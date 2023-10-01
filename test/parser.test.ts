@@ -95,9 +95,24 @@ test("should handle syntax errors", () => {
 
   expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': Unexpected token (5:2)")
 })
-  parser.parseController(code, "controller.js")
 
-  expect(spy).toBeCalledWith("Error while parsing controller in 'controller.js': Unexpected token (5:2)")
+test("parse arrow function", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      connect() {
+        document.addEventListener('event', this.load)
+      }
+
+      load = (event) => {}
+    }
+  `
+
+  const controller = parser.parseController(code, "controller.js")
+
+  expect(controller.methods).toEqual(["connect", "load"])
+  expect(controller.parseError).toBeUndefined()
 })
 
 test("parse private methods", () => {

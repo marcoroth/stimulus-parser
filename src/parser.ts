@@ -2,6 +2,7 @@ import { simple } from "acorn-walk"
 import { Parser as AcornParser } from "acorn"
 import staticClassFeatures from "acorn-static-class-features"
 import privateMethods from "acorn-private-methods"
+import classFields from "acorn-class-fields"
 
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
@@ -13,7 +14,10 @@ export class Parser {
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser.extend(staticClassFeatures).extend(privateMethods)
+    this.parser = AcornParser
+      .extend(staticClassFeatures)
+      .extend(privateMethods)
+      .extend(classFields)
   }
 
   parse(code: string) {
@@ -37,6 +41,10 @@ export class Parser {
 
         PropertyDefinition(node: any): void {
           const { name } = node.key
+
+          if (node.value.type === "ArrowFunctionExpression") {
+            controller.methods.push(name)
+          }
 
           if (name === "targets") {
             controller.targets = node.value.elements.map((element: NodeElement) => element.value)
