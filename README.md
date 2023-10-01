@@ -26,7 +26,26 @@ yarn add stimulus-parser
 
 ## Usage
 
-TODO
+```js
+import { Project } from "stimulus-parser"
+
+const project = new Project("/Users/user/path/to/project")
+
+const controllers = project.controllerDefinitions
+const controller = controllers[0]
+
+console.log(controller.methods)
+// => ["connect", "click", "disconnect"]
+
+console.log(controller.targets)
+// => ["name", "output"]
+
+console.log(controller.classes)
+// => ["loading"]
+
+console.log(controller.values)
+// => [{ url: { type: "String", default: "" } }]
+```
 
 ## Development
 
