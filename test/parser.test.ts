@@ -99,6 +99,21 @@ test("should handle syntax errors", () => {
 
   expect(spy).toBeCalledWith("Error while parsing controller in 'controller.js': Unexpected token (5:2)")
 })
+
+test("parse private methods", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      #load() {}
+    }
+  `
+  const controller = parser.parseController(code, "controller.js")
+
+  expect(controller.methods).toEqual(["load"])
+  expect(controller.parseError).toBeUndefined()
+})
+
 // TODO
 test.skip("parse nested object/array default value types", () => {
   const code = `

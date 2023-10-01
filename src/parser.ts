@@ -1,6 +1,7 @@
 import { simple } from "acorn-walk"
 import { Parser as AcornParser } from "acorn"
 import staticClassFeatures from "acorn-static-class-features"
+import privateMethods from "acorn-private-methods"
 
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
@@ -12,7 +13,7 @@ export class Parser {
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser.extend(staticClassFeatures)
+    this.parser = AcornParser.extend(staticClassFeatures).extend(privateMethods)
   }
 
   parse(code: string) {
