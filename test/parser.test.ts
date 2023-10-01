@@ -1,4 +1,4 @@
-import { expect, test } from "vitest"
+import { expect, test, vi } from "vitest"
 import { Project, Parser } from "../src"
 
 const project = new Project("/Users/marcoroth/Development/stimulus-parser")
@@ -80,6 +80,25 @@ test("parse values with with default values", () => {
   })
 })
 
+test("should handle syntax errors", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+  `
+  const spy = vi.spyOn(console, 'error')
+
+  const controller = parser.parseController(code, "error_controller.js")
+
+  expect(controller.identifier).toEqual("error")
+  expect(controller.parseError).toEqual("Unexpected token (5:2)")
+
+  expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': Unexpected token (5:2)")
+})
+  parser.parseController(code, "controller.js")
+
+  expect(spy).toBeCalledWith("Error while parsing controller in 'controller.js': Unexpected token (5:2)")
+})
 // TODO
 test.skip("parse nested object/array default value types", () => {
   const code = `

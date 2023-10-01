@@ -25,6 +25,8 @@ export class ControllerDefinition {
   classes: Array<string> = []
   values: { [key: string]: ValueDefinition } = {}
 
+  parseError?: string
+
   static controllerPathForIdentifier(identifier: string): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
 
