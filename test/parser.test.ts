@@ -129,6 +129,37 @@ test("parse private methods", () => {
   expect(controller.parseError).toBeUndefined()
 })
 
+test('parse typescript code', () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static targets: string[] = ["one", "two", "three"]
+
+      hello(name: string): void {
+        console.log("Hello, " + name);
+      }
+    }`
+
+  const controller = parser.parseController(code, "target_controller.js")
+
+  expect(controller.targets).toEqual(["one", "two", "three"])
+})
+
+test("parse typescript private methods", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      private load() {}
+    }
+  `
+  const controller = parser.parseController(code, "controller.js")
+
+  expect(controller.methods).toEqual(["load"])
+  expect(controller.parseError).toBeUndefined()
+})
+
 // TODO
 test.skip("parse nested object/array default value types", () => {
   const code = `

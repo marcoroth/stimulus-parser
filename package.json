@@ -20,18 +20,16 @@
   },
   "dependencies": {
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
-    "acorn": "^8.8.2",
-    "acorn-class-fields": "^1.0.0",
-    "acorn-private-methods": "^1.0.0",
-    "acorn-static-class-features": "^1.0.0",
+    "acorn": "^8.10.0",
+    "acorn-typescript": "^1.4.8",
     "acorn-walk": "^8.2.0",
-    "fs": "^0.0.1-security",
     "glob": "^10.3.4"
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.2.2",
     "@types/glob": "^8.1.0",
     "@types/minimatch": "^3.0.4",
+    "@types/node": "^20.8.4",
     "minimatch": "^9.0.3",
     "path": "^0.12.7",
     "rimraf": "^5.0.1",

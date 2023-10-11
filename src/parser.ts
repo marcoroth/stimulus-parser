@@ -1,8 +1,6 @@
-import { simple } from "acorn-walk"
 import { Parser as AcornParser } from "acorn"
-import staticClassFeatures from "acorn-static-class-features"
-import privateMethods from "acorn-private-methods"
-import classFields from "acorn-class-fields"
+import { simple } from "acorn-walk"
+import { tsPlugin } from "acorn-typescript";
 
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
@@ -14,16 +12,15 @@ export class Parser {
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser
-      .extend(staticClassFeatures)
-      .extend(privateMethods)
-      .extend(classFields)
+
+    // @ts-expect-error TODO(Zeko369): Figure out TS error when loading tsPlugin
+    this.parser = AcornParser.extend(tsPlugin())
   }
 
   parse(code: string) {
     return this.parser.parse(code, {
       sourceType: "module",
-      ecmaVersion: 2020,
+      ecmaVersion: "latest",
     })
   }
 
@@ -105,7 +102,7 @@ export class Parser {
       })
 
       return controller
-    } catch(error: any) {
+    } catch (error: any) {
       console.error(`Error while parsing controller in '${filename}': ${error.message}`)
 
       const controller = new ControllerDefinition(this.project, filename)
