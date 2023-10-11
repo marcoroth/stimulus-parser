@@ -33,6 +33,8 @@ export class ControllerDefinition {
   readonly project: Project
   parent?: ParentController
 
+  isTyped: boolean = false
+
   methods: Array<string> = []
   targets: Array<string> = []
   classes: Array<string> = []
