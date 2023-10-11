@@ -20,6 +20,8 @@ export class ControllerDefinition {
   readonly path: string
   readonly project: Project
 
+  isTyped: boolean = false
+
   methods: Array<string> = []
   targets: Array<string> = []
   classes: Array<string> = []

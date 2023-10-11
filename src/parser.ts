@@ -1,8 +1,6 @@
+import { Node, Parser as AcornParser } from "acorn"
 import { simple } from "acorn-walk"
-import { Parser as AcornParser } from "acorn"
-import staticClassFeatures from "acorn-static-class-features"
-import privateMethods from "acorn-private-methods"
-import classFields from "acorn-class-fields"
+import { tsPlugin } from "acorn-typescript";
 
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
@@ -14,16 +12,15 @@ export class Parser {
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser
-      .extend(staticClassFeatures)
-      .extend(privateMethods)
-      .extend(classFields)
+
+    // @ts-expect-error TODO(Zeko369): Figure out TS error when loading tsPlugin
+    this.parser = AcornParser.extend(tsPlugin())
   }
 
   parse(code: string) {
     return this.parser.parse(code, {
       sourceType: "module",
-      ecmaVersion: 2020,
+      ecmaVersion: "latest",
     })
   }
 
@@ -38,16 +35,34 @@ export class Parser {
             controller.methods.push(node.key.name)
           }
         },
-
+        ClassDeclaration(node: any): void {
+          if('decorators' in node && Array.isArray(node.decorators)) {
+            controller.isTyped = !!node.decorators.find((decorator: any) => decorator.expression.name === 'TypedController');
+          }
+        },
         PropertyDefinition(node: any): void {
           const { name } = node.key
 
-          if (node.value.type === "ArrowFunctionExpression") {
+          if('decorators' in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
+            node.decorators.forEach((decorator: any) => {
+              if(decorator.expression.name === 'Target') {
+                controller.targets.push(name)
+              }
+            })
+
+            return
+          }
+
+          if (node.value?.type === "ArrowFunctionExpression") {
             controller.methods.push(name)
           }
 
+          if(!node.static) {
+            return
+          }
+
           if (name === "targets") {
-            controller.targets = node.value.elements.map((element: NodeElement) => element.value)
+            controller.targets.push(...node.value.elements.map((element: any) => element.value))
           }
 
           if (name === "classes") {
@@ -105,7 +120,7 @@ export class Parser {
       })
 
       return controller
-    } catch(error: any) {
+    } catch (error: any) {
       console.error(`Error while parsing controller in '${filename}': ${error.message}`)
 
       const controller = new ControllerDefinition(this.project, filename)
