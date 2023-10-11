@@ -1,4 +1,4 @@
-import { Parser as AcornParser } from "acorn"
+import { Node, Parser as AcornParser } from "acorn"
 import { simple } from "acorn-walk"
 import { tsPlugin } from "acorn-typescript";
 
@@ -35,16 +35,34 @@ export class Parser {
             controller.methods.push(node.key.name)
           }
         },
-
+        ClassDeclaration(node: any): void {
+          if('decorators' in node && Array.isArray(node.decorators)) {
+            controller.isTyped = !!node.decorators.find((decorator: any) => decorator.expression.name === 'TypedController');
+          }
+        },
         PropertyDefinition(node: any): void {
           const { name } = node.key
 
-          if (node.value.type === "ArrowFunctionExpression") {
+          if('decorators' in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
+            node.decorators.forEach((decorator: any) => {
+              if(decorator.expression.name === 'Target') {
+                controller.targets.push(name)
+              }
+            })
+
+            return
+          }
+
+          if (node.value?.type === "ArrowFunctionExpression") {
             controller.methods.push(name)
           }
 
+          if(!node.static) {
+            return
+          }
+
           if (name === "targets") {
-            controller.targets = node.value.elements.map((element: NodeElement) => element.value)
+            controller.targets.push(...node.value.elements.map((element: any) => element.value))
           }
 
           if (name === "classes") {

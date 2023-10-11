@@ -1,21 +1,80 @@
-import { expect, test, vi } from "vitest"
+import { describe, expect, test, vi } from "vitest"
 import { Project, Parser } from "../src"
 
 const project = new Project("/Users/marcoroth/Development/stimulus-parser")
 const parser = new Parser(project)
 
-test("parse targets", () => {
-  const code = `
+describe('parse targets', () => {
+  describe('static', () => {
+    test("parse targets", () => {
+      const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
       static targets = ["one", "two", "three"]
     }
   `
-  const controller = parser.parseController(code, "target_controller.js")
+      const controller = parser.parseController(code, "target_controller.js")
 
-  expect(controller.targets).toEqual(["one", "two", "three"])
-})
+      expect(controller.targets).toEqual(["one", "two", "three"])
+    })
+  })
+
+  describe('decorator', () => {
+    test("parse single target", () => {
+      const code = `
+  import { Controller } from "@hotwired/stimulus"
+  import { Target, TypedController } from "@vytant/stimulus-decorators";
+
+  @TypedController
+  export default class extends Controller {
+    @Target private readonly outputTarget!: HTMLDivElement;
+  }`
+
+      const controller = parser.parseController(code, 'target_controller.js')
+      expect(controller.isTyped).toBeTruthy()
+
+      expect(controller.targets).toEqual(['outputTarget'])
+    })
+
+    test("parse multiple target defintions", () => {
+      const code = `
+  import { Controller } from "@hotwired/stimulus"
+  import { Target, TypedController } from "@vytant/stimulus-decorators";
+
+  @TypedController
+  export default class extends Controller {
+    @Target private readonly outputTarget!: HTMLDivElement;
+    @Target private readonly nameTarget!: HTMLInputElement;
+  }`
+
+      const controller = parser.parseController(code, 'decorator_controller.js')
+      expect(controller.isTyped).toBeTruthy()
+
+      expect(controller.targets).toEqual(['outputTarget', 'nameTarget'])
+    })
+
+    test("parse mix decorator and static defintions", () => {
+      const code = `
+  import { Controller } from "@hotwired/stimulus"
+  import { Target, TypedController } from "@vytant/stimulus-decorators";
+
+  @TypedController
+  export default class extends Controller {
+    @Target private readonly outputTarget!: HTMLDivElement;
+    @Target private readonly nameTarget!: HTMLInputElement;
+    
+    static targets = ['one', 'two']
+  }`
+
+      const controller = parser.parseController(code, 'decorator_controller.js')
+      expect(controller.isTyped).toBeTruthy()
+
+      expect(controller.targets).toEqual(['outputTarget', 'nameTarget', 'one', 'two'])
+    })
+  })
+});
+
 
 test("parse classes", () => {
   const code = `
