@@ -11,15 +11,16 @@ interface ControllerFile {
 
 export class Project {
   readonly projectPath: string
-  readonly controllerPath = "app/javascript/controllers"
+  readonly controllerPath: string
 
   controllerDefinitions: ControllerDefinition[] = []
 
   private controllerFiles: Array<ControllerFile> = []
   private parser: Parser = new Parser(this)
 
-  constructor(projectPath: string) {
+  constructor(projectPath: string, controllerPath = "app/javascript/controllers") {
     this.projectPath = projectPath
+    this.controllerPath = controllerPath
   }
 
   relativePath(path: string) {
