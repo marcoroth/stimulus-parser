@@ -28,7 +28,7 @@ test("relativeControllerPath", () => {
 })
 
 test("controllerRoot and controllerRoots", async () => {
-  const project = new Project("/Users/marcoroth/Development/stimulus-parser/test/fixtures/controller-paths")
+  const project = new Project("test/fixtures/controller-paths")
 
   expect(project.controllerRootFallback).toEqual("app/javascript/controllers")
   expect(project.controllerRoot).toEqual("app/javascript/controllers")
