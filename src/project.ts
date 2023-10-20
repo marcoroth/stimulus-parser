@@ -73,7 +73,10 @@ export class Project {
   }
 
   private controllerRootForPath(path: string) {
-    return this.controllerRoots.find(root => path.startsWith(root)) || this.controllerRootFallback
+    const relativePath = this.relativePath(path)
+    const relativeRoots = this.controllerRoots.map(root => this.relativePath(root))
+
+    return relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
   }
 
   private async readControllerFiles() {

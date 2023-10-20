@@ -40,8 +40,28 @@ test("controllerRoot and controllerRoots", async () => {
 
   expect(project.controllerRoots).toEqual([
     "app/javascript/controllers",
-    "app/pack/controllers",
+    "app/packs/controllers",
     "resources/js/controllers",
+  ])
+})
+
+test("identifier in different controllerRoots", async () => {
+  const project = new Project("test/fixtures/controller-paths")
+
+  await project.analyze()
+
+  const identifiers = project.controllerDefinitions.map(controller => controller.identifier).sort()
+
+  expect(identifiers).toEqual([
+    "laravel",
+    "nested--laravel",
+    "nested--rails",
+    "nested--twice--laravel",
+    "nested--twice--rails",
+    "nested--twice--webpack",
+    "nested--webpack",
+    "rails",
+    "webpack",
   ])
 })
 
