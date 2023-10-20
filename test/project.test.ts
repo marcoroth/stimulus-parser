@@ -26,3 +26,53 @@ test("relativeControllerPath", () => {
     )
   ).toEqual("nested/deeply/some_controller.js")
 })
+
+test("controllerRoot and controllerRoots", async () => {
+  const project = new Project("test/fixtures/controller-paths")
+
+  expect(project.controllerRootFallback).toEqual("app/javascript/controllers")
+  expect(project.controllerRoot).toEqual("app/javascript/controllers")
+  expect(project.controllerRoots).toEqual([])
+
+  await project.analyze()
+
+  expect(project.controllerRoot).toEqual("app/javascript/controllers")
+
+  expect(project.controllerRoots).toEqual([
+    "app/javascript/controllers",
+    "app/pack/controllers",
+    "resources/js/controllers",
+  ])
+})
+
+test("static calculateControllerRoots", () => {
+  expect(
+    Project.calculateControllerRoots([
+      "app/javascript/controllers/some_controller.js",
+      "app/javascript/controllers/nested/some_controller.js",
+      "app/javascript/controllers/nested/deeply/some_controller.js",
+    ])
+  ).toEqual([
+    "app/javascript/controllers"
+  ])
+
+  expect(
+    Project.calculateControllerRoots(
+      [
+        "app/packs/controllers/some_controller.js",
+        "app/packs/controllers/nested/some_controller.js",
+        "app/packs/controllers/nested/deeply/some_controller.js",
+        "app/javascript/controllers/some_controller.js",
+        "app/javascript/controllers/nested/some_controller.js",
+        "app/javascript/controllers/nested/deeply/some_controller.js",
+        "resources/js/controllers/some_controller.js",
+        "resources/js/controllers/nested/some_controller.js",
+        "resources/js/controllers/nested/deeply/some_controller.js",
+      ]
+    )
+  ).toEqual([
+    "app/javascript/controllers",
+    "app/packs/controllers",
+    "resources/js/controllers"
+  ])
+})

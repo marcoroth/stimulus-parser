@@ -11,12 +11,31 @@ interface ControllerFile {
 
 export class Project {
   readonly projectPath: string
-  readonly controllerPath = "app/javascript/controllers"
+  readonly controllerRootFallback = "app/javascript/controllers"
 
-  controllerDefinitions: ControllerDefinition[] = []
+  public controllerDefinitions: ControllerDefinition[] = []
 
   private controllerFiles: Array<ControllerFile> = []
   private parser: Parser = new Parser(this)
+
+  static calculateControllerRoots(filenames: string[]) {
+    const controllerRoots: string[] = [];
+
+    filenames.forEach(filename => {
+      const splits = filename.split("/")
+      const controllersIndex = splits.indexOf("controllers")
+
+      if (controllersIndex !== -1) {
+        const controllerRoot = splits.slice(0, controllersIndex + 1).join("/")
+
+        if (!controllerRoots.includes(controllerRoot)) {
+          controllerRoots.push(controllerRoot)
+        }
+      }
+    })
+
+    return controllerRoots.sort();
+  }
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
@@ -27,7 +46,19 @@ export class Project {
   }
 
   relativeControllerPath(path: string) {
-    return this.relativePath(path).replace(`${this.controllerPath}/`, "")
+    const controllerRoot = this.controllerRootForPath(path)
+
+    return this.relativePath(path).replace(`${controllerRoot}/`, "")
+  }
+
+  get controllerRoot() {
+    return this.controllerRoots[0] || this.controllerRootFallback
+  }
+
+  get controllerRoots() {
+    return Project.calculateControllerRoots(
+      this.controllerFiles.map(file => this.relativePath(file.filename))
+    )
   }
 
   async analyze() {
@@ -39,6 +70,10 @@ export class Project {
     this.controllerFiles.forEach((file: ControllerFile) => {
       this.controllerDefinitions.push(this.parser.parseController(file.content, file.filename))
     })
+  }
+
+  private controllerRootForPath(path: string) {
+    return this.controllerRoots.find(root => path.startsWith(root)) || this.controllerRootFallback
   }
 
   private async readControllerFiles() {
