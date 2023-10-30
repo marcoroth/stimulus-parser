@@ -101,7 +101,7 @@ describe("parse values", () => {
   })
 
   // TODO
-  test.skip("parse nested object/array default value types", () => {
+  test.todo("parse nested object/array default value types", () => {
     const code = `
     import { Controller } from "@hotwired/stimulus"
 
