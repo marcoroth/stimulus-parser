@@ -163,30 +163,12 @@ describe("with TS Syntax", () => {
         private unload() {}
       }
     `
+
     const controller = parser.parseController(code, "controller.ts")
 
     expect(controller.methods).toEqual(["#load", "#unload"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
-  })
-
-  test.todo("parse nested object/array default value types", () => {
-    const code = `
-      import { Controller } from "@hotwired/stimulus"
-
-      export default class extends Controller {
-        static values = {
-          object: { type: Object, default: { object: { some: { more: { levels: {} } } } } },
-          array: { type: Array, default: [["Array", "with", ["nested", ["values"]]]] },
-        }
-      }
-    `
-    const controller = parser.parseController(code, "value_controller.js")
-
-    expect(controller.values).toEqual({
-      object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
-      array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
-    })
   })
 
   test("parse controller with public class fields", () => {

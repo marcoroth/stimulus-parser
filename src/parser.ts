@@ -17,6 +17,115 @@ type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
 }
 
+// TODO: Support decorator + reflect-metadata value definitions
+class ControllerParser {
+  constructor(public controller: ControllerDefinition) {}
+
+  public parseDecoratedProperty(node: any) {
+    const { name } = node.key
+
+    node.decorators.forEach((decorator: any) => {
+      switch (decorator.expression.name || decorator.expression.callee.name) {
+        case "Target":
+        case "Targets":
+          return this.controller.targets.push(this.stripDecoratorSuffix(name, "Target"))
+        case "Class":
+        case "Classes":
+          return this.controller.classes.push(this.stripDecoratorSuffix(name, "Class"))
+        case "Value":
+          if (decorator.expression.name !== undefined || decorator.expression.arguments.length !== 1) {
+            throw new Error("We dont support reflected types yet")
+          }
+
+          const key = this.stripDecoratorSuffix(name, "Value")
+          const type = decorator.expression.arguments[0].name
+
+          this.controller.values[key] = {
+            type,
+            default: node.value ? this.getDefaultValueFromNode(node) : defaultValuesForType[type],
+          }
+      }
+    })
+  }
+
+  private stripDecoratorSuffix(name: string, type: string) {
+    return name.slice(0, name.indexOf(type))
+  }
+
+  public parseProperty(node: any) {
+    switch (node.key.name) {
+      case "targets":
+        return this.controller.targets.push(...node.value.elements.map((element: any) => element.value))
+      case "classes":
+        return this.controller.classes.push(...node.value.elements.map((element: NodeElement) => element.value))
+      case "values":
+        node.value.properties.forEach((property: NodeElement) => {
+          this.controller.values[property.key.name] = this.parseValuePropertyDefinition(property)
+        })
+    }
+  }
+
+  private parseValuePropertyDefinition(property: NodeElement): { type: any; default: any } {
+    const { value } = property
+    if (value.name && typeof value.name === "string") {
+      return {
+        type: value.name,
+        default: defaultValuesForType[value.name],
+      }
+    }
+
+    const properties = property.value.properties
+
+    const typeProperty = properties.find((property) => property.key.name === "type")
+    const defaultProperty = properties.find((property) => property.key.name === "default")
+
+    return {
+      type: typeProperty?.value.name || "",
+      default: this.getDefaultValueFromNode(defaultProperty),
+    }
+  }
+
+  private convertArrayExpression(value: NodeElement | PropertyValue): NestedArray<PropertyValue> {
+    return value.elements.map((node) => {
+      if (node.type === "ArrayExpression") {
+        return this.convertArrayExpression(node)
+      } else {
+        return node.value
+      }
+    })
+  }
+
+  private convertObjectExpression (value: PropertyValue): NestedObject<PropertyValue> {
+    return Object.fromEntries(
+      value.properties.map((property) => {
+        const isObjectExpression = property.value.type === "ObjectExpression"
+        const value = isObjectExpression ? this.convertObjectExpression(property.value) : property.value.value
+
+        return [property.key.name, value]
+      })
+    )
+  }
+
+  private getDefaultValueFromNode(node: any) {
+    if ("value" in node.value) {
+      return node.value.value
+    }
+
+    const value = node.value
+
+    switch (value.type) {
+      case "ArrayExpression":
+        return this.convertArrayExpression(value)
+      case "ObjectExpression":
+        return this.convertObjectExpression(value)
+    }
+  }
+}
+
+// TODO: make sure to show an error if there are duplicate targets
+// TODO: make sure to error out if there are decorators and no TypedController
+// TODO: error or multiple classes
+
 export class Parser {
   private readonly project: Project
   private parser: typeof ESLintParser
@@ -42,7 +151,7 @@ export class Parser {
     try {
       const importStatements: ImportStatement[] = []
       const ast = this.parse(code, filename)
-      const controller = new ControllerDefinition(this.project, filename)
+      const controllerParser = new ControllerParser(new ControllerDefinition(this.project, filename))
 
       simple(ast as any, {
         ImportDeclaration(node: any): void {
@@ -60,20 +169,22 @@ export class Parser {
           const importStatement = importStatements.find(i => i.importedName === superClass)
 
           if (importStatement) {
-            controller.parent = {
+            controllerParser.controller.parent = {
               constant: superClass,
               package: importStatement.source,
               type: (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") ? "default" : "import",
             }
           } else {
-            controller.parent = {
+            controllerParser.controller.parent = {
               constant: node.superClass.name,
               type: "unknown",
             }
           }
 
-          if('decorators' in node && Array.isArray(node.decorators)) {
-            controller.isTyped = !!node.decorators.find((decorator: any) => decorator.expression.name === 'TypedController');
+          if ("decorators" in node && Array.isArray(node.decorators)) {
+            controllerParser.controller.isTyped = !!node.decorators.find(
+              (decorator: any) => decorator.expression.name === "TypedController",
+            )
           }
         },
 
@@ -83,110 +194,29 @@ export class Parser {
             const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
             const name = isPrivate ? `#${methodName}` : methodName
 
-            controller.methods.push(name)
+            controllerParser.controller.methods.push(name)
           }
         },
 
         PropertyDefinition(node: any): void {
-          const { name } = node.key
-
-          if('decorators' in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
-            node.decorators.forEach((decorator: any) => {
-              if(decorator.expression.name === 'Target') {
-                controller.targets.push(name)
-              }
-            })
-
-            return
+          if ("decorators" in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
+            return controllerParser.parseDecoratedProperty(node)
           }
 
           if (node.value?.type === "ArrowFunctionExpression") {
-            controller.methods.push(name)
+            controllerParser.controller.methods.push(node.key.name)
           }
 
-          if(!node.static) {
-            return
-          }
+          // console.log(node)
 
-          if (name === "targets") {
-            controller.targets.push(...node.value.elements.map((element: any) => element.value))
-          }
+          if (!node.static) return
 
-          if (name === "classes") {
-            controller.classes = node.value.elements.map((element: NodeElement) => element.value)
-          }
-
-          if (name === "values") {
-            node.value.properties.forEach((property: NodeElement) => {
-              const value = property.value
-
-              let type
-              let defaultValue
-
-              if (value.name && typeof value.name === "string") {
-                type = value.name
-                defaultValue = defaultValuesForType[type]
-              } else {
-                const properties = property.value.properties
-
-                const convertArrayExpression = (
-                  value: NodeElement | PropertyValue
-                ): NestedArray<PropertyValue> => {
-                  return value.elements.map((node) => {
-                    if (node.type === "ArrayExpression") {
-                      return convertArrayExpression(node)
-                    } else {
-                      return node.value
-                    }
-                  })
-                }
-
-                const convertObjectExpression = (
-                  value: PropertyValue
-                ): NestedObject<PropertyValue> => {
-                  return Object.fromEntries(
-                    value.properties.map((property) => {
-                      const value =
-                        property.value.type === "ObjectExpression"
-                          ? convertObjectExpression(property.value)
-                          : property.value.value
-
-                      return [property.key.name, value]
-                    })
-                  )
-                }
-
-                const convertProperty = (value: PropertyValue) => {
-                  switch (value.type) {
-                    case "ArrayExpression":
-                      return convertArrayExpression(value)
-                    case "ObjectExpression":
-                      return convertObjectExpression(value)
-                  }
-                }
-
-                const typeProperty = properties.find((property) => property.key.name === "type")
-                const defaultProperty = properties.find((property) => property.key.name === "default")
-
-                type = typeProperty?.value.name || ""
-                defaultValue = defaultProperty?.value.value
-
-                if (!defaultValue && defaultProperty) {
-                  defaultValue = convertProperty(defaultProperty.value)
-                }
-              }
-
-              controller.values[property.key.name] = {
-                type: type,
-                default: defaultValue,
-              }
-            })
-          }
+          controllerParser.parseProperty(node)
         },
       })
 
-      return controller
-    } catch(error: any) {
+      return controllerParser.controller
+    } catch (error: any) {
       console.error(`Error while parsing controller in '${filename}': ${error.message}`)
 
       const controller = new ControllerDefinition(this.project, filename)
