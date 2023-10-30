@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest"
+import { expect, test, vi } from "vitest"
 import { setupParserTest } from "./setup"
 
 const parser = setupParserTest()
@@ -14,7 +14,9 @@ test("should handle syntax errors", () => {
   const controller = parser.parseController(code, "error_controller.js")
 
   expect(controller.identifier).toEqual("error")
-  expect(controller.parseError).toEqual("Unexpected token (5:2)")
+  expect(controller.errors).toHaveLength(1)
+  expect(controller.errors[0].message).toEqual("Error parsing controller")
+  expect(controller.errors[0].cause.message).toEqual("Unexpected token (5:2)")
 
   expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': Unexpected token (5:2)")
 })
@@ -35,7 +37,7 @@ test("parse arrow function", () => {
   const controller = parser.parseController(code, "controller.js")
 
   expect(controller.methods).toEqual(["connect", "load"])
-  expect(controller.parseError).toBeUndefined()
+  expect(controller.hasErrors).toBeFalsy()
 })
 
 test("parse private methods", () => {
@@ -49,7 +51,7 @@ test("parse private methods", () => {
   const controller = parser.parseController(code, "controller.js")
 
   expect(controller.methods).toEqual(["load"])
-  expect(controller.parseError).toBeUndefined()
+  expect(controller.hasErrors).toBeFalsy()
 })
 
 test("parse typescript code", () => {
@@ -80,5 +82,5 @@ test("parse typescript private methods", () => {
   const controller = parser.parseController(code, "controller.js")
 
   expect(controller.methods).toEqual(["load"])
-  expect(controller.parseError).toBeUndefined()
+  expect(controller.hasErrors).toBeFalsy()
 })

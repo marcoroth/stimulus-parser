@@ -17,6 +17,24 @@ describe("parse targets", () => {
     expect(controller.targets).toEqual(["one", "two", "three"])
   })
 
+  test("duplicate static targets", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static targets = ["one", "one", "three"]
+    }
+  `
+    const controller = parser.parseController(code, "target_controller.js")
+
+    expect(controller.targets).toEqual(["one", "one", "three"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate defintion of target:one")
+    expect(controller.errors[0].loc.start.line).toEqual(5)
+    expect(controller.errors[0].loc.end.line).toEqual(5)
+  })
+
   test("single @Target decorator", () => {
     const code = `
   import { Controller } from "@hotwired/stimulus"
@@ -31,6 +49,28 @@ describe("parse targets", () => {
     expect(controller.isTyped).toBeTruthy()
 
     expect(controller.targets).toEqual(["output"])
+  })
+
+  test("duplicate @Target decorator", () => {
+    const code = `
+  import { Controller } from "@hotwired/stimulus"
+  import { Target, TypedController } from "@vytant/stimulus-decorators";
+
+  @TypedController
+  export default class extends Controller {
+    @Target private readonly outputTarget!: HTMLDivElement;
+    @Target private readonly outputTarget!: HTMLDivElement;
+  }`
+
+    const controller = parser.parseController(code, "target_controller.js")
+    expect(controller.isTyped).toBeTruthy()
+
+    expect(controller.targets).toEqual(["output", "output"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate defintion of target:output")
+    expect(controller.errors[0].loc.start.line).toEqual(8)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
   })
 
   test("single @Targets decorator", () => {
@@ -84,5 +124,28 @@ describe("parse targets", () => {
     expect(controller.isTyped).toBeTruthy()
 
     expect(controller.targets).toEqual(["output", "name", "item", "one", "two"])
+  })
+
+  test("duplicate target in mix", () => {
+    const code = `
+  import { Controller } from "@hotwired/stimulus"
+  import { Target, TypedController } from "@vytant/stimulus-decorators";
+
+  @TypedController
+  export default class extends Controller {
+    static targets = ['output']
+  
+    @Target private readonly outputTarget!: HTMLDivElement;
+  }`
+
+    const controller = parser.parseController(code, "target_controller.js")
+    expect(controller.isTyped).toBeTruthy()
+
+    expect(controller.targets).toEqual(["output", "output"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate defintion of target:output")
+    expect(controller.errors[0].loc.start.line).toEqual(9)
+    expect(controller.errors[0].loc.end.line).toEqual(9)
   })
 })

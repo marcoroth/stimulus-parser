@@ -1,33 +1,60 @@
 import { Project } from "./project"
 import { identifierForContextKey } from "@hotwired/stimulus-webpack-helpers"
+import { SourceLocation } from "acorn"
 
-type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
-
-type ValueDefinition = {
-  type: string
-  default: ValueDefinitionValue
+export class ParseError {
+  constructor(
+    public readonly severity: "LINT" | "FAIL",
+    public readonly message: string,
+    public readonly loc?: any,
+    public readonly cause?: any,
+  ) {}
 }
 
-export const defaultValuesForType = {
-  Array: [],
-  Boolean: false,
-  Number: 0,
-  Object: {},
-  String: "",
-} as { [key: string]: ValueDefinitionValue }
+export class Definition {
+  constructor(
+    public readonly name: string,
+    public readonly loc?: SourceLocation,
+    public readonly definitionType: "decorator" | "static" = "decorator",
+  ) {}
+}
+
+type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
+export class ValueDefinition extends Definition {
+  constructor(
+    name: string,
+    public readonly valueDef: { type: string; default: ValueDefinitionValue },
+    loc?: SourceLocation,
+    definitionType: "decorator" | "static" = "decorator",
+  ) {
+    super(name, loc, definitionType)
+  }
+
+  public static defaultValuesForType = {
+    Array: [],
+    Boolean: false,
+    Number: 0,
+    Object: {},
+    String: "",
+  } as { [key: string]: ValueDefinitionValue }
+}
 
 export class ControllerDefinition {
   readonly path: string
   readonly project: Project
 
   isTyped: boolean = false
+  anyDecorator: boolean = false
 
-  methods: Array<string> = []
-  targets: Array<string> = []
-  classes: Array<string> = []
-  values: { [key: string]: ValueDefinition } = {}
+  readonly _methods: Array<Definition> = []
+  readonly _targets: Array<Definition> = []
+  readonly _classes: Array<Definition> = []
+  readonly _values: { [key: string]: ValueDefinition } = {}
 
-  parseError?: string
+  readonly errors: ParseError[] = []
+  get hasErrors() {
+    return this.errors.length > 0
+  }
 
   static controllerPathForIdentifier(identifier: string): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
@@ -38,6 +65,26 @@ export class ControllerDefinition {
   constructor(project: Project, path: string) {
     this.project = project
     this.path = path
+  }
+
+  // getters for converting internal representations to not break the API
+  get methods() {
+    return this._methods.map((method) => method.name)
+  }
+
+  // getters for converting internal representations to not break the API
+  get targets() {
+    return this._targets.map((method) => method.name)
+  }
+
+  // getters for converting internal representations to not break the API
+  get classes() {
+    return this._classes.map((method) => method.name)
+  }
+
+  // getters for converting internal representations to not break the API
+  get values() {
+    return Object.fromEntries(Object.entries(this._values).map(([key, def]) => [key, def.valueDef]))
   }
 
   get controllerPath() {
