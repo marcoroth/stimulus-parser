@@ -168,6 +168,7 @@ describe("with JS Syntax", () => {
 
     const controller = parser.parseController(code, "controller.js")
 
+    expect(controller.methods).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
