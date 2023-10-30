@@ -19,6 +19,12 @@ class ControllerParser {
       )
     }
 
+    if (!this.controller.anyDecorator && this.controller.isTyped) {
+      this.controller.errors.push(
+        new ParseError("LINT", "You decorated the controller with @TypedController to use decorators", this.loc),
+      )
+    }
+
     this.uniqueErrorGenerator("target", this.controller._targets)
     this.uniqueErrorGenerator("class", this.controller._classes)
     // values are reported at the time of parsing since we're storing them as an object
@@ -38,7 +44,7 @@ class ControllerParser {
 
         if (item.name === item2.name) {
           errors.push(item.name)
-          this.controller.errors.push(new ParseError("LINT", `Duplicate defintion of ${type}:${item.name}`, item2.loc))
+          this.controller.errors.push(new ParseError("LINT", `Duplicate definition of ${type}:${item.name}`, item2.loc))
         }
       })
     })
@@ -103,6 +109,12 @@ class ControllerParser {
         )
       case "values":
         node.value.properties.forEach((property: NodeElement) => {
+          if (this.controller._values[property.key.name]) {
+            this.controller.errors.push(
+              new ParseError("LINT", `Duplicate definition of value:${property.key.name}`, node.loc),
+            )
+          }
+
           this.controller._values[property.key.name] = new ValueDefinition(
             property.key.name,
             this.parseValuePropertyDefinition(property),
@@ -157,8 +169,6 @@ class ControllerParser {
   }
 }
 
-// TODO: make sure to show an error if there are duplicate targets
-// TODO: make sure to error out if there are decorators and no TypedController
 // TODO: error or multiple classes
 export class Parser {
   private readonly project: Project

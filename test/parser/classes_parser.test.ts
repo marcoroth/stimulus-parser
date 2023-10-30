@@ -46,7 +46,7 @@ describe("parse classes", () => {
     expect(controller.classes).toEqual(["random"])
   })
 
-  test("parse multiple class defintions", () => {
+  test("parse multiple class definitions", () => {
     const code = `
   import { Controller } from "@hotwired/stimulus"
   import { Class, TypedController } from "@vytant/stimulus-decorators";

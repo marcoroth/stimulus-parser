@@ -30,7 +30,7 @@ describe("parse targets", () => {
     expect(controller.targets).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Duplicate defintion of target:one")
+    expect(controller.errors[0].message).toEqual("Duplicate definition of target:one")
     expect(controller.errors[0].loc.start.line).toEqual(5)
     expect(controller.errors[0].loc.end.line).toEqual(5)
   })
@@ -68,7 +68,7 @@ describe("parse targets", () => {
     expect(controller.targets).toEqual(["output", "output"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Duplicate defintion of target:output")
+    expect(controller.errors[0].message).toEqual("Duplicate definition of target:output")
     expect(controller.errors[0].loc.start.line).toEqual(8)
     expect(controller.errors[0].loc.end.line).toEqual(8)
   })
@@ -89,7 +89,7 @@ describe("parse targets", () => {
     expect(controller.targets).toEqual(["output"])
   })
 
-  test("parse multiple target defintions", () => {
+  test("parse multiple target definitions", () => {
     const code = `
   import { Controller } from "@hotwired/stimulus"
   import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -106,7 +106,7 @@ describe("parse targets", () => {
     expect(controller.targets).toEqual(["output", "name"])
   })
 
-  test("parse mix decorator and static defintions", () => {
+  test("parse mix decorator and static definitions", () => {
     const code = `
   import { Controller } from "@hotwired/stimulus"
   import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -144,7 +144,7 @@ describe("parse targets", () => {
     expect(controller.targets).toEqual(["output", "output"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Duplicate defintion of target:output")
+    expect(controller.errors[0].message).toEqual("Duplicate definition of target:output")
     expect(controller.errors[0].loc.start.line).toEqual(9)
     expect(controller.errors[0].loc.end.line).toEqual(9)
   })
