@@ -148,3 +148,20 @@ test.skip("parse nested object/array default value types", () => {
     array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
   })
 })
+
+test("parse controller with public class fields", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      someField
+      static someOtherField
+
+      static targets = ["one", "two", "three"]
+    }
+  `
+
+  const controller = parser.parseController(code, "target_controller.js")
+
+  expect(controller.targets).toEqual(["one", "two", "three"])
+})
