@@ -129,8 +129,7 @@ test("parse private methods", () => {
   expect(controller.parseError).toBeUndefined()
 })
 
-// TODO
-test.skip("parse nested object/array default value types", () => {
+test("parse nested object/array default value types", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
