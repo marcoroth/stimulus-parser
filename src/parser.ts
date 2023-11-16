@@ -8,6 +8,11 @@ import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
 
+type NestedArray<T> = T | NestedArray<T>[]
+type NestedObject<T> = {
+  [k: string]: T | NestedObject<T>
+}
+
 export class Parser {
   private readonly project: Project
   private parser: typeof AcornParser
@@ -67,12 +72,31 @@ export class Parser {
               } else {
                 const properties = property.value.properties
 
-                const convertArrayExpression = (value: PropertyValue) => {
-                  return value.elements.map((node) => node.value)
+                const convertArrayExpression = (
+                  value: NodeElement | PropertyValue
+                ): NestedArray<PropertyValue> => {
+                  return value.elements.map((node) => {
+                    if (node.type === "ArrayExpression") {
+                      return convertArrayExpression(node)
+                    } else {
+                      return node.value
+                    }
+                  })
                 }
 
-                const convertObjectExpression = (value: PropertyValue) => {
-                  return Object.fromEntries(value.properties.map((property) => [property.key.name, property.value.value]))
+                const convertObjectExpression = (
+                  value: PropertyValue
+                ): NestedObject<PropertyValue> => {
+                  return Object.fromEntries(
+                    value.properties.map((property) => {
+                      const value =
+                        property.value.type === "ObjectExpression"
+                          ? convertObjectExpression(property.value)
+                          : property.value.value
+
+                      return [property.key.name, value]
+                    })
+                  )
                 }
 
                 const convertProperty = (value: PropertyValue) => {
