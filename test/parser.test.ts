@@ -154,14 +154,14 @@ test("parse controller with public class fields", () => {
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
-      someField
-      static someOtherField
-
-      static targets = ["one", "two", "three"]
+      instanceField
+      instanceFieldWithInitializer = "instance field"
+      static staticField
+      static staticFieldWithInitializer = "static field"
     }
   `
 
   const controller = parser.parseController(code, "target_controller.js")
 
-  expect(controller.targets).toEqual(["one", "two", "three"])
+  expect(controller.parseError).toBeUndefined()
 })
