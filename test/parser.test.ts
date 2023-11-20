@@ -147,3 +147,20 @@ test("parse nested object/array default value types", () => {
     array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
   })
 })
+
+test("parse controller with public class fields", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      instanceField
+      instanceFieldWithInitializer = "instance field"
+      static staticField
+      static staticFieldWithInitializer = "static field"
+    }
+  `
+
+  const controller = parser.parseController(code, "target_controller.js")
+
+  expect(controller.parseError).toBeUndefined()
+})

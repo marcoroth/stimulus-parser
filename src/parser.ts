@@ -47,7 +47,7 @@ export class Parser {
         PropertyDefinition(node: any): void {
           const { name } = node.key
 
-          if (node.value.type === "ArrowFunctionExpression") {
+          if (node.value && node.value.type === "ArrowFunctionExpression") {
             controller.methods.push(name)
           }
 
