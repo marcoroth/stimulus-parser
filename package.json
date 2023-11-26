@@ -20,11 +20,11 @@
   },
   "dependencies": {
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
-    "acorn": "^8.8.2",
+    "acorn": "^8.11.2",
     "acorn-class-fields": "^1.0.0",
     "acorn-private-methods": "^1.0.0",
     "acorn-static-class-features": "^1.0.0",
-    "acorn-walk": "^8.2.0",
+    "acorn-walk": "^8.3.0",
     "fs": "^0.0.1-security",
     "glob": "^10.3.4"
   },
