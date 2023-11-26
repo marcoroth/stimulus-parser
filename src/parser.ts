@@ -1,5 +1,6 @@
 import { simple } from "acorn-walk"
 import { Parser as AcornParser } from "acorn"
+import type { Program } from "acorn"
 import staticClassFeatures from "acorn-static-class-features"
 import privateMethods from "acorn-private-methods"
 import classFields from "acorn-class-fields"
@@ -25,7 +26,7 @@ export class Parser {
       .extend(classFields)
   }
 
-  parse(code: string) {
+  parse(code: string): Program {
     return this.parser.parse(code, {
       sourceType: "module",
       ecmaVersion: 2020,
