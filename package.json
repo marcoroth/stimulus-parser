@@ -13,7 +13,7 @@
     "prebuild": "yarn clean",
     "build": "tsc -b",
     "watch": "tsc -b -w",
-    "dev": "watch",
+    "dev": "yarn watch",
     "clean": "rimraf dist",
     "prerelease": "yarn build",
     "test": "vitest"
