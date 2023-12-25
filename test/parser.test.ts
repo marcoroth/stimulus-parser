@@ -160,7 +160,24 @@ test("parse controller with public class fields", () => {
     }
   `
 
-  const controller = parser.parseController(code, "target_controller.js")
+  const controller = parser.parseController(code, "controller.js")
 
   expect(controller.parseError).toBeUndefined()
+})
+
+test("parse controller with private getter", () => {
+  const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      get #privateGetter () {
+        return true
+      }
+    }
+  `
+
+  const controller = parser.parseController(code, "controller.js")
+
+  expect(controller.parseError).toBeUndefined()
+  expect(controller.methods).toEqual([])
 })
