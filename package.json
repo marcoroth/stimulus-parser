@@ -23,15 +23,14 @@
     "acorn": "^8.11.2",
     "acorn-walk": "^8.3.1",
     "fs": "^0.0.1-security",
-    "glob": "^10.3.4"
+    "glob": "^10.3.10"
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.2.2",
-    "@types/glob": "^8.1.0",
-    "@types/minimatch": "^3.0.4",
+    "@types/node": "^20.10.5",
     "minimatch": "^9.0.3",
     "path": "^0.12.7",
-    "rimraf": "^5.0.1",
+    "rimraf": "^5.0.5",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
