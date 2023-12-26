@@ -1,13 +1,10 @@
 import { simple } from "acorn-walk"
 import { Parser as AcornParser } from "acorn"
-import type { Program } from "acorn"
-import staticClassFeatures from "acorn-static-class-features"
-import privateMethods from "acorn-private-methods"
-import classFields from "acorn-class-fields"
-
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
+
+import type { Program } from "acorn"
 
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
@@ -21,15 +18,12 @@ export class Parser {
   constructor(project: Project) {
     this.project = project
     this.parser = AcornParser
-      .extend(staticClassFeatures)
-      .extend(privateMethods)
-      .extend(classFields)
   }
 
   parse(code: string): Program {
     return this.parser.parse(code, {
       sourceType: "module",
-      ecmaVersion: 2020,
+      ecmaVersion: "latest",
     })
   }
 
