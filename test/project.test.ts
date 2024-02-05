@@ -61,6 +61,7 @@ test("identifier in different controllerRoots", async () => {
     "nested--twice--webpack",
     "nested--webpack",
     "rails",
+    "rails-ts",
     "webpack",
   ])
 })

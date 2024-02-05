@@ -1,37 +1,39 @@
 import { expect, test, vi } from "vitest"
 import { Project, Parser } from "../src"
+import { describe } from "node:test"
 
 const project = new Project("/Users/marcoroth/Development/stimulus-parser")
 const parser = new Parser(project)
 
-test("parse targets", () => {
-  const code = `
+describe("with JS Syntax", () => {
+  test("parse targets", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
       static targets = ["one", "two", "three"]
     }
   `
-  const controller = parser.parseController(code, "target_controller.js")
+    const controller = parser.parseController(code, "target_controller.js")
 
-  expect(controller.targets).toEqual(["one", "two", "three"])
-})
+    expect(controller.targets).toEqual(["one", "two", "three"])
+  })
 
-test("parse classes", () => {
-  const code = `
+  test("parse classes", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
       static classes = ["one", "two", "three"]
     }
   `
-  const controller = parser.parseController(code, "class_controller.js")
+    const controller = parser.parseController(code, "class_controller.js")
 
-  expect(controller.classes).toEqual(["one", "two", "three"])
-})
+    expect(controller.classes).toEqual(["one", "two", "three"])
+  })
 
-test("parse values", () => {
-  const code = `
+  test("parse values", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -44,19 +46,19 @@ test("parse values", () => {
       }
     }
   `
-  const controller = parser.parseController(code, "value_controller.js")
+    const controller = parser.parseController(code, "value_controller.js")
 
-  expect(controller.values).toEqual({
-    string: { type: "String", default: "" },
-    object: { type: "Object", default: {} },
-    boolean: { type: "Boolean", default: false },
-    array: { type: "Array", default: [] },
-    number: { type: "Number", default: 0 },
+    expect(controller.values).toEqual({
+      string: { type: "String", default: "" },
+      object: { type: "Object", default: {} },
+      boolean: { type: "Boolean", default: false },
+      array: { type: "Array", default: [] },
+      number: { type: "Number", default: 0 },
+    })
   })
-})
 
-test("parse values with with default values", () => {
-  const code = `
+  test("parse values with with default values", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -69,35 +71,35 @@ test("parse values with with default values", () => {
       }
     }
   `
-  const controller = parser.parseController(code, "value_controller.js")
+    const controller = parser.parseController(code, "value_controller.js")
 
-  expect(controller.values).toEqual({
-    string: { type: "String", default: "string" },
-    object: { type: "Object", default: { object: "Object" } },
-    boolean: { type: "Boolean", default: true },
-    array: { type: "Array", default: ["Array"] },
-    number: { type: "Number", default: 1 },
+    expect(controller.values).toEqual({
+      string: { type: "String", default: "string" },
+      object: { type: "Object", default: { object: "Object" } },
+      boolean: { type: "Boolean", default: true },
+      array: { type: "Array", default: ["Array"] },
+      number: { type: "Number", default: 1 },
+    })
   })
-})
 
-test("should handle syntax errors", () => {
-  const code = `
+  test("should handle syntax errors", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
   `
-  const spy = vi.spyOn(console, 'error')
+    const spy = vi.spyOn(console, 'error')
 
-  const controller = parser.parseController(code, "error_controller.js")
+    const controller = parser.parseController(code, "error_controller.js")
 
-  expect(controller.identifier).toEqual("error")
-  expect(controller.parseError).toEqual("Unexpected token (5:2)")
+    expect(controller.identifier).toEqual("error")
+    expect(controller.parseError).toEqual("Unexpected token (5:2)")
 
-  expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': Unexpected token (5:2)")
-})
+    expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': Unexpected token (5:2)")
+  })
 
-test("parse arrow function", () => {
-  const code = `
+  test("parse arrow function", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -109,28 +111,28 @@ test("parse arrow function", () => {
     }
   `
 
-  const controller = parser.parseController(code, "controller.js")
+    const controller = parser.parseController(code, "controller.js")
 
-  expect(controller.methods).toEqual(["connect", "load"])
-  expect(controller.parseError).toBeUndefined()
-})
+    expect(controller.methods).toEqual(["connect", "load"])
+    expect(controller.parseError).toBeUndefined()
+  })
 
-test("parse private methods", () => {
-  const code = `
+  test("parse private methods", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
       #load() {}
     }
   `
-  const controller = parser.parseController(code, "controller.js")
+    const controller = parser.parseController(code, "controller.js")
 
-  expect(controller.methods).toEqual(["load"])
-  expect(controller.parseError).toBeUndefined()
-})
+    expect(controller.methods).toEqual(["load"])
+    expect(controller.parseError).toBeUndefined()
+  })
 
-test("parse nested object/array default value types", () => {
-  const code = `
+  test("parse nested object/array default value types", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -140,16 +142,16 @@ test("parse nested object/array default value types", () => {
       }
     }
   `
-  const controller = parser.parseController(code, "value_controller.js")
+    const controller = parser.parseController(code, "value_controller.js")
 
-  expect(controller.values).toEqual({
-    object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
-    array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
+    expect(controller.values).toEqual({
+      object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
+      array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
+    })
   })
-})
 
-test("parse controller with public class fields", () => {
-  const code = `
+  test("parse controller with public class fields", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -160,13 +162,13 @@ test("parse controller with public class fields", () => {
     }
   `
 
-  const controller = parser.parseController(code, "controller.js")
+    const controller = parser.parseController(code, "controller.js")
 
-  expect(controller.parseError).toBeUndefined()
-})
+    expect(controller.parseError).toBeUndefined()
+  })
 
-test("parse controller with private getter", () => {
-  const code = `
+  test("parse controller with private getter", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -176,14 +178,14 @@ test("parse controller with private getter", () => {
     }
   `
 
-  const controller = parser.parseController(code, "controller.js")
+    const controller = parser.parseController(code, "controller.js")
 
-  expect(controller.parseError).toBeUndefined()
-  expect(controller.methods).toEqual([])
-})
+    expect(controller.parseError).toBeUndefined()
+    expect(controller.methods).toEqual([])
+  })
 
-test("parse controller with private setter", () => {
-  const code = `
+  test("parse controller with private setter", () => {
+    const code = `
     import { Controller } from "@hotwired/stimulus"
 
     export default class extends Controller {
@@ -193,8 +195,222 @@ test("parse controller with private setter", () => {
     }
   `
 
-  const controller = parser.parseController(code, "controller.js")
+    const controller = parser.parseController(code, "controller.js")
 
-  expect(controller.parseError).toBeUndefined()
-  expect(controller.methods).toEqual([])
+    expect(controller.parseError).toBeUndefined()
+    expect(controller.methods).toEqual([])
+  })
+})
+
+describe("with TS Syntax", () => {
+  test("parse targets", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static targets = ["one", "two", "three"]
+
+      declare readonly oneTarget: HTMLElement
+      declare readonly twoTarget: HTMLElement
+      declare readonly threeTarget: HTMLElement
+    }
+  `
+    const controller = parser.parseController(code, "target_controller.ts")
+
+    expect(controller.targets).toEqual(["one", "two", "three"])
+  })
+
+  test("parse classes", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static classes = ["one", "two", "three"]
+    }
+  `
+    const controller = parser.parseController(code, "class_controller.ts")
+
+    expect(controller.classes).toEqual(["one", "two", "three"])
+  })
+
+  test("parse values", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static values = {
+        string: String,
+        object: Object,
+        boolean: Boolean,
+        array: Array,
+        number: Number
+      }
+
+      declare stringValue: string
+      declare objectValue: object
+      declare booleanValue: boolean
+      declare arrayValue: any[]
+      declare numberValue: number
+    }
+  `
+    const controller = parser.parseController(code, "value_controller.ts")
+
+    expect(controller.values).toEqual({
+      string: { type: "String", default: "" },
+      object: { type: "Object", default: {} },
+      boolean: { type: "Boolean", default: false },
+      array: { type: "Array", default: [] },
+      number: { type: "Number", default: 0 },
+    })
+  })
+
+  test("parse values with with default values", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static values = {
+        string: { type: String, default: "string" },
+        object: { type: Object, default: { object: "Object" } },
+        boolean: { type: Boolean, default: true },
+        array: { type: Array, default: ["Array"] },
+        number: { type: Number, default: 1 }
+      }
+
+      declare stringValue: string
+      declare objectValue: object
+      declare booleanValue: boolean
+      declare arrayValue: any[]
+      declare numberValue: number
+    }
+  `
+    const controller = parser.parseController(code, "value_controller.ts")
+
+    expect(controller.values).toEqual({
+      string: { type: "String", default: "string" },
+      object: { type: "Object", default: { object: "Object" } },
+      boolean: { type: "Boolean", default: true },
+      array: { type: "Array", default: ["Array"] },
+      number: { type: "Number", default: 1 },
+    })
+  })
+
+  test("should handle syntax errors", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+  `
+    const spy = vi.spyOn(console, 'error')
+
+    const controller = parser.parseController(code, "error_controller.ts")
+
+    expect(controller.identifier).toEqual("error")
+    expect(controller.parseError).toEqual("Unexpected token (5:2)")
+
+    expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.ts': Unexpected token (5:2)")
+  })
+
+  test("parse arrow function", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      connect():void {
+        document.addEventListener('event', this.load)
+      }
+
+      load = (event: Event):void => {}
+    }
+  `
+
+    const controller = parser.parseController(code, "controller.ts")
+
+    expect(controller.methods).toEqual(["connect", "load"])
+    expect(controller.parseError).toBeUndefined()
+  })
+
+  test("parse private methods", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      private load() {}
+    }
+  `
+    const controller = parser.parseController(code, "controller.ts")
+
+    expect(controller.methods).toEqual(["load"])
+    expect(controller.parseError).toBeUndefined()
+  })
+
+  test("parse nested object/array default value types", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      static values = {
+        object: { type: Object, default: { object: { some: { more: { levels: {} } } } } },
+        array: { type: Array, default: [["Array", "with", ["nested", ["values"]]]] },
+      }
+    }
+  `
+    const controller = parser.parseController(code, "value_controller.js")
+
+    expect(controller.values).toEqual({
+      object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
+      array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
+    })
+  })
+
+  test("parse controller with public class fields", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      instanceField: any;
+      instanceFieldWithInitializer: string = "instance field";
+      static staticField: any;
+      static staticFieldWithInitializer: string = "static field";
+    }
+  `
+
+    const controller = parser.parseController(code, "controller.ts")
+
+    expect(controller.parseError).toBeUndefined()
+  })
+
+  test("parse controller with private getter", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      private get privateGetter () {
+        return true
+      }
+    }
+  `
+
+    const controller = parser.parseController(code, "controller.ts")
+
+    expect(controller.parseError).toBeUndefined()
+    expect(controller.methods).toEqual([])
+  })
+
+  test("parse controller with private setter", () => {
+    const code = `
+    import { Controller } from "@hotwired/stimulus"
+
+    export default class extends Controller {
+      private set privateSetter (value) {
+        // set
+      }
+    }
+  `
+
+    const controller = parser.parseController(code, "controller.ts")
+
+    expect(controller.parseError).toBeUndefined()
+    expect(controller.methods).toEqual([])
+  })
 })

@@ -5,6 +5,7 @@ import { ControllerDefinition, defaultValuesForType } from "./controller_definit
 import { NodeElement, PropertyValue } from "./types"
 
 import type { Program } from "acorn"
+import tsPlugin from "acorn-typescript"
 
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
@@ -17,13 +18,14 @@ export class Parser {
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser
+    this.parser = AcornParser.extend(tsPlugin() as any)
   }
 
   parse(code: string): Program {
     return this.parser.parse(code, {
       sourceType: "module",
       ecmaVersion: "latest",
+      locations: true
     })
   }
 
@@ -124,7 +126,7 @@ export class Parser {
       })
 
       return controller
-    } catch(error: any) {
+    } catch (error: any) {
       console.error(`Error while parsing controller in '${filename}': ${error.message}`)
 
       const controller = new ControllerDefinition(this.project, filename)
