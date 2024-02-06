@@ -37,7 +37,6 @@ export class Parser {
 
       const qry = query
 
-      debugger
       query(ast, "MethodDeclaration").forEach((node: any) => {
         controller.methods.push(node.name.escapedText.replace(/^#/, ''))
       })
@@ -51,12 +50,66 @@ export class Parser {
       query(ast, 'PropertyDeclaration:has([kindName="ArrowFunction"])').forEach((node: any) => {
         controller.methods.push(node.name.escapedText.replace(/^#/, ''))
       })
+      query(ast, 'PropertyDeclaration:has([name="values"])').forEach((node: any) => {
+        controller.values = node.initializer.properties.reduce((acc: any, property: any) => {
+          const value = property.initializer
+          let type
+          let defaultValue
+          if (value.escapedText === "String") {
+            type = value.escapedText
+            defaultValue = defaultValuesForType[type]
+          } else {
+            const properties = value.properties
+            const convertArrayExpression = (
+              value: NodeElement | PropertyValue
+            ): NestedArray<PropertyValue> => {
+              return value.elements.map((node) => {
+                if (node.type === "ArrayExpression") {
+                  return convertArrayExpression(node)
+                } else {
+                  return node.value
+                }
+              })
+            }
+            const convertObjectExpression = (
+              value: PropertyValue
+            ): NestedObject<PropertyValue> => {
+              return Object.fromEntries(
+                value.properties.map((property) => {
+                  const value =
+                    property.value.type === "ObjectExpression"
+                      ? convertObjectExpression(property.value)
+                      : property.value.value
+                  return [property.key.name, value]
+                })
+              )
+            }
+            const convertProperty = (value: PropertyValue) => {
+              switch (value.type) {
+                case "ArrayExpression":
+                  return convertArrayExpression(value)
+                case "ObjectExpression":
+                  return convertObjectExpression(value)
+              }
+            }
+            const typeProperty = properties.find((property: any) => property.key.name === "type")
+            const defaultProperty = properties.find((property: any) => property.key.name === "default")
+            type = typeProperty?.value.name || ""
+            defaultValue = defaultProperty?.value.value
+            if (!defaultValue && defaultProperty) {
+              defaultValue = convertProperty(defaultProperty.value)
+            }
+          }
+          acc[property.name.escapedText] = {
+            type: type,
+            default: defaultValue, // TODO: try to get the actual value first
+          }
+          debugger
+          return acc
+        }, {})
+      })
       // PropertyDefinition(node: any): void {
       //   const { name } = node.key
-
-      //   if (node.value && node.value.type === "ArrowFunctionExpression") {
-      //     controller.methods.push(name)
-      //   }
 
       //   if (name === "values") {
       //     node.value.properties.forEach((property: NodeElement) => {
@@ -108,7 +161,7 @@ export class Parser {
       //         }
 
       //         const typeProperty = properties.find((property) => property.key.name === "type")
-      //         const defaultProperty = properties.find((property) => property.key.name === "default")
+      //         const defaultProperty = `properties`.find((property) => property.key.name === "default")
 
       //         type = typeProperty?.value.name || ""
       //         defaultValue = defaultProperty?.value.value

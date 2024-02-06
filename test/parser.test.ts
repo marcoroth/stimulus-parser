@@ -30,7 +30,7 @@ test("parse classes", () => {
   expect(controller.classes).toEqual(["one", "two", "three"])
 })
 
-test.skip("parse values", () => {
+test.only("parse values", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
@@ -96,7 +96,7 @@ test.skip("should handle syntax errors", () => {
   expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': Unexpected token (5:2)")
 })
 
-test.only("parse arrow function", () => {
+test("parse arrow function", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
@@ -115,7 +115,7 @@ test.only("parse arrow function", () => {
   expect(controller.parseError).toBeUndefined()
 })
 
-test.skip("parse private methods", () => {
+test("parse private methods", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
@@ -148,7 +148,7 @@ test.skip("parse nested object/array default value types", () => {
   })
 })
 
-test.skip("parse controller with public class fields", () => {
+test("parse controller with public class fields", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
@@ -165,7 +165,7 @@ test.skip("parse controller with public class fields", () => {
   expect(controller.parseError).toBeUndefined()
 })
 
-test.skip("parse controller with private getter", () => {
+test("parse controller with private getter", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
