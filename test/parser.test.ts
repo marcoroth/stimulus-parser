@@ -30,7 +30,7 @@ test("parse classes", () => {
   expect(controller.classes).toEqual(["one", "two", "three"])
 })
 
-test.only("parse values", () => {
+test("parse values", () => {
   const code = `
     import { Controller } from "@hotwired/stimulus"
 
