@@ -1,10 +1,7 @@
+import type { TSESTree } from "@typescript-eslint/types"
+
 import { simple } from "acorn-walk"
-
-// @ts-ignore
-import { parse } from "@typescript-eslint/parser"
-
-// TODO: figure out what's up here, we want to use it like:
-// import * as Parser from "@typescript-eslint/parser"
+import * as ESLintParser from "@typescript-eslint/parser"
 
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
@@ -17,26 +14,27 @@ type NestedObject<T> = {
 
 export class Parser {
   private readonly project: Project
-  // private parser: typeof Parser
+  private parser: typeof ESLintParser
 
   constructor(project: Project) {
     this.project = project
-    // this.parser = Parser
+    this.parser = ESLintParser
   }
 
-  parse(code: string) {
-    return parse(code, {
+  parse(code: string, filePath?: string): TSESTree.Program {
+    return this.parser.parse(code, {
       sourceType: "module",
       ecmaVersion: "latest",
+      filePath
     })
   }
 
   parseController(code: string, filename: string) {
     try {
-      const ast = this.parse(code)
+      const ast = this.parse(code, filename)
       const controller = new ControllerDefinition(this.project, filename)
 
-      simple(ast, {
+      simple(ast as any, {
         MethodDefinition(node: any): void {
           if (node.kind === "method") {
             const methodName = node.key.name
