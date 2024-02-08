@@ -40,7 +40,7 @@ export class Parser {
         MethodDefinition(node: any): void {
           if (node.kind === "method") {
             const methodName = node.key.name
-            const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
+            const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
             const name = isPrivate ? `#${methodName}` : methodName
 
             controller.methods.push(name)
