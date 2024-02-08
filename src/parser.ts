@@ -1,10 +1,14 @@
 import { simple } from "acorn-walk"
-import { Parser as AcornParser } from "acorn"
+
+// @ts-ignore
+import { parse } from "@typescript-eslint/parser"
+
+// TODO: figure out what's up here, we want to use it like:
+// import * as Parser from "@typescript-eslint/parser"
+
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
-
-import type { Program } from "acorn"
 
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
@@ -13,15 +17,15 @@ type NestedObject<T> = {
 
 export class Parser {
   private readonly project: Project
-  private parser: typeof AcornParser
+  // private parser: typeof Parser
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser
+    // this.parser = Parser
   }
 
-  parse(code: string): Program {
-    return this.parser.parse(code, {
+  parse(code: string) {
+    return parse(code, {
       sourceType: "module",
       ecmaVersion: "latest",
     })
@@ -35,7 +39,11 @@ export class Parser {
       simple(ast, {
         MethodDefinition(node: any): void {
           if (node.kind === "method") {
-            controller.methods.push(node.key.name)
+            const methodName = node.key.name
+            const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
+            const name = isPrivate ? `#${methodName}` : methodName
+
+            controller.methods.push(name)
           }
         },
 
