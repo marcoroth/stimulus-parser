@@ -21,11 +21,11 @@ export class Parser {
     this.parser = ESLintParser
   }
 
-  parse(code: string, filePath?: string): TSESTree.Program {
+  parse(code: string, filename?: string): TSESTree.Program {
     return this.parser.parse(code, {
       sourceType: "module",
       ecmaVersion: "latest",
-      filePath
+      filePath: filename
     })
   }
 
