@@ -1,10 +1,9 @@
 import { simple } from "acorn-walk"
-import { Parser as AcornParser } from "acorn"
+import * as ESLintParser from "@typescript-eslint/typescript-estree"
+
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
-
-import type { Program } from "acorn"
 
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
@@ -13,29 +12,34 @@ type NestedObject<T> = {
 
 export class Parser {
   private readonly project: Project
-  private parser: typeof AcornParser
+  private parser: typeof ESLintParser
 
   constructor(project: Project) {
     this.project = project
-    this.parser = AcornParser
+    this.parser = ESLintParser
   }
 
-  parse(code: string): Program {
+  parse(code: string, filename?: string) {
     return this.parser.parse(code, {
       sourceType: "module",
       ecmaVersion: "latest",
+      filePath: filename
     })
   }
 
   parseController(code: string, filename: string) {
     try {
-      const ast = this.parse(code)
+      const ast = this.parse(code, filename)
       const controller = new ControllerDefinition(this.project, filename)
 
-      simple(ast, {
+      simple(ast as any, {
         MethodDefinition(node: any): void {
           if (node.kind === "method") {
-            controller.methods.push(node.key.name)
+            const methodName = node.key.name
+            const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
+            const name = isPrivate ? `#${methodName}` : methodName
+
+            controller.methods.push(name)
           }
         },
 
