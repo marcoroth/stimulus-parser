@@ -1,5 +1,3 @@
-import type { TSESTree } from "@typescript-eslint/types"
-
 import { simple } from "acorn-walk"
 import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
@@ -21,7 +19,7 @@ export class Parser {
     this.parser = ESLintParser
   }
 
-  parse(code: string, filename?: string): TSESTree.Program {
+  parse(code: string, filename?: string) {
     return this.parser.parse(code, {
       sourceType: "module",
       ecmaVersion: "latest",
