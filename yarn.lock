@@ -294,7 +294,7 @@
   dependencies:
     undici-types "~5.26.4"
 
-"@typescript-eslint/types@6.21.0":
+"@typescript-eslint/types@6.21.0", "@typescript-eslint/types@^6.21.0":
   version "6.21.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-6.21.0.tgz#205724c5123a8fef7ecd195075fa6e85bac3436d"
   integrity sha512-1kFmZ1rOm5epu9NZEZm1kckCDGj5UJEf7P1kliH4LKu/RkwpsfqqGmY2OOcUs18lSlQBKLDYBOGxRVtrMN5lpg==
