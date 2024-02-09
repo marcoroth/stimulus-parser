@@ -1,7 +1,7 @@
 import { expect, test } from "vitest"
 import { Project, ControllerDefinition } from "../src"
 
-const project = new Project("/Users/marcoroth/Development/stimulus-parser")
+const project = new Project(process.cwd())
 
 test("top-level", () => {
   const controller = new ControllerDefinition(project, "some_controller.js")

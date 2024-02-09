@@ -1,12 +1,12 @@
 import { expect, test } from "vitest"
 import { Project, ControllerDefinition } from "../src"
 
-const project = new Project("/Users/marcoroth/Development/stimulus-parser")
+const project = new Project(process.cwd())
 
 test("absolute path", () => {
   const controller = new ControllerDefinition(
     project,
-    "/Users/marcoroth/Development/stimulus-parser/app/javascript/controllers/some_controller.js"
+    `${process.cwd()}/app/javascript/controllers/some_controller.js`
   )
 
   expect(controller.identifier).toEqual("some")
