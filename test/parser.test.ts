@@ -216,6 +216,23 @@ describe("with JS Syntax", () => {
     expect(controller.parseError).toBeUndefined()
     expect(controller.methods).toEqual([])
   })
+
+  test("parse controller with variable declaration in method body", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        method(value) {
+          const variable = 0
+        }
+      }
+    `
+
+    const controller = parser.parseController(code, "controller.js")
+
+    expect(controller.parseError).toBeUndefined()
+    expect(controller.methods).toEqual(["method"])
+  })
 })
 
 describe("with TS Syntax", () => {

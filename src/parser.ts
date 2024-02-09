@@ -1,7 +1,7 @@
 import type { TSESTree } from "@typescript-eslint/types"
 
 import { simple } from "acorn-walk"
-import * as ESLintParser from "@typescript-eslint/parser"
+import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
