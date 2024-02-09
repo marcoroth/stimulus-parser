@@ -4,6 +4,12 @@ import { Parser } from "./parser"
 import { promises as fs } from "fs"
 import { glob } from "glob"
 
+const fileExists = (path: string) => {
+  return new Promise<string|null>((resolve, reject) =>
+    fs.stat(path).then(() => resolve(path)).catch(() => reject())
+  )
+}
+
 interface ControllerFile {
   filename: string
   content: string
@@ -12,6 +18,8 @@ interface ControllerFile {
 export class Project {
   readonly projectPath: string
   readonly controllerRootFallback = "app/javascript/controllers"
+  static readonly javascriptEndings = ["js", "mjs", "cjs", "jsx"]
+  static readonly typescriptEndings = ["ts", "mts", "tsx"]
 
   public controllerDefinitions: ControllerDefinition[] = []
 
@@ -51,14 +59,32 @@ export class Project {
     return this.relativePath(path).replace(`${controllerRoot}/`, "")
   }
 
+  possibleControllerPathsForIdentifier(identifier: string): string[] {
+    const endings = Project.javascriptEndings.concat(Project.typescriptEndings)
+
+    return this.controllerRoots.flatMap(root => endings.map(
+      ending => `${root}/${ControllerDefinition.controllerPathForIdentifier(identifier, ending)}`
+    ))
+  }
+
+  async findControllerPathForIdentifier(identifier: string): Promise<string|null> {
+    const possiblePaths = this.possibleControllerPathsForIdentifier(identifier)
+    const promises = possiblePaths.map((path: string) => fileExists(`${this.projectPath}/${path}`))
+    const possiblePath = await Promise.any(promises).catch(() => null)
+
+    return (possiblePath) ? this.relativePath(possiblePath) : null
+  }
+
   get controllerRoot() {
     return this.controllerRoots[0] || this.controllerRootFallback
   }
 
   get controllerRoots() {
-    return Project.calculateControllerRoots(
+    const roots = Project.calculateControllerRoots(
       this.controllerFiles.map(file => this.relativePath(file.filename))
     )
+
+    return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
 
   async analyze() {
@@ -80,7 +106,9 @@ export class Project {
   }
 
   private async readControllerFiles() {
-    const controllerFiles = await glob(`${this.projectPath}/**/*_controller.js`, {
+    const endings = `${Project.javascriptEndings.join(",")},${Project.typescriptEndings.join(",")}`
+
+    const controllerFiles = await glob(`${this.projectPath}/**/*_controller.{${endings}}`, {
       ignore: `${this.projectPath}/node_modules/**/*`,
     })
 

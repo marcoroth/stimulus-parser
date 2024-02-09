@@ -27,10 +27,10 @@ export class ControllerDefinition {
 
   parseError?: string
 
-  static controllerPathForIdentifier(identifier: string): string {
+  static controllerPathForIdentifier(identifier: string, fileending: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
 
-    return `${path}_controller.js`
+    return `${path}_controller.${fileending}`
   }
 
   constructor(project: Project, path: string) {
@@ -54,5 +54,15 @@ export class ControllerDefinition {
     const splits = this.identifier.split("--")
 
     return splits.slice(0, splits.length - 1).join("--")
+  }
+
+  get type() {
+    const splits = this.path.split(".")
+    const ending = splits[splits.length - 1]
+
+    if (Project.javascriptEndings.includes(ending)) return "javascript"
+    if (Project.typescriptEndings.includes(ending)) return "typescript"
+
+    return "javascript"
   }
 }

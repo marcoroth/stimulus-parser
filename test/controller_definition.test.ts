@@ -60,3 +60,18 @@ test("controllerPathForIdentifier", () => {
     "nested/namespaced/some_controller.js"
   )
 })
+
+test("controllerPathForIdentifier with fileending", () => {
+  expect(ControllerDefinition.controllerPathForIdentifier("some", "mjs")).toEqual("some_controller.mjs")
+  expect(ControllerDefinition.controllerPathForIdentifier("namespaced--some", "ts")).toEqual("namespaced/some_controller.ts")
+})
+
+test("type", () => {
+  expect(new ControllerDefinition(project, "some_controller.js").type).toEqual("javascript")
+  expect(new ControllerDefinition(project, "some_underscored.mjs").type).toEqual("javascript")
+  expect(new ControllerDefinition(project, "some_underscored.cjs").type).toEqual("javascript")
+  expect(new ControllerDefinition(project, "some_underscored.jsx").type).toEqual("javascript")
+  expect(new ControllerDefinition(project, "some_underscored.ts").type).toEqual("typescript")
+  expect(new ControllerDefinition(project, "some_underscored.mts").type).toEqual("typescript")
+  expect(new ControllerDefinition(project, "some_underscored.tsx").type).toEqual("typescript")
+})

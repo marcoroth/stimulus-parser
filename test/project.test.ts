@@ -1,7 +1,11 @@
-import { expect, test } from "vitest"
+import { expect, test, beforeEach } from "vitest"
 import { Project } from "../src"
 
-const project = new Project("/Users/marcoroth/Development/stimulus-parser")
+let project: Project
+
+beforeEach(() => {
+  project = new Project("/Users/marcoroth/Development/stimulus-parser")
+})
 
 test("relativePath", () => {
   expect(project.relativePath("/Users/marcoroth/Development/stimulus-parser/path/to/some/file.js")).toEqual(
@@ -32,7 +36,7 @@ test("controllerRoot and controllerRoots", async () => {
 
   expect(project.controllerRootFallback).toEqual("app/javascript/controllers")
   expect(project.controllerRoot).toEqual("app/javascript/controllers")
-  expect(project.controllerRoots).toEqual([])
+  expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
 
   await project.analyze()
 
@@ -61,6 +65,7 @@ test("identifier in different controllerRoots", async () => {
     "nested--twice--webpack",
     "nested--webpack",
     "rails",
+    "typescript",
     "webpack",
   ])
 })
@@ -95,4 +100,60 @@ test("static calculateControllerRoots", () => {
     "app/packs/controllers",
     "resources/js/controllers"
   ])
+})
+
+test("possibleControllerPathsForIdentifier", async () => {
+  expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
+    "app/javascript/controllers/rails_controller.js",
+    "app/javascript/controllers/rails_controller.mjs",
+    "app/javascript/controllers/rails_controller.cjs",
+    "app/javascript/controllers/rails_controller.jsx",
+    "app/javascript/controllers/rails_controller.ts",
+    "app/javascript/controllers/rails_controller.mts",
+    "app/javascript/controllers/rails_controller.tsx",
+  ])
+
+  await project.analyze()
+
+  expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mjs",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.cjs",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.jsx",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.ts",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mts",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.tsx",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.js",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mjs",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.cjs",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.jsx",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.ts",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mts",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.tsx",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.js",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mjs",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.cjs",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.jsx",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.ts",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mts",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.tsx",
+  ])
+})
+
+test("findControllerPathForIdentifier", async () => {
+  expect(await project.findControllerPathForIdentifier("rails")).toBeNull()
+  expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toBeNull()
+  expect(await project.findControllerPathForIdentifier("typescript")).toBeNull()
+  expect(await project.findControllerPathForIdentifier("webpack")).toBeNull()
+  expect(await project.findControllerPathForIdentifier("nested--webpack")).toBeNull()
+  expect(await project.findControllerPathForIdentifier("doesnt-exist")).toBeNull()
+
+  await project.analyze()
+
+  expect(await project.findControllerPathForIdentifier("rails")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js")
+  expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/nested/twice/rails_controller.js")
+  expect(await project.findControllerPathForIdentifier("typescript")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/typescript_controller.ts")
+  expect(await project.findControllerPathForIdentifier("webpack")).toEqual("test/fixtures/controller-paths/app/packs/controllers/webpack_controller.js")
+  expect(await project.findControllerPathForIdentifier("nested--webpack")).toEqual("test/fixtures/controller-paths/app/packs/controllers/nested/webpack_controller.js")
+  expect(await project.findControllerPathForIdentifier("doesnt-exist")).toBeNull()
 })
