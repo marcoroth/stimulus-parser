@@ -5,6 +5,12 @@ import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
 
+type ImportStatement = {
+  originalName?: string
+  importedName: string
+  source: string
+}
+
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
@@ -29,10 +35,39 @@ export class Parser {
 
   parseController(code: string, filename: string) {
     try {
+      const importStatements: ImportStatement[] = []
       const ast = this.parse(code, filename)
       const controller = new ControllerDefinition(this.project, filename)
 
       simple(ast as any, {
+        ImportDeclaration(node: any): void {
+          node.specifiers.map((specifier: any) => {
+            importStatements.push({
+              originalName: specifier.imported?.name,
+              importedName: specifier.local.name,
+              source: node.source.value
+            })
+          })
+        },
+
+        ClassDeclaration(node: any): void {
+          const superClass = node.superClass.name
+          const importStatement = importStatements.find(i => i.importedName === superClass)
+
+          if (importStatement) {
+            controller.parent = {
+              constant: superClass,
+              package: importStatement.source,
+              type: (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") ? "default" : "import",
+            }
+          } else {
+            controller.parent = {
+              constant: node.superClass.name,
+              type: "unknown",
+            }
+          }
+        },
+
         MethodDefinition(node: any): void {
           if (node.kind === "method") {
             const methodName = node.key.name

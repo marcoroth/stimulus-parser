@@ -8,6 +8,16 @@ type ValueDefinition = {
   default: ValueDefinitionValue
 }
 
+type ParentController = {
+  controllerFile?: string
+  constant: string
+  identifier?: string
+  definition?: ControllerDefinition
+  package?: string
+  parent?: ParentController
+  type: "default" | "application" | "package" | "import" | "unknown"
+}
+
 export const defaultValuesForType = {
   Array: [],
   Boolean: false,
@@ -19,6 +29,7 @@ export const defaultValuesForType = {
 export class ControllerDefinition {
   readonly path: string
   readonly project: Project
+  parent?: ParentController
 
   methods: Array<string> = []
   targets: Array<string> = []
