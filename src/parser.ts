@@ -5,6 +5,12 @@ import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
 
+type ImportStatement = {
+  originalName?: string
+  importedName: string
+  source: string
+}
+
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
@@ -29,7 +35,7 @@ export class Parser {
 
   parseController(code: string, filename: string) {
     try {
-      const importStatements = []
+      const importStatements: ImportStatement[] = []
       const ast = this.parse(code, filename)
       const controller = new ControllerDefinition(this.project, filename)
 
