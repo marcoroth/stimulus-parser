@@ -11,8 +11,7 @@
   "sideEffects": false,
   "scripts": {
     "prebuild": "yarn clean",
-    "types": "tsc --noEmit false --declaration true --emitDeclarationOnly true --outDir dist/",
-    "build": "tsc && yarn vite build && yarn types",
+    "build": "tsc -b",
     "watch": "tsc -b -w",
     "dev": "yarn watch",
     "clean": "rimraf dist",
