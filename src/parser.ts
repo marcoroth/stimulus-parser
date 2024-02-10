@@ -4,7 +4,8 @@ import { simple } from "acorn-walk"
 
 import { Project } from "./project"
 import { ParseError } from "./parse_error"
-import { ControllerDefinition, Definition, ValueDefinition } from "./controller_definition"
+import { ControllerDefinition } from "./controller_definition"
+import { ControllerPropertyDefinition, MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } from "./controller_property_definition"
 import { NodeElement, PropertyValue } from "./types"
 
 type ImportStatement = {
@@ -91,7 +92,7 @@ export class Parser {
             const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
             const name = isPrivate ? `#${methodName}` : methodName
 
-            controller._methods.push(new Definition(name, node.loc, "static"))
+            controller._methods.push(new MethodDefinition(name, node.loc, "static"))
           }
         },
 
@@ -101,7 +102,7 @@ export class Parser {
           }
 
           if (node.value?.type === "ArrowFunctionExpression") {
-            controller._methods.push(new Definition(node.key.name, node.loc, "static"))
+            controller._methods.push(new MethodDefinition(node.key.name, node.loc, "static"))
           }
 
           if (!node.static) return
@@ -142,7 +143,7 @@ export class Parser {
     // values are reported at the time of parsing since we're storing them as an object
   }
 
-  private uniqueErrorGenerator(controller: ControllerDefinition, type: string, items: Definition[]) {
+  private uniqueErrorGenerator(controller: ControllerDefinition, type: string, items: ControllerPropertyDefinition[]) {
     const errors: string[] = []
 
     items.forEach((item, index) => {
@@ -168,13 +169,13 @@ export class Parser {
         case "Targets":
           controller.anyDecorator = true
           return controller._targets.push(
-            new Definition(this.stripDecoratorSuffix(name, "Target"), node.loc, "decorator"),
+            new TargetDefinition(this.stripDecoratorSuffix(name, "Target"), node.loc, "decorator"),
           )
         case "Class":
         case "Classes":
           controller.anyDecorator = true
           return controller._classes.push(
-            new Definition(this.stripDecoratorSuffix(name, "Class"), node.loc, "decorator"),
+            new ClassDefinition(this.stripDecoratorSuffix(name, "Class"), node.loc, "decorator"),
           )
         case "Value":
           controller.anyDecorator = true
@@ -207,11 +208,11 @@ export class Parser {
     switch (node.key.name) {
       case "targets":
         return controller._targets.push(
-          ...node.value.elements.map((element: any) => new Definition(element.value, node.loc, "static")),
+          ...node.value.elements.map((element: any) => new TargetDefinition(element.value, node.loc, "static")),
         )
       case "classes":
         return controller._classes.push(
-          ...node.value.elements.map((element: any) => new Definition(element.value, node.loc, "static")),
+          ...node.value.elements.map((element: any) => new ClassDefinition(element.value, node.loc, "static")),
         )
       case "values":
         node.value.properties.forEach((property: NodeElement) => {
@@ -261,7 +262,7 @@ export class Parser {
     })
   }
 
-  private convertObjectExpression (value: PropertyValue): NestedObject<PropertyValue> {
+  private convertObjectExpression(value: PropertyValue): NestedObject<PropertyValue> {
     return Object.fromEntries(
       value.properties.map((property) => {
         const isObjectExpression = property.value.type === "ObjectExpression"
