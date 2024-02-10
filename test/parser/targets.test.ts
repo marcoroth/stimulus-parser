@@ -12,9 +12,9 @@ describe("parse targets", () => {
         static targets = ["one", "two", "three"]
       }
     `
-
     const controller = parser.parseController(code, "target_controller.js")
 
+    expect(controller.isTyped).toBeFalsy()
     expect(controller.targets).toEqual(["one", "two", "three"])
   })
 
@@ -29,7 +29,13 @@ describe("parse targets", () => {
 
     const controller = parser.parseController(code, "target_controller.js")
 
+    expect(controller.isTyped).toBeFalsy()
     expect(controller.targets).toEqual(["one", "one", "three"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate definition of target:one")
+    expect(controller.errors[0].loc.start.line).toEqual(5)
+    expect(controller.errors[0].loc.end.line).toEqual(5)
   })
 
   test("single @Target decorator", () => {
@@ -44,8 +50,8 @@ describe("parse targets", () => {
     `
 
     const controller = parser.parseController(code, "target_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.targets).toEqual(["output"])
   })
 
@@ -62,9 +68,14 @@ describe("parse targets", () => {
     `
 
     const controller = parser.parseController(code, "target_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.targets).toEqual(["output", "output"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate definition of target:output")
+    expect(controller.errors[0].loc.start.line).toEqual(8)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
   })
 
   test("single @Targets decorator", () => {
@@ -79,8 +90,8 @@ describe("parse targets", () => {
     `
 
     const controller = parser.parseController(code, "target_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.targets).toEqual(["output"])
   })
 
@@ -97,8 +108,8 @@ describe("parse targets", () => {
     `
 
     const controller = parser.parseController(code, "decorator_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.targets).toEqual(["output", "name"])
   })
 
@@ -118,8 +129,8 @@ describe("parse targets", () => {
     `
 
     const controller = parser.parseController(code, "decorator_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.targets).toEqual(["output", "name", "item", "one", "two"])
   })
 
@@ -137,8 +148,13 @@ describe("parse targets", () => {
     `
 
     const controller = parser.parseController(code, "target_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.targets).toEqual(["output", "output"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate definition of target:output")
+    expect(controller.errors[0].loc.start.line).toEqual(9)
+    expect(controller.errors[0].loc.end.line).toEqual(9)
   })
 })

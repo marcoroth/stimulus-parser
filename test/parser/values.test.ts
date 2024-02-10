@@ -1,10 +1,10 @@
-import { describe, expect, test } from "vitest"
+import { describe, expect, test, vi } from "vitest"
 import { setupParser } from "../helpers/setup"
 
 const parser = setupParser()
 
 describe("parse values", () => {
-  test("static object", () => {
+  test("static", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -21,6 +21,7 @@ describe("parse values", () => {
 
     const controller = parser.parseController(code, "value_controller.js")
 
+    expect(controller.isTyped).toBeFalsy()
     expect(controller.values).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
@@ -30,7 +31,7 @@ describe("parse values", () => {
     })
   })
 
-  test("static object with with default values", () => {
+  test("static with default values", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -47,6 +48,7 @@ describe("parse values", () => {
 
     const controller = parser.parseController(code, "value_controller.js")
 
+    expect(controller.isTyped).toBeFalsy()
     expect(controller.values).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: { object: "Object" } },
@@ -73,6 +75,7 @@ describe("parse values", () => {
 
     const controller = parser.parseController(code, "value_controller.js")
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.values).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
@@ -89,7 +92,7 @@ describe("parse values", () => {
 
       @TypedController
       export default class extends Controller {
-        @Value(String) stringValue! = 'string'
+        @Value(String) stringValue! = "string"
         @Value(Object) objectValue! = {}
         @Value(Boolean) booleanValue! = false
         @Value(Array) arrayValue! = []
@@ -99,6 +102,7 @@ describe("parse values", () => {
 
     const controller = parser.parseController(code, "value_controller.js")
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.values).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: {} },
@@ -108,7 +112,7 @@ describe("parse values", () => {
     })
   })
 
-  test.only("parse nested object/array default value types", () => {
+  test("parse static value with nested object/array default value", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -122,9 +126,43 @@ describe("parse values", () => {
 
     const controller = parser.parseController(code, "value_controller.js")
 
+    expect(controller.isTyped).toBeFalsy()
     expect(controller.values).toEqual({
-      object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
-      array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
+      object: {
+        type: "Object",
+        default: { object: { some: { more: { levels: {} } } } },
+      },
+      array: {
+        type: "Array",
+        default: [["Array", "with", ["nested", ["values"]]]],
+      },
+    })
+  })
+
+  test("parse decorated @Value with nested object/array with default value", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus";
+      import { Value, TypedController } from "@vytant/stimulus-decorators";
+
+      @TypedController
+      export default class extends Controller {
+        @Value(Object) objectValue! = { object: { some: { more: { levels: {} } } } }
+        @Value(Array) arrayValue! = [["Array", "with", ["nested", ["values"]]]]
+      }
+    `
+
+    const controller = parser.parseController(code, "value_controller.js")
+
+    expect(controller.isTyped).toBeTruthy()
+    expect(controller.values).toEqual({
+      object: {
+        type: "Object",
+        default: { object: { some: { more: { levels: {} } } } },
+      },
+      array: {
+        type: "Array",
+        default: [["Array", "with", ["nested", ["values"]]]],
+      },
     })
   })
 })

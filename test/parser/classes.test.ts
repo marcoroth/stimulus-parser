@@ -12,9 +12,31 @@ describe("parse classes", () => {
         static classes = ["one", "two", "three"]
       }
     `
+
     const controller = parser.parseController(code, "class_controller.js")
 
+    expect(controller.isTyped).toBeFalsy()
     expect(controller.classes).toEqual(["one", "two", "three"])
+  })
+
+  test("duplicate static classes", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static classes = ["one", "one", "three"]
+      }
+    `
+
+    const controller = parser.parseController(code, "target_controller.js")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.classes).toEqual(["one", "one", "three"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Duplicate definition of class:one")
+    expect(controller.errors[0].loc.start.line).toEqual(5)
+    expect(controller.errors[0].loc.end.line).toEqual(5)
   })
 
   test("single @Class decorator", () => {
@@ -30,6 +52,7 @@ describe("parse classes", () => {
 
     const controller = parser.parseController(code, "class_controller.js")
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.classes).toEqual(["random"])
   })
 
@@ -45,6 +68,8 @@ describe("parse classes", () => {
     `
 
     const controller = parser.parseController(code, "target_controller.js")
+
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.classes).toEqual(["random"])
   })
 
@@ -61,8 +86,8 @@ describe("parse classes", () => {
     `
 
     const controller = parser.parseController(code, "decorator_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.classes).toEqual(["one", "two"])
   })
 
@@ -82,8 +107,8 @@ describe("parse classes", () => {
     `
 
     const controller = parser.parseController(code, "decorator_controller.js")
-    expect(controller.isTyped).toBeTruthy()
 
+    expect(controller.isTyped).toBeTruthy()
     expect(controller.classes).toEqual(["output", "name", "item", "one", "two"])
   })
 })
