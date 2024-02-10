@@ -28,6 +28,10 @@ export class Parser {
 
   parse(code: string, filename?: string) {
     return this.parser.parse(code, {
+      loc: true,
+      range: true,
+      tokens: true,
+      comment: true,
       sourceType: "module",
       ecmaVersion: "latest",
       filePath: filename
