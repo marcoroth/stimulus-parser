@@ -1,3 +1,5 @@
+import path from "path"
+
 import { Project } from "./project"
 import { ParseError } from "./parse_error"
 
@@ -59,7 +61,18 @@ export class ControllerDefinition {
   }
 
   get identifier() {
-    return identifierForContextKey(this.controllerPath) || ""
+    const folder = path.dirname(this.controllerPath)
+    const extension = path.extname(this.controllerPath)
+    const file = path.basename(this.controllerPath)
+    const filename = path.basename(this.controllerPath, extension)
+
+    if (file === `controller${extension}`) {
+      return identifierForContextKey(`${folder}_${file}${extension}`) || ""
+    } else if (!filename.endsWith("controller")) {
+      return identifierForContextKey(`${folder}/${filename}_controller${extension}`) || ""
+    } else {
+      return identifierForContextKey(this.controllerPath) || ""
+    }
   }
 
   get isNamespaced() {
