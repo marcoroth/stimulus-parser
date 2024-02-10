@@ -51,9 +51,56 @@ test("deeply nested all dasherized", () => {
   expect(controller.identifier).toEqual("a--bunch--of--levels--some-underscored")
 })
 
+// TODO: update implementation once this gets released
 // https://github.com/hotwired/stimulus-webpack-helpers/pull/3
-test.skip("nested with only controller", () => {
-  const controller = new ControllerDefinition(project, "a/bunch/of/levels/controller.js")
+test("nested with only controller", () => {
+  const controller1 = new ControllerDefinition(project, "a/bunch/of/levels/controller.js")
+  const controller2 = new ControllerDefinition(project, "a/bunch/of/levels/controller.ts")
 
-  expect(controller.identifier).toEqual("a--bunch--of--levels")
+  expect(controller1.identifier).toEqual("a--bunch--of--levels")
+  expect(controller2.identifier).toEqual("a--bunch--of--levels")
+})
+
+test("without controller suffix", () => {
+  const controller1 = new ControllerDefinition(project, "something.js")
+  const controller2 = new ControllerDefinition(project, "something.ts")
+
+  expect(controller1.identifier).toEqual("something")
+  expect(controller2.identifier).toEqual("something")
+})
+
+test("nested without controller suffix", () => {
+  const controller1 = new ControllerDefinition(project, "a/bunch/of/levels/something.js")
+  const controller2 = new ControllerDefinition(project, "a/bunch/of/levels/something.ts")
+
+  expect(controller1.identifier).toEqual("a--bunch--of--levels--something")
+  expect(controller2.identifier).toEqual("a--bunch--of--levels--something")
+})
+
+test("controller with dashes and underscores", () => {
+  const controller1 = new ControllerDefinition(project, "some-thing_controller.js")
+  const controller2 = new ControllerDefinition(project, "some-thing_controller.ts")
+  const controller3 = new ControllerDefinition(project, "some_thing-controller.js")
+  const controller4 = new ControllerDefinition(project, "some_thing-controller.ts")
+
+  expect(controller1.identifier).toEqual("some-thing")
+  expect(controller2.identifier).toEqual("some-thing")
+  expect(controller3.identifier).toEqual("some-thing")
+  expect(controller4.identifier).toEqual("some-thing")
+})
+
+test("controller with dasherized name", () => {
+  const controller1 = new ControllerDefinition(project, "some-thing-controller.js")
+  const controller2 = new ControllerDefinition(project, "some-thing-controller.ts")
+
+  expect(controller1.identifier).toEqual("some-thing")
+  expect(controller2.identifier).toEqual("some-thing")
+})
+
+test("nested controller with dasherized name", () => {
+  const controller1 = new ControllerDefinition(project, "a/bunch-of/levels/some-thing-controller.js")
+  const controller2 = new ControllerDefinition(project, "a/bunch-of/levels/some-thing-controller.ts")
+
+  expect(controller1.identifier).toEqual("a--bunch-of--levels--some-thing")
+  expect(controller2.identifier).toEqual("a--bunch-of--levels--some-thing")
 })
