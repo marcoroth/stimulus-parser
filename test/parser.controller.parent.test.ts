@@ -1,8 +1,7 @@
 import { expect, test, describe } from "vitest"
-import { Project, Parser } from "../src"
+import { setupParser } from "./helpers/setup"
 
-const project = new Project(process.cwd())
-const parser = new Parser(project)
+const parser = setupParser()
 
 describe("@hotwired/stimulus Controller", () => {
   test("parse parent", () => {

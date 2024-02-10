@@ -1,8 +1,7 @@
 import { expect, test, vi, describe } from "vitest"
-import { Project, Parser } from "../../src"
+import { setupParser } from "../helpers/setup"
 
-const project = new Project(process.cwd())
-const parser = new Parser(project)
+const parser = setupParser()
 
 describe("with JS Syntax", () => {
   test("parse targets", () => {
