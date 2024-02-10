@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest"
-import { setupParser } from "./helpers/setup"
+import { setupParser } from "../helpers/setup"
 
 const parser = setupParser()
 
