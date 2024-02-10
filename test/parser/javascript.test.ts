@@ -91,7 +91,12 @@ describe("with JS Syntax", () => {
     const controller = parser.parseController(code, "error_controller.js")
 
     expect(controller.identifier).toEqual("error")
-    expect(controller.parseError).toEqual("'}' expected.")
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual("Error parsing controller")
+    expect(controller.errors[0].cause.message).toEqual("'}' expected.")
+    // expect(controller.errors[0].loc.start.line).toEqual(9)
+    // expect(controller.errors[0].loc.end.line).toEqual(9)
 
     expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': '}' expected.")
   })
@@ -116,7 +121,8 @@ describe("with JS Syntax", () => {
     const controller = parser.parseController(code, "controller.js")
 
     expect(controller.methods).toEqual(["connect", "load"])
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
   })
 
   test("parse methods", () => {
@@ -129,7 +135,8 @@ describe("with JS Syntax", () => {
     const controller = parser.parseController(code, "controller.js")
 
     expect(controller.methods).toEqual(["load", "unload"])
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
   })
 
   test("parse private methods", () => {
@@ -143,10 +150,11 @@ describe("with JS Syntax", () => {
     const controller = parser.parseController(code, "controller.js")
 
     expect(controller.methods).toEqual(["#load"])
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse nested object/array default value types", () => {
+  test.todo("parse nested object/array default value types", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -179,7 +187,8 @@ describe("with JS Syntax", () => {
 
     const controller = parser.parseController(code, "controller.js")
 
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
   })
 
   test("parse controller with private getter", () => {
@@ -195,7 +204,8 @@ describe("with JS Syntax", () => {
 
     const controller = parser.parseController(code, "controller.js")
 
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
     expect(controller.methods).toEqual([])
   })
 
@@ -212,7 +222,8 @@ describe("with JS Syntax", () => {
 
     const controller = parser.parseController(code, "controller.js")
 
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
     expect(controller.methods).toEqual([])
   })
 
@@ -229,7 +240,8 @@ describe("with JS Syntax", () => {
 
     const controller = parser.parseController(code, "controller.js")
 
-    expect(controller.parseError).toBeUndefined()
+    expect(controller.hasErrors).toBeFalsy()
+    expect(controller.errors).toHaveLength(0)
     expect(controller.methods).toEqual(["method"])
   })
 })

@@ -1,4 +1,6 @@
 import { Project } from "./project"
+import { ParseError } from "./parse_error"
+
 import { identifierForContextKey } from "@hotwired/stimulus-webpack-helpers"
 
 type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
@@ -36,7 +38,10 @@ export class ControllerDefinition {
   classes: Array<string> = []
   values: { [key: string]: ValueDefinition } = {}
 
-  parseError?: string
+  readonly errors: ParseError[] = []
+  get hasErrors() {
+    return this.errors.length > 0
+  }
 
   static controllerPathForIdentifier(identifier: string, fileending: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")

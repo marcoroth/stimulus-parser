@@ -1,6 +1,7 @@
 import { simple } from "acorn-walk"
 import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
+import { ParseError } from "./parse_error"
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
 import { NodeElement, PropertyValue } from "./types"
@@ -168,7 +169,7 @@ export class Parser {
 
       const controller = new ControllerDefinition(this.project, filename)
 
-      controller.parseError = error.message
+      controller.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
 
       return controller
     }
