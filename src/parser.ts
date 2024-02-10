@@ -1,6 +1,5 @@
 import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
-import { SourceLocation } from "acorn"
 import { simple } from "acorn-walk"
 
 import { Project } from "./project"
@@ -20,68 +19,165 @@ type NestedObject<T> = {
 }
 
 // TODO: Support decorator + reflect-metadata value definitions
-class ControllerParser {
-  loc?: SourceLocation
+// TODO: error or multiple classes
 
-  constructor(public controller: ControllerDefinition) {}
+export class Parser {
+  private readonly project: Project
+  private parser: typeof ESLintParser
 
-  public validate() {
-    if (this.controller.anyDecorator && !this.controller.isTyped) {
-      this.controller.errors.push(
-        new ParseError("LINT", "You need to decorate the controller with @TypedController to use decorators", this.loc),
+  constructor(project: Project) {
+    this.project = project
+    this.parser = ESLintParser
+  }
+
+  parse(code: string, filename?: string) {
+    return this.parser.parse(code, {
+      loc: true,
+      range: true,
+      tokens: true,
+      comment: true,
+      sourceType: "module",
+      ecmaVersion: "latest",
+      filePath: filename
+    })
+  }
+
+  parseController(code: string, filename: string) {
+    try {
+      const importStatements: ImportStatement[] = []
+      const ast = this.parse(code, filename)
+      const controller = new ControllerDefinition(this.project, filename)
+
+      const parser = this
+
+      simple(ast as any, {
+        ImportDeclaration(node: any): void {
+          node.specifiers.map((specifier: any) => {
+            importStatements.push({
+              originalName: specifier.imported?.name,
+              importedName: specifier.local.name,
+              source: node.source.value
+            })
+          })
+        },
+
+        ClassDeclaration(node: any): void {
+          const superClass = node.superClass.name
+          const importStatement = importStatements.find(i => i.importedName === superClass)
+
+          if (importStatement) {
+            controller.parent = {
+              constant: superClass,
+              package: importStatement.source,
+              type: (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") ? "default" : "import",
+            }
+          } else {
+            controller.parent = {
+              constant: node.superClass.name,
+              type: "unknown",
+            }
+          }
+
+          if ("decorators" in node && Array.isArray(node.decorators)) {
+            controller.isTyped = !!node.decorators.find(
+              (decorator: any) => decorator.expression.name === "TypedController",
+            )
+          }
+        },
+
+        MethodDefinition(node: any): void {
+          if (node.kind === "method") {
+            const methodName = node.key.name
+            const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
+            const name = isPrivate ? `#${methodName}` : methodName
+
+            controller._methods.push(new Definition(name, node.loc, "static"))
+          }
+        },
+
+        PropertyDefinition(node: any): void {
+          if ("decorators" in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
+            return parser.parseDecoratedProperty(controller, node)
+          }
+
+          if (node.value?.type === "ArrowFunctionExpression") {
+            controller._methods.push(new Definition(node.key.name, node.loc, "static"))
+          }
+
+          if (!node.static) return
+
+          parser.parseProperty(controller, node)
+        },
+      })
+
+      this.validate(controller)
+
+      return controller
+    } catch (error: any) {
+      console.error(`Error while parsing controller in '${filename}': ${error.message}`)
+
+      const controller = new ControllerDefinition(this.project, filename)
+
+      controller.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
+
+      return controller
+    }
+  }
+
+  public validate(controller: ControllerDefinition) {
+    if (controller.anyDecorator && !controller.isTyped) {
+      controller.errors.push(
+        new ParseError("LINT", "You need to decorate the controller with @TypedController to use decorators"),
       )
     }
 
-    if (!this.controller.anyDecorator && this.controller.isTyped) {
-      this.controller.errors.push(
-        new ParseError("LINT", "You decorated the controller with @TypedController to use decorators", this.loc),
+    if (!controller.anyDecorator && controller.isTyped) {
+      controller.errors.push(
+        new ParseError("LINT", "You decorated the controller with @TypedController to use decorators"),
       )
     }
 
-    this.uniqueErrorGenerator("target", this.controller._targets)
-    this.uniqueErrorGenerator("class", this.controller._classes)
+    this.uniqueErrorGenerator(controller, "target", controller._targets)
+    this.uniqueErrorGenerator(controller, "class", controller._classes)
     // values are reported at the time of parsing since we're storing them as an object
   }
 
-  private uniqueErrorGenerator(type: string, items: Definition[]) {
+  private uniqueErrorGenerator(controller: ControllerDefinition, type: string, items: Definition[]) {
     const errors: string[] = []
+
     items.forEach((item, index) => {
-      if (errors.includes(item.name)) {
-        return
-      }
+      if (errors.includes(item.name)) return
 
       items.forEach((item2, index2) => {
-        if (index2 === index) {
-          return
-        }
+        if (index2 === index) return
 
         if (item.name === item2.name) {
           errors.push(item.name)
-          this.controller.errors.push(new ParseError("LINT", `Duplicate definition of ${type}:${item.name}`, item2.loc))
+          controller.errors.push(new ParseError("LINT", `Duplicate definition of ${type}:${item.name}`, item2.loc))
         }
       })
     })
   }
 
-  public parseDecoratedProperty(node: any) {
+  public parseDecoratedProperty(controller: ControllerDefinition, node: any) {
     const { name } = node.key
 
     node.decorators.forEach((decorator: any) => {
       switch (decorator.expression.name || decorator.expression.callee.name) {
         case "Target":
         case "Targets":
-          this.controller.anyDecorator = true
-          return this.controller._targets.push(
+          controller.anyDecorator = true
+          return controller._targets.push(
             new Definition(this.stripDecoratorSuffix(name, "Target"), node.loc, "decorator"),
           )
         case "Class":
         case "Classes":
-          this.controller.anyDecorator = true
-          return this.controller._classes.push(
+          controller.anyDecorator = true
+          return controller._classes.push(
             new Definition(this.stripDecoratorSuffix(name, "Class"), node.loc, "decorator"),
           )
         case "Value":
-          this.controller.anyDecorator = true
+          controller.anyDecorator = true
           if (decorator.expression.name !== undefined || decorator.expression.arguments.length !== 1) {
             throw new Error("We dont support reflected types yet")
           }
@@ -89,19 +185,16 @@ class ControllerParser {
           const key = this.stripDecoratorSuffix(name, "Value")
           const type = decorator.expression.arguments[0].name
 
-          if (this.controller._values[key]) {
-            this.controller.errors.push(new ParseError("LINT", `Duplicate definition of value:${key}`, node.loc))
+          if (controller._values[key]) {
+            controller.errors.push(new ParseError("LINT", `Duplicate definition of value:${key}`, node.loc))
           }
 
-          this.controller._values[key] = new ValueDefinition(
-            key,
-            {
-              type,
-              default: node.value ? this.getDefaultValueFromNode(node) : ValueDefinition.defaultValuesForType[type],
-            },
-            node.loc,
-            "decorator",
-          )
+          const defaultValue = {
+            type,
+            default: node.value ? this.getDefaultValueFromNode(node) : ValueDefinition.defaultValuesForType[type],
+          }
+
+          controller._values[key] = new ValueDefinition(key, defaultValue, node.loc, "decorator")
       }
     })
   }
@@ -110,25 +203,25 @@ class ControllerParser {
     return name.slice(0, name.indexOf(type))
   }
 
-  public parseProperty(node: any) {
+  public parseProperty(controller: ControllerDefinition, node: any) {
     switch (node.key.name) {
       case "targets":
-        return this.controller._targets.push(
+        return controller._targets.push(
           ...node.value.elements.map((element: any) => new Definition(element.value, node.loc, "static")),
         )
       case "classes":
-        return this.controller._classes.push(
+        return controller._classes.push(
           ...node.value.elements.map((element: any) => new Definition(element.value, node.loc, "static")),
         )
       case "values":
         node.value.properties.forEach((property: NodeElement) => {
-          if (this.controller._values[property.key.name]) {
-            this.controller.errors.push(
+          if (controller._values[property.key.name]) {
+            controller.errors.push(
               new ParseError("LINT", `Duplicate definition of value:${property.key.name}`, node.loc),
             )
           }
 
-          this.controller._values[property.key.name] = new ValueDefinition(
+          controller._values[property.key.name] = new ValueDefinition(
             property.key.name,
             this.parseValuePropertyDefinition(property),
             node.loc,
@@ -191,112 +284,6 @@ class ControllerParser {
         return this.convertArrayExpression(value)
       case "ObjectExpression":
         return this.convertObjectExpression(value)
-    }
-  }
-}
-
-// TODO: error or multiple classes
-
-export class Parser {
-  private readonly project: Project
-  private parser: typeof ESLintParser
-
-  constructor(project: Project) {
-    this.project = project
-    this.parser = ESLintParser
-  }
-
-  parse(code: string, filename?: string) {
-    return this.parser.parse(code, {
-      loc: true,
-      range: true,
-      tokens: true,
-      comment: true,
-      sourceType: "module",
-      ecmaVersion: "latest",
-      filePath: filename
-    })
-  }
-
-  parseController(code: string, filename: string) {
-    try {
-      const importStatements: ImportStatement[] = []
-      const ast = this.parse(code, filename)
-      const controllerParser = new ControllerParser(new ControllerDefinition(this.project, filename))
-
-      simple(ast as any, {
-        ImportDeclaration(node: any): void {
-          node.specifiers.map((specifier: any) => {
-            importStatements.push({
-              originalName: specifier.imported?.name,
-              importedName: specifier.local.name,
-              source: node.source.value
-            })
-          })
-        },
-
-        ClassDeclaration(node: any): void {
-          const superClass = node.superClass.name
-          const importStatement = importStatements.find(i => i.importedName === superClass)
-
-          if (importStatement) {
-            controllerParser.controller.parent = {
-              constant: superClass,
-              package: importStatement.source,
-              type: (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") ? "default" : "import",
-            }
-          } else {
-            controllerParser.controller.parent = {
-              constant: node.superClass.name,
-              type: "unknown",
-            }
-          }
-
-          if ("decorators" in node && Array.isArray(node.decorators)) {
-            controllerParser.controller.isTyped = !!node.decorators.find(
-              (decorator: any) => decorator.expression.name === "TypedController",
-            )
-          }
-        },
-
-        MethodDefinition(node: any): void {
-          if (node.kind === "method") {
-            const methodName = node.key.name
-            const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
-            const name = isPrivate ? `#${methodName}` : methodName
-
-            controllerParser.controller._methods.push(new Definition(name, node.loc, "static"))
-          }
-        },
-
-        PropertyDefinition(node: any): void {
-          if ("decorators" in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
-            return controllerParser.parseDecoratedProperty(node)
-          }
-
-          if (node.value?.type === "ArrowFunctionExpression") {
-            controllerParser.controller._methods.push(new Definition(node.key.name, node.loc, "static"))
-          }
-
-          // console.log(node)
-
-          if (!node.static) return
-
-          controllerParser.parseProperty(node)
-        },
-      })
-
-      controllerParser.validate()
-
-      return controllerParser.controller
-    } catch (error: any) {
-      console.error(`Error while parsing controller in '${filename}': ${error.message}`)
-
-      const controller = new ControllerDefinition(this.project, filename)
-
-      controller.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
-
-      return controller
     }
   }
 }
