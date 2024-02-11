@@ -1,16 +1,14 @@
-import { ControllerDefinition } from "./controller_definition"
-import { Parser } from "./parser"
-import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util"
-import { detectPackages } from "./packages"
-import type { NodeModule } from "./types"
-
 import path from "path"
 import { glob } from "glob"
 
-interface ControllerFile {
-  filename: string
-  content: string
-}
+import { ControllerDefinition } from "./controller_definition"
+import { Parser } from "./parser"
+import { SourceFile } from "./source_file"
+
+import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util"
+import { detectPackages } from "./packages"
+
+import type { NodeModule } from "./types"
 
 export class Project {
   readonly projectPath: string
@@ -20,10 +18,9 @@ export class Project {
 
   public detectedNodeModules: Array<NodeModule> = []
   public controllerDefinitions: ControllerDefinition[] = []
+  public parser: Parser = new Parser(this)
 
-  private controllerFiles: Array<ControllerFile> = []
-  private parser: Parser = new Parser(this)
-
+  private sourceFiles: Array<SourceFile> = []
 
   static calculateControllerRoots(filenames: string[]) {
     let controllerRoots: string[] = [];
@@ -105,21 +102,21 @@ export class Project {
   }
 
   get controllerRoots() {
-    const relativePaths = this.controllerFiles.map(file => this.relativePath(file.filename))
+    const relativePaths = this.sourceFiles.map(file => this.relativePath(file.path))
     const roots = Project.calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
 
   async analyze() {
-    this.controllerFiles = []
+    this.sourceFiles = []
     this.controllerDefinitions = []
 
-    await this.readControllerFiles(await this.getControllerFiles())
+    await this.readSourceFiles(await this.getSourceFiles())
     await detectPackages(this)
 
-    this.controllerFiles.forEach((file: ControllerFile) => {
-      this.controllerDefinitions.push(this.parser.parseController(file.content, file.filename))
+    this.sourceFiles.forEach(file => {
+      this.controllerDefinitions.push(this.parser.parseController(file.content, file.path))
     })
   }
 
@@ -130,17 +127,20 @@ export class Project {
     return relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
   }
 
-  async readControllerFiles(controllerFiles: string[]) {
-    await Promise.allSettled(
-      controllerFiles.map(async (filename: string) => {
-        const content = await readFile(filename)
+  async readSourceFiles(sourceFiles: string[]) {
+    const project = this
 
-        this.controllerFiles.push({ filename, content })
+    await Promise.allSettled(
+      sourceFiles.map(async (path: string) => {
+        const content = await readFile(path)
+        const sourceFile = new SourceFile(path, content, project)
+
+        this.sourceFiles.push(sourceFile)
       })
     )
   }
 
-  private async getControllerFiles(): Promise<string[]> {
+  private async getSourceFiles(): Promise<string[]> {
     return await glob(`${this.projectPath}/**/*controller${this.fileEndingsGlob}`, {
       ignore: `${this.projectPath}/**/node_modules/**/*`,
     })

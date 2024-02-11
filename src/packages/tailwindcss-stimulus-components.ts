@@ -23,5 +23,5 @@ export async function analyze(project: Project) {
 
   project.detectedNodeModules.push(detectedModule)
 
-  await project.readControllerFiles(files)
+  await project.readSourceFiles(files)
 }
