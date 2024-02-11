@@ -65,7 +65,7 @@ export class Parser {
 
         ClassDeclaration(node: any): void {
           const className = node.id?.name
-          const superClass = node.superClass.name
+          const superClass = node.superClass?.name
           const importStatement = importStatements.find(i => i.importedName === superClass)
 
           // TODO: this needs to be recursive
@@ -85,7 +85,7 @@ export class Parser {
             }
           } else {
             controller.parent = {
-              constant: node.superClass.name,
+              constant: superClass,
               type: "unknown",
             }
           }

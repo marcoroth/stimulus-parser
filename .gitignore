@@ -6,6 +6,7 @@
 /dist
 node_modules/
 coverage/
+scratch/
 
 yarn-error.log
 

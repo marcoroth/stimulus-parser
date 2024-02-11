@@ -1,11 +1,10 @@
 import { ControllerDefinition } from "./controller_definition"
 import { Parser } from "./parser"
-import { resolvePathWhenFileExists, nestedFolderSort } from "./util"
+import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util"
 import { detectPackages } from "./packages"
 import type { NodeModule } from "./types"
 
 import path from "path"
-import { promises as fs } from "fs"
 import { glob } from "glob"
 
 interface ControllerFile {
@@ -134,7 +133,7 @@ export class Project {
   async readControllerFiles(controllerFiles: string[]) {
     await Promise.allSettled(
       controllerFiles.map(async (filename: string) => {
-        const content = await fs.readFile(filename, "utf8")
+        const content = await readFile(filename)
 
         this.controllerFiles.push({ filename, content })
       })
@@ -143,11 +142,13 @@ export class Project {
 
   private async getControllerFiles(): Promise<string[]> {
     return await glob(`${this.projectPath}/**/*controller${this.fileEndingsGlob}`, {
-      ignore: `${this.projectPath}/node_modules/**/*`,
+      ignore: `${this.projectPath}/**/node_modules/**/*`,
     })
   }
 
   get fileEndingsGlob(): string {
-    return `.{${Project.javascriptEndings.join(",")},${Project.typescriptEndings.join(",")}}`
+    const extensions = Project.javascriptEndings.concat(Project.typescriptEndings).join(",")
+
+    return `.{${extensions}}`
   }
 }

@@ -2,7 +2,7 @@ import path from "path"
 import { glob } from "glob"
 
 import type { NodeModule } from "../types"
-import  { Project } from '../project'
+import  { Project } from "../project"
 import { hasDepedency, findPackagePath } from "./util"
 
 export async function analyze(project: Project) {

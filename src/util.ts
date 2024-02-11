@@ -15,6 +15,10 @@ export async function resolvePathWhenFileExists(path: string): Promise<string|nu
   return exists ? path : null
 }
 
+export async function readFile(path: string): Promise<string> {
+  return await fs.readFile(path, "utf8")
+}
+
 export async function fileExists(path: string): Promise<boolean> {
   return folderExists(path)
 }

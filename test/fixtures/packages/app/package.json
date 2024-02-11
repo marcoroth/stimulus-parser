@@ -1,0 +1,18 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@stimulus-library/controllers": "^1.0.6",
+    "stimulus-checkbox": "^2.0.0",
+    "stimulus-clipboard": "^4.0.1",
+    "stimulus-datepicker": "^1.0.6",
+    "stimulus-dropdown": "^2.1.0",
+    "stimulus-hotkeys": "^2.3.0",
+    "stimulus-inline-input-validations": "^1.2.0",
+    "stimulus-use": "^0.52.2",
+    "tailwindcss-stimulus-components": "^4.0.4"
+  }
+}
