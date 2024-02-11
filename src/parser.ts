@@ -101,6 +101,33 @@ export class Parser {
           }
         },
 
+        ExpressionStatement(node: any): void {
+          const left = node.expression.left
+          const right = node.expression.right
+
+          if (node.expression.type === "AssignmentExpression" && left.type === "MemberExpression" && left.object.type === "Identifier") {
+            const classDeclaration = classDeclarations.find(c => c.className === left.object.name)
+
+            if (classDeclaration && classDeclaration.isStimulusClass) {
+              if (right.type === "ArrayExpression") {
+                const values = right.elements.map((element: NodeElement) => element.value)
+
+                if (left.property.name === "targets") {
+                  controller.targets = values
+                }
+
+                if (left.property.name === "classes" && right.type === "ArrayExpression") {
+                  controller.classes = values
+                }
+              }
+
+              if (left.property.name === "values" && right.type === "ObjectExpression") {
+                // TODO
+              }
+            }
+          }
+        },
+
         PropertyDefinition(node: any): void {
           const { name } = node.key
 
