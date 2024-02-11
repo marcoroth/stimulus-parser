@@ -20,6 +20,7 @@ export const nodelessCompare = (objects: (ImportDeclaration | ExportDeclaration)
 
 export const stripSuperClasses = (objects: ClassDeclaration[]): ClassDeclaration[] => {
   objects.forEach(object => {
+    stripNodeField(object)
     stripNodeField(object.importDeclaration)
 
     if (object.superClass) {

@@ -150,7 +150,8 @@ export class SourceFile {
         this.classDeclarations.push({
           className,
           superClass,
-          isStimulusDescendant
+          isStimulusDescendant,
+          node
         })
       }
     })

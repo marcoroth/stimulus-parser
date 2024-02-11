@@ -61,6 +61,7 @@ export type ClassDeclaration = {
   importDeclaration?: ImportDeclaration
   exportDeclaration?: ExportDeclaration
   isStimulusDescendant: boolean
+  node?: Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration
 }
 
 export type IdentifiableNode =
