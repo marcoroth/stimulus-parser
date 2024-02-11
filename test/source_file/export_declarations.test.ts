@@ -427,7 +427,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test.only("export default named arrow function inline", () => {
+    test("export default named arrow function inline", () => {
       const code = `
         export default something = () => {}
       `

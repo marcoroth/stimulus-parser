@@ -43,6 +43,7 @@ export type ImportDeclaration = {
   originalName?: string
   localName: string
   source: string
+  isStimulusImport: boolean
   node: Acorn.ImportDeclaration
 }
 
@@ -52,6 +53,14 @@ export type ExportDeclaration = {
   source?: string
   type: "default" | "named" | "namespace"
   node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
+}
+
+export type ClassDeclaration = {
+  className?: string
+  superClass?: ClassDeclaration
+  importDeclaration?: ImportDeclaration
+  exportDeclaration?: ExportDeclaration
+  isStimulusDescendant: boolean
 }
 
 export type IdentifiableNode =

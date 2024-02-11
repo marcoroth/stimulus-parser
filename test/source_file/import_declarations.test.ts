@@ -26,6 +26,7 @@ describe("SourceFile", () => {
       sourceFile.analyze()
 
       expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: false,
         localName: "Something",
         originalName: undefined,
         source: "something"
@@ -41,6 +42,7 @@ describe("SourceFile", () => {
       sourceFile.analyze()
 
       expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: false,
         localName: "something",
         originalName: "something",
         source: "something"
@@ -56,6 +58,7 @@ describe("SourceFile", () => {
       sourceFile.analyze()
 
       expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: false,
         localName: "somethingElse",
         originalName: "something",
         source: "something"
@@ -71,6 +74,7 @@ describe("SourceFile", () => {
       sourceFile.analyze()
 
       expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: false,
         localName: "something",
         originalName: undefined,
         source: "something"
@@ -87,16 +91,19 @@ describe("SourceFile", () => {
 
       expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([
         {
+          isStimulusImport: false,
           localName: "onething",
           originalName: undefined,
           source: "something"
         },
         {
+          isStimulusImport: false,
           localName: "anotherthing",
           originalName: "anotherthing",
           source: "something"
         },
         {
+          isStimulusImport: false,
           localName: "something",
           originalName: "thirdthing",
           source: "something"
@@ -113,9 +120,42 @@ describe("SourceFile", () => {
       sourceFile.analyze()
 
       expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: false,
         localName: "something",
         originalName: "something",
         source: "something"
+      }])
+    })
+
+    test("stimulus controller import", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: true,
+        localName: "Controller",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
+      }])
+    })
+
+    test("stimulus controller import with alias", () => {
+      const code = `
+        import { Controller as StimulusController } from "@hotwired/stimulus"
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+        isStimulusImport: true,
+        localName: "StimulusController",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
       }])
     })
   })

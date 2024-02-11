@@ -60,6 +60,7 @@ export class Parser {
               originalName: specifier.imported?.name,
               localName: specifier.local.name,
               source: node.source.value,
+              isStimulusImport: false,
               node: node
             })
           })
