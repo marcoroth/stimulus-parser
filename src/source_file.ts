@@ -3,9 +3,11 @@ import { simple } from "acorn-walk"
 import * as Acorn from "acorn"
 import { Project } from "./project"
 import { ControllerDefinition } from "./controller_definition"
+import { ClassDeclaration } from "./class_declaration"
 
 import type { AST } from "@typescript-eslint/typescript-estree"
-import type { ParserOptions, ImportDeclaration, ExportDeclaration, ClassDeclaration, IdentifiableNode } from "./types"
+import type { ParserOptions, ImportDeclaration, ExportDeclaration, IdentifiableNode } from "./types"
+
 
 export class SourceFile {
   readonly path: string
@@ -134,25 +136,20 @@ export class SourceFile {
         const className = this.extractIdentifier(node.id)
         const superClassName = this.extractIdentifier(node.superClass)
         const importDeclaration = this.importDeclarations.find(i => i.localName === superClassName)
+        let superClass = this.classDeclarations.find(i => i.className === superClassName)
 
-        const newSuperClass = superClassName ? {
-          className: superClassName,
-          superClass: undefined,
-          isStimulusDescendant: importDeclaration?.isStimulusImport || false,
-          importDeclaration,
-        } : undefined
+        if (!superClass && superClassName) {
+          superClass = new ClassDeclaration(superClassName, undefined)
 
-        const superClass = this.classDeclarations.find(i => i.className === superClassName) || newSuperClass
+          if (importDeclaration) {
+            superClass.isStimulusDescendant = importDeclaration.isStimulusImport
+            superClass.importDeclaration = importDeclaration
+          }
+        }
 
-        const baseClass = this.findBaseClass(superClass)
-        const isStimulusDescendant = (baseClass?.isStimulusDescendant) || false
+        const classDeclaration = new ClassDeclaration(className, superClass, node)
 
-        this.classDeclarations.push({
-          className,
-          superClass,
-          isStimulusDescendant,
-          node
-        })
+        this.classDeclarations.push(classDeclaration)
       }
     })
   }
@@ -168,15 +165,5 @@ export class SourceFile {
     if (!node.value) return undefined
 
     return node.value.toString()
-  }
-
-  private findBaseClass(superClass: ClassDeclaration | undefined): ClassDeclaration | undefined {
-    if (!superClass) return undefined
-
-    if (superClass.superClass) {
-      return this.findBaseClass(superClass.superClass)
-    } else {
-      return superClass
-    }
   }
 }

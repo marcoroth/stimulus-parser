@@ -1,4 +1,5 @@
-import type { ImportDeclaration, ExportDeclaration, ClassDeclaration } from "../../src/types"
+import { ClassDeclaration } from "../../src/class_declaration"
+import type { ImportDeclaration, ExportDeclaration } from "../../src/types"
 
 export const stripNodeField = (object: any): any => {
   if (object?.node) {
@@ -19,14 +20,14 @@ export const nodelessCompare = (objects: (ImportDeclaration | ExportDeclaration)
 }
 
 export const stripSuperClasses = (objects: ClassDeclaration[]): ClassDeclaration[] => {
-  objects.forEach(object => {
+  return objects.map(object => {
     stripNodeField(object)
     stripNodeField(object.importDeclaration)
 
     if (object.superClass) {
       stripSuperClasses([object.superClass])
     }
-  })
 
-  return objects
+    return JSON.parse(JSON.stringify(object))
+  })
 }

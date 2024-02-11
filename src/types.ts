@@ -55,14 +55,7 @@ export type ExportDeclaration = {
   node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
 }
 
-export type ClassDeclaration = {
-  className?: string
-  superClass?: ClassDeclaration
-  importDeclaration?: ImportDeclaration
-  exportDeclaration?: ExportDeclaration
-  isStimulusDescendant: boolean
-  node?: Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration
-}
+export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration
 
 export type IdentifiableNode =
   Acorn.Literal |

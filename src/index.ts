@@ -1,3 +1,4 @@
+export * from "./class_declaration"
 export * from "./controller_definition"
 export * from "./parse_error"
 export * from "./parser"
