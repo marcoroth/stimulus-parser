@@ -1,14 +1,12 @@
 import { ControllerDefinition } from "./controller_definition"
 import { Parser } from "./parser"
+import { resolvePathWhenFileExists, nestedFolderSort } from "./util"
+import { detectPackages } from "./packages"
+import type { NodeModule } from "./types"
 
+import path from "path"
 import { promises as fs } from "fs"
 import { glob } from "glob"
-
-const fileExists = (path: string) => {
-  return new Promise<string|null>((resolve, reject) =>
-    fs.stat(path).then(() => resolve(path)).catch(() => reject())
-  )
-}
 
 interface ControllerFile {
   filename: string
@@ -21,16 +19,32 @@ export class Project {
   static readonly javascriptEndings = ["js", "mjs", "cjs", "jsx"]
   static readonly typescriptEndings = ["ts", "mts", "tsx"]
 
+  public detectedNodeModules: Array<NodeModule> = []
   public controllerDefinitions: ControllerDefinition[] = []
 
   private controllerFiles: Array<ControllerFile> = []
   private parser: Parser = new Parser(this)
 
+
   static calculateControllerRoots(filenames: string[]) {
-    const controllerRoots: string[] = [];
+    let controllerRoots: string[] = [];
+
+    filenames = filenames.sort(nestedFolderSort)
+
+    const findClosest = (basename: string) => {
+      const splits = basename.split("/")
+
+      for (let i = 0; i < splits.length + 1; i++) {
+        const possbilePath = splits.slice(0, i).join("/")
+
+        if (controllerRoots.includes(possbilePath) && possbilePath !== basename) {
+          return possbilePath
+        }
+      }
+    }
 
     filenames.forEach(filename => {
-      const splits = filename.split("/")
+      const splits = path.dirname(filename).split("/")
       const controllersIndex = splits.indexOf("controllers")
 
       if (controllersIndex !== -1) {
@@ -39,10 +53,22 @@ export class Project {
         if (!controllerRoots.includes(controllerRoot)) {
           controllerRoots.push(controllerRoot)
         }
+      } else {
+        const controllerRoot = splits.slice(0, splits.length).join("/")
+        const found = findClosest(controllerRoot)
+
+        if (found) {
+          const index = controllerRoots.indexOf(controllerRoot)
+          if (index !== -1) controllerRoots.splice(index, 1)
+        } else {
+          if (!controllerRoots.includes(controllerRoot)) {
+            controllerRoots.push(controllerRoot)
+          }
+        }
       }
     })
 
-    return controllerRoots.sort();
+    return controllerRoots.sort(nestedFolderSort)
   }
 
   constructor(projectPath: string) {
@@ -64,13 +90,13 @@ export class Project {
 
     return this.controllerRoots.flatMap(root => endings.map(
       ending => `${root}/${ControllerDefinition.controllerPathForIdentifier(identifier, ending)}`
-    ))
+    )).sort(nestedFolderSort)
   }
 
   async findControllerPathForIdentifier(identifier: string): Promise<string|null> {
     const possiblePaths = this.possibleControllerPathsForIdentifier(identifier)
-    const promises = possiblePaths.map((path: string) => fileExists(`${this.projectPath}/${path}`))
-    const possiblePath = await Promise.any(promises).catch(() => null)
+    const promises = possiblePaths.map((path: string) => resolvePathWhenFileExists(`${this.projectPath}/${path}`))
+    const possiblePath = Array.from(await Promise.all(promises)).find(promise => promise)
 
     return (possiblePath) ? this.relativePath(possiblePath) : null
   }
@@ -80,9 +106,8 @@ export class Project {
   }
 
   get controllerRoots() {
-    const roots = Project.calculateControllerRoots(
-      this.controllerFiles.map(file => this.relativePath(file.filename))
-    )
+    const relativePaths = this.controllerFiles.map(file => this.relativePath(file.filename))
+    const roots = Project.calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
@@ -91,7 +116,8 @@ export class Project {
     this.controllerFiles = []
     this.controllerDefinitions = []
 
-    await this.readControllerFiles()
+    await this.readControllerFiles(await this.getControllerFiles())
+    await detectPackages(this)
 
     this.controllerFiles.forEach((file: ControllerFile) => {
       this.controllerDefinitions.push(this.parser.parseController(file.content, file.filename))
@@ -105,13 +131,7 @@ export class Project {
     return relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
   }
 
-  private async readControllerFiles() {
-    const endings = `${Project.javascriptEndings.join(",")},${Project.typescriptEndings.join(",")}`
-
-    const controllerFiles = await glob(`${this.projectPath}/**/*_controller.{${endings}}`, {
-      ignore: `${this.projectPath}/node_modules/**/*`,
-    })
-
+  async readControllerFiles(controllerFiles: string[]) {
     await Promise.allSettled(
       controllerFiles.map(async (filename: string) => {
         const content = await fs.readFile(filename, "utf8")
@@ -119,5 +139,15 @@ export class Project {
         this.controllerFiles.push({ filename, content })
       })
     )
+  }
+
+  private async getControllerFiles(): Promise<string[]> {
+    return await glob(`${this.projectPath}/**/*controller${this.fileEndingsGlob}`, {
+      ignore: `${this.projectPath}/node_modules/**/*`,
+    })
+  }
+
+  get fileEndingsGlob(): string {
+    return `.{${Project.javascriptEndings.join(",")},${Project.typescriptEndings.join(",")}}`
   }
 }

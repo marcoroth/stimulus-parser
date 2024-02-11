@@ -1,4 +1,4 @@
-import { expect, test, beforeEach } from "vitest"
+import { describe, expect, test, beforeEach } from "vitest"
 import { Project } from "../src"
 
 let project: Project
@@ -70,72 +70,211 @@ test("identifier in different controllerRoots", async () => {
   ])
 })
 
-test("static calculateControllerRoots", () => {
-  expect(
-    Project.calculateControllerRoots([
-      "app/javascript/controllers/some_controller.js",
-      "app/javascript/controllers/nested/some_controller.js",
-      "app/javascript/controllers/nested/deeply/some_controller.js",
-    ])
-  ).toEqual([
-    "app/javascript/controllers"
-  ])
-
-  expect(
-    Project.calculateControllerRoots(
-      [
-        "app/packs/controllers/some_controller.js",
-        "app/packs/controllers/nested/some_controller.js",
-        "app/packs/controllers/nested/deeply/some_controller.js",
+describe("calculateControllerRoots", () => {
+  test("same root", () => {
+    expect(
+      Project.calculateControllerRoots([
         "app/javascript/controllers/some_controller.js",
         "app/javascript/controllers/nested/some_controller.js",
         "app/javascript/controllers/nested/deeply/some_controller.js",
-        "resources/js/controllers/some_controller.js",
-        "resources/js/controllers/nested/some_controller.js",
-        "resources/js/controllers/nested/deeply/some_controller.js",
-      ]
-    )
-  ).toEqual([
-    "app/javascript/controllers",
-    "app/packs/controllers",
-    "resources/js/controllers"
-  ])
+      ])
+    ).toEqual([
+      "app/javascript/controllers"
+    ])
+  })
+
+  test("different roots", () => {
+    expect(
+      Project.calculateControllerRoots(
+        [
+          "app/packs/controllers/some_controller.js",
+          "app/packs/controllers/nested/some_controller.js",
+          "app/packs/controllers/nested/deeply/some_controller.js",
+          "app/javascript/controllers/some_controller.js",
+          "app/javascript/controllers/nested/some_controller.js",
+          "app/javascript/controllers/nested/deeply/some_controller.js",
+          "resources/js/controllers/some_controller.js",
+          "resources/js/controllers/nested/some_controller.js",
+          "resources/js/controllers/nested/deeply/some_controller.js",
+        ]
+      )
+    ).toEqual([
+      "app/javascript/controllers",
+      "app/packs/controllers",
+      "resources/js/controllers"
+    ])
+  })
+
+  describe("no common root", () => {
+    test("nested first", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "test/fixtures/controller-paths/app/javascript/controllers/typescript_controller.ts",
+            "test/fixtures/controller-paths/app/packs/controllers/webpack_controller.js",
+            "test/fixtures/controller-paths/app/packs/controllers/nested/twice/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/laravel_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/nested/twice/laravel_controller.js",
+            "test/fixtures/controller-paths/app/javascript/controllers/nested/twice/rails_controller.js",
+            "node_modules/tailwindcss-stimulus-components/src/tabs.js",
+            "node_modules/tailwindcss-stimulus-components/src/toggle.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/slideover.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src",
+        "test/fixtures/controller-paths/app/javascript/controllers",
+        "test/fixtures/controller-paths/app/packs/controllers",
+        "test/fixtures/controller-paths/resources/js/controllers",
+      ])
+    })
+
+    test("nested last", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "test/fixtures/controller-paths/app/packs/controllers/nested/twice/webpack_controller.js",
+            "test/fixtures/controller-paths/app/packs/controllers/nested/webpack_controller.js",
+            "test/fixtures/controller-paths/app/packs/controllers/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/nested/twice/rails_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/nested/twice/laravel_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/laravel_controller.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/slideover.js",
+            "node_modules/tailwindcss-stimulus-components/src/toggle.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src",
+        "test/fixtures/controller-paths/app/packs/controllers",
+        "test/fixtures/controller-paths/resources/js/controllers",
+      ])
+    })
+
+    test("nested mixed", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "test/fixtures/controller-paths/app/packs/controllers/nested/webpack_controller.js",
+            "test/fixtures/controller-paths/app/packs/controllers/nested/twice/webpack_controller.js",
+            "test/fixtures/controller-paths/app/packs/controllers/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/nested/rails_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/nested/twice/laravel_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/laravel_controller.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/slideover.js",
+            "node_modules/tailwindcss-stimulus-components/src/toggle.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/twice/modal.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src",
+        "test/fixtures/controller-paths/app/packs/controllers",
+        "test/fixtures/controller-paths/resources/js/controllers",
+      ])
+    })
+
+    test("with only one file", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "test/fixtures/controller-paths/app/packs/controllers/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/laravel_controller.js",
+            "node_modules/tailwindcss-stimulus-components/src/modal.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src",
+        "test/fixtures/controller-paths/app/packs/controllers",
+        "test/fixtures/controller-paths/resources/js/controllers",
+      ])
+    })
+
+    test("with only one file in nested folder", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "test/fixtures/controller-paths/app/packs/controllers/nested/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/controllers/nested/laravel_controller.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/modal.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src/nested",
+        "test/fixtures/controller-paths/app/packs/controllers",
+        "test/fixtures/controller-paths/resources/js/controllers",
+      ])
+    })
+
+    test("with no controllers folder and only one file in nested folder", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "test/fixtures/controller-paths/app/packs/nested/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/nested/laravel_controller.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/modal.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src/nested",
+        "test/fixtures/controller-paths/app/packs/nested",
+        "test/fixtures/controller-paths/resources/js/nested",
+      ])
+    })
+
+    test("with with no controllers folder and multiple files", () => {
+      expect(
+        Project.calculateControllerRoots(
+          [
+            "node_modules/tailwindcss-stimulus-components/src/modal.js",
+            "node_modules/tailwindcss-stimulus-components/src/nested/modal.js",
+            "test/fixtures/controller-paths/app/packs/nested/webpack_controller.js",
+            "test/fixtures/controller-paths/app/packs/webpack_controller.js",
+            "test/fixtures/controller-paths/resources/js/laravel_controller.js",
+            "test/fixtures/controller-paths/resources/js/nested/laravel_controller.js",
+          ]
+        )
+      ).toEqual([
+        "node_modules/tailwindcss-stimulus-components/src",
+        "test/fixtures/controller-paths/app/packs",
+        "test/fixtures/controller-paths/resources/js",
+      ])
+    })
+  })
 })
 
 test("possibleControllerPathsForIdentifier", async () => {
   expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
-    "app/javascript/controllers/rails_controller.js",
-    "app/javascript/controllers/rails_controller.mjs",
     "app/javascript/controllers/rails_controller.cjs",
+    "app/javascript/controllers/rails_controller.js",
     "app/javascript/controllers/rails_controller.jsx",
-    "app/javascript/controllers/rails_controller.ts",
+    "app/javascript/controllers/rails_controller.mjs",
     "app/javascript/controllers/rails_controller.mts",
+    "app/javascript/controllers/rails_controller.ts",
     "app/javascript/controllers/rails_controller.tsx",
   ])
 
   await project.analyze()
 
   expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mjs",
     "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.cjs",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js",
     "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.jsx",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.ts",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mjs",
     "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mts",
+    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.ts",
     "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.tsx",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.js",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mjs",
     "test/fixtures/controller-paths/app/packs/controllers/rails_controller.cjs",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.js",
     "test/fixtures/controller-paths/app/packs/controllers/rails_controller.jsx",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.ts",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mjs",
     "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mts",
+    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.ts",
     "test/fixtures/controller-paths/app/packs/controllers/rails_controller.tsx",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.js",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mjs",
     "test/fixtures/controller-paths/resources/js/controllers/rails_controller.cjs",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.js",
     "test/fixtures/controller-paths/resources/js/controllers/rails_controller.jsx",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.ts",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mjs",
     "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mts",
+    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.ts",
     "test/fixtures/controller-paths/resources/js/controllers/rails_controller.tsx",
   ])
 })

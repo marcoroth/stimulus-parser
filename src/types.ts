@@ -20,3 +20,9 @@ export interface PropertyElement {
   value: PropertyValue
   properties: PropertyElement[]
 }
+
+export interface NodeModule {
+  name: string
+  path: string
+  controllerRoots: string[]
+}

@@ -154,7 +154,7 @@ export class Parser {
                 type = value.name
                 defaultValue = defaultValuesForType[type]
               } else {
-                const properties = property.value.properties
+                const properties = property.value.properties || []
 
                 const convertArrayExpression = (
                   value: NodeElement | PropertyValue
