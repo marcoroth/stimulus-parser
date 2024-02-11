@@ -27,6 +27,8 @@ export async function analyzeAll(project: Project) {
       if (packageName === "@hotwired/stimulus") return
       if (packageName === "@hotwired/stimulus-webpack-helpers") return
       if (packageName === "stimulus-vite-helpers") return
+      if (packageName === "bun-stimulus-plugin") return
+      if (packageName === "esbuild-plugin-stimulus") return
 
       const source = parsed.source || parsed.module || parsed.main
 
