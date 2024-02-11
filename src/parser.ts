@@ -12,6 +12,12 @@ type ImportStatement = {
   source: string
 }
 
+type ClassDeclaration = {
+  className: string
+  superClass?: string
+  isStimulusClass: boolean
+}
+
 type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
@@ -41,6 +47,8 @@ export class Parser {
   parseController(code: string, filename: string) {
     try {
       const importStatements: ImportStatement[] = []
+      const classDeclarations: ClassDeclaration[] = []
+
       const ast = this.parse(code, filename)
       const controller = new ControllerDefinition(this.project, filename)
 
@@ -56,14 +64,24 @@ export class Parser {
         },
 
         ClassDeclaration(node: any): void {
+          const className = node.id?.name
           const superClass = node.superClass.name
           const importStatement = importStatements.find(i => i.importedName === superClass)
+
+          // TODO: this needs to be recursive
+          const isStimulusClass = importStatement ? (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") : false
+
+          classDeclarations.push({
+            className,
+            superClass,
+            isStimulusClass
+          })
 
           if (importStatement) {
             controller.parent = {
               constant: superClass,
               package: importStatement.source,
-              type: (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") ? "default" : "import",
+              type: isStimulusClass ? "default" : "import",
             }
           } else {
             controller.parent = {
