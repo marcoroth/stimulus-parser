@@ -61,7 +61,7 @@ test("controllerPathForIdentifier", () => {
   )
 })
 
-test("controllerPathForIdentifier with fileending", () => {
+test("controllerPathForIdentifier with fileExtension", () => {
   expect(ControllerDefinition.controllerPathForIdentifier("some", "mjs")).toEqual("some_controller.mjs")
   expect(ControllerDefinition.controllerPathForIdentifier("namespaced--some", "ts")).toEqual("namespaced/some_controller.ts")
 })

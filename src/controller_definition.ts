@@ -45,10 +45,10 @@ export class ControllerDefinition {
     return this.errors.length > 0
   }
 
-  static controllerPathForIdentifier(identifier: string, fileending: string = "js"): string {
+  static controllerPathForIdentifier(identifier: string, fileExtension: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
 
-    return `${path}_controller.${fileending}`
+    return `${path}_controller.${fileExtension}`
   }
 
   constructor(project: Project, path: string) {
@@ -87,10 +87,10 @@ export class ControllerDefinition {
 
   get type() {
     const splits = this.path.split(".")
-    const ending = splits[splits.length - 1]
+    const extension = splits[splits.length - 1]
 
-    if (Project.javascriptEndings.includes(ending)) return "javascript"
-    if (Project.typescriptEndings.includes(ending)) return "typescript"
+    if (Project.javascriptExtensions.includes(extension)) return "javascript"
+    if (Project.typescriptExtensions.includes(extension)) return "typescript"
 
     return "javascript"
   }

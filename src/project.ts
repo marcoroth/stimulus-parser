@@ -13,8 +13,8 @@ import type { NodeModule } from "./types"
 export class Project {
   readonly projectPath: string
   readonly controllerRootFallback = "app/javascript/controllers"
-  static readonly javascriptEndings = ["js", "mjs", "cjs", "jsx"]
-  static readonly typescriptEndings = ["ts", "mts", "tsx"]
+  static readonly javascriptExtensions = ["js", "mjs", "cjs", "jsx"]
+  static readonly typescriptExtensions = ["ts", "mts", "tsx"]
 
   public detectedNodeModules: Array<NodeModule> = []
   public controllerDefinitions: ControllerDefinition[] = []
@@ -82,10 +82,10 @@ export class Project {
   }
 
   possibleControllerPathsForIdentifier(identifier: string): string[] {
-    const endings = Project.javascriptEndings.concat(Project.typescriptEndings)
+    const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions)
 
-    return this.controllerRoots.flatMap(root => endings.map(
-      ending => `${root}/${ControllerDefinition.controllerPathForIdentifier(identifier, ending)}`
+    return this.controllerRoots.flatMap(root => extensions.map(
+      extension => `${root}/${ControllerDefinition.controllerPathForIdentifier(identifier, extension)}`
     )).sort(nestedFolderSort)
   }
 
@@ -141,13 +141,13 @@ export class Project {
   }
 
   private async getSourceFiles(): Promise<string[]> {
-    return await glob(`${this.projectPath}/**/*controller${this.fileEndingsGlob}`, {
+    return await glob(`${this.projectPath}/**/*controller${this.fileExtensionGlob}`, {
       ignore: `${this.projectPath}/**/node_modules/**/*`,
     })
   }
 
-  get fileEndingsGlob(): string {
-    const extensions = Project.javascriptEndings.concat(Project.typescriptEndings).join(",")
+  get fileExtensionGlob(): string {
+    const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions).join(",")
 
     return `.{${extensions}}`
   }
