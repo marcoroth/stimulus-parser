@@ -1,4 +1,4 @@
-import type { TSESTree } from "@typescript-eslint/typescript-estree"
+import type * as Acorn from "acorn"
 
 export interface NodeElement {
   key: { name: string }
@@ -43,6 +43,23 @@ export type ImportDeclaration = {
   originalName?: string
   localName: string
   source: string
-  node: TSESTree.ImportDeclaration
+  node: Acorn.ImportDeclaration
 }
+
+export type ExportDeclaration = {
+  localName?: string
+  exportedName?: string
+  source?: string
+  type: "default" | "named" | "namespace"
+  node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
 }
+
+export type IdentifiableNode =
+  Acorn.Literal |
+  Acorn.Pattern |
+  Acorn.Declaration |
+  Acorn.AnonymousFunctionDeclaration |
+  Acorn.AnonymousClassDeclaration |
+  Acorn.Expression |
+  null |
+  undefined

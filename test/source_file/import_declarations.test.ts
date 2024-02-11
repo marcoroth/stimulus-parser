@@ -1,14 +1,8 @@
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
-import type { ImportDeclaration } from "../../src/types"
+import { nodelessCompare } from "../helpers/ast"
 
 const project = new Project(process.cwd())
-
-const importCompare = (importDeclarations: ImportDeclaration[]) => {
-  importDeclarations.forEach(importDeclaration => delete importDeclaration.node)
-
-  return importDeclarations
-}
 
 describe("SourceFile", () => {
   describe("importDeclarations", () => {
@@ -20,7 +14,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([])
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([])
     })
 
     test("default import", () => {
@@ -31,7 +25,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
         localName: "Something",
         originalName: undefined,
         source: "something"
@@ -46,7 +40,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
         localName: "something",
         originalName: "something",
         source: "something"
@@ -61,7 +55,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
         localName: "somethingElse",
         originalName: "something",
         source: "something"
@@ -76,7 +70,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
         localName: "something",
         originalName: undefined,
         source: "something"
@@ -91,7 +85,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([
         {
           localName: "onething",
           originalName: undefined,
@@ -118,7 +112,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(importCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
         localName: "something",
         originalName: "something",
         source: "something"
