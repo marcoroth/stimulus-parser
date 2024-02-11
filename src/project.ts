@@ -115,9 +115,7 @@ export class Project {
     await this.readSourceFiles(await this.getSourceFiles())
     await detectPackages(this)
 
-    this.sourceFiles.forEach(file => {
-      this.controllerDefinitions.push(this.parser.parseController(file.content, file.path))
-    })
+    this.sourceFiles.map(async sourceFile => sourceFile.analyze())
   }
 
   private controllerRootForPath(path: string) {

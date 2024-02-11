@@ -1,4 +1,7 @@
 export * from "./controller_definition"
+export * from "./parse_error"
 export * from "./parser"
 export * from "./project"
+export * from "./source_file"
 export * from "./types"
+export * from "./util"

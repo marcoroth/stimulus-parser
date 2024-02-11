@@ -1,16 +1,11 @@
 import { simple } from "acorn-walk"
 import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
+import { SourceFile } from "./source_file"
 import { ParseError } from "./parse_error"
 import { Project } from "./project"
 import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
-import { NodeElement, PropertyValue } from "./types"
-
-type ImportStatement = {
-  originalName?: string
-  importedName: string
-  source: string
-}
+import type { NodeElement, PropertyValue, ParserOptions, ImportDeclaration } from "./types"
 
 type ClassDeclaration = {
   className: string
@@ -24,29 +19,35 @@ type NestedObject<T> = {
 }
 
 export class Parser {
+  private parser = ESLintParser
   private readonly project: Project
-  private parser: typeof ESLintParser
+  private readonly parserOptions: ParserOptions = {
+    loc: true,
+    range: true,
+    tokens: true,
+    comment: true,
+    sourceType: "module",
+    ecmaVersion: "latest"
+  }
 
   constructor(project: Project) {
     this.project = project
-    this.parser = ESLintParser
   }
 
   parse(code: string, filename?: string) {
     return this.parser.parse(code, {
-      loc: true,
-      range: true,
-      tokens: true,
-      comment: true,
-      sourceType: "module",
-      ecmaVersion: "latest",
+      ...this.parserOptions,
       filePath: filename
     })
   }
 
-  parseController(code: string, filename: string) {
+  parseSourceFile(_sourceFile: SourceFile): ControllerDefinition[] {
+    return []
+  }
+
+  parseController(code: string, filename: string): ControllerDefinition {
     try {
-      const importStatements: ImportStatement[] = []
+      const importDeclarations: ImportDeclaration[] = []
       const classDeclarations: ClassDeclaration[] = []
 
       const ast = this.parse(code, filename)
@@ -55,10 +56,11 @@ export class Parser {
       simple(ast as any, {
         ImportDeclaration(node: any): void {
           node.specifiers.map((specifier: any) => {
-            importStatements.push({
+            importDeclarations.push({
               originalName: specifier.imported?.name,
-              importedName: specifier.local.name,
-              source: node.source.value
+              localName: specifier.local.name,
+              source: node.source.value,
+              node: node
             })
           })
         },
@@ -66,10 +68,10 @@ export class Parser {
         ClassDeclaration(node: any): void {
           const className = node.id?.name
           const superClass = node.superClass?.name
-          const importStatement = importStatements.find(i => i.importedName === superClass)
+          const importDeclaration = importDeclarations.find(i => i.localName === superClass)
 
           // TODO: this needs to be recursive
-          const isStimulusClass = importStatement ? (importStatement.source === "@hotwired/stimulus" && importStatement.originalName === "Controller") : false
+          const isStimulusClass = importDeclaration ? (importDeclaration.source === "@hotwired/stimulus" && importDeclaration.originalName === "Controller") : false
 
           classDeclarations.push({
             className,
@@ -77,10 +79,10 @@ export class Parser {
             isStimulusClass
           })
 
-          if (importStatement) {
+          if (importDeclaration) {
             controller.parent = {
               constant: superClass,
-              package: importStatement.source,
+              package: importDeclaration.source,
               type: isStimulusClass ? "default" : "import",
             }
           } else {
