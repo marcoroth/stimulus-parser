@@ -170,10 +170,6 @@ export class SourceFile {
     return node.value.toString()
   }
 
-  private isDefaultStimulusImport(importDeclaration: ImportDeclaration | undefined): boolean {
-    return importDeclaration ? (importDeclaration.source === "@hotwired/stimulus" && importDeclaration.originalName === "Controller") : false
-  }
-
   private findBaseClass(superClass: ClassDeclaration | undefined): ClassDeclaration | undefined {
     if (!superClass) return undefined
 
@@ -182,20 +178,5 @@ export class SourceFile {
     } else {
       return superClass
     }
-  }
-
-  private recursivelyFindImportDeclaration(name: string | undefined): ImportDeclaration | undefined {
-    if (!name) return undefined
-
-    const importDeclaration = this.importDeclarations.find(i => i.localName === name)
-    const superClass = this.classDeclarations.find(i => i.className === name)
-
-    if (importDeclaration) return importDeclaration
-
-    if (superClass) {
-      return this.recursivelyFindImportDeclaration(superClass.superClass?.className)
-    }
-
-    return undefined
   }
 }
