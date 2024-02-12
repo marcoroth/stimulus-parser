@@ -1,7 +1,11 @@
-import type { Project } from "./project"
+import * as ESLintParser from "@typescript-eslint/typescript-estree"
+
+import { Project } from "./project"
+
 import type { ParserOptions } from "./types"
 
-import * as ESLintParser from "@typescript-eslint/typescript-estree"
+// TODO: Support decorator + reflect-metadata value definitions
+// TODO: error or multiple classes
 
 export class Parser {
   readonly project: Project

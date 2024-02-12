@@ -29,8 +29,7 @@ export interface PropertyElement {
   properties: PropertyElement[]
 }
 
-export type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
-
+export type ValueDefinitionValue = Array<any> | string | number | bigint | boolean | object | null | undefined
 export type ValueDefinition = {
   type: string
   default: ValueDefinitionValue

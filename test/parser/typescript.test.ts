@@ -5,6 +5,23 @@ import { Project } from "../../src/project"
 import { SourceFile } from "../../src/source_file"
 
 describe("with TS Syntax", () => {
+  test("parse typescript code", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static targets: string[] = ["one", "two", "three"]
+
+        hello(name: string): void {
+          console.log("Hello, " + name);
+        }
+      }`
+
+    const controller = parseController(code, "target_controller.js")
+
+    expect(controller.targets).toEqual(["one", "two", "three"])
+  })
+
   test("parse targets", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
