@@ -4,13 +4,7 @@ import { Project } from "./project"
 import { ParseError } from "./parse_error"
 
 import { identifierForContextKey } from "@hotwired/stimulus-webpack-helpers"
-
-type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
-
-type ValueDefinition = {
-  type: string
-  default: ValueDefinitionValue
-}
+import { MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } from "./controller_property_definition"
 
 type ParentController = {
   controllerFile?: string
@@ -22,28 +16,21 @@ type ParentController = {
   type: "default" | "application" | "package" | "import" | "unknown"
 }
 
-export const defaultValuesForType = {
-  Array: [],
-  Boolean: false,
-  Number: 0,
-  Object: {},
-  String: "",
-} as { [key: string]: ValueDefinitionValue }
 
 export class ControllerDefinition {
   readonly path: string
   readonly project: Project
   parent?: ParentController
 
-  methods: Array<string> = []
-  targets: Array<string> = []
-  classes: Array<string> = []
-  values: { [key: string]: ValueDefinition } = {}
+  isTyped: boolean = false
+  anyDecorator: boolean = false
+
+  readonly _methods: Array<MethodDefinition> = []
+  readonly _targets: Array<TargetDefinition> = []
+  readonly _classes: Array<ClassDefinition> = []
+  readonly _values: { [key: string]: ValueDefinition } = {}
 
   readonly errors: ParseError[] = []
-  get hasErrors() {
-    return this.errors.length > 0
-  }
 
   static controllerPathForIdentifier(identifier: string, fileending: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
@@ -54,6 +41,26 @@ export class ControllerDefinition {
   constructor(project: Project, path: string) {
     this.project = project
     this.path = path
+  }
+
+  get hasErrors() {
+    return this.errors.length > 0
+  }
+
+  get methods() {
+    return this._methods.map((method) => method.name)
+  }
+
+  get targets() {
+    return this._targets.map((method) => method.name)
+  }
+
+  get classes() {
+    return this._classes.map((method) => method.name)
+  }
+
+  get values() {
+    return Object.fromEntries(Object.entries(this._values).map(([key, def]) => [key, def.valueDef]))
   }
 
   get controllerPath() {

@@ -1,9 +1,11 @@
-import { simple } from "acorn-walk"
 import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
-import { ParseError } from "./parse_error"
+import { simple } from "acorn-walk"
+
 import { Project } from "./project"
-import { ControllerDefinition, defaultValuesForType } from "./controller_definition"
+import { ParseError } from "./parse_error"
+import { ControllerDefinition } from "./controller_definition"
+import { ControllerPropertyDefinition, MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } from "./controller_property_definition"
 import { NodeElement, PropertyValue } from "./types"
 
 type ImportStatement = {
@@ -22,6 +24,9 @@ type NestedArray<T> = T | NestedArray<T>[]
 type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
 }
+
+// TODO: Support decorator + reflect-metadata value definitions
+// TODO: error or multiple classes
 
 export class Parser {
   private readonly project: Project
@@ -51,6 +56,8 @@ export class Parser {
 
       const ast = this.parse(code, filename)
       const controller = new ControllerDefinition(this.project, filename)
+
+      const parser = this
 
       simple(ast as any, {
         ImportDeclaration(node: any): void {
@@ -89,6 +96,12 @@ export class Parser {
               type: "unknown",
             }
           }
+
+          if ("decorators" in node && Array.isArray(node.decorators)) {
+            controller.isTyped = !!node.decorators.find(
+              (decorator: any) => decorator.expression.name === "TypedController",
+            )
+          }
         },
 
         MethodDefinition(node: any): void {
@@ -97,7 +110,7 @@ export class Parser {
             const isPrivate = node.accessibility === "private" || node.key.type === "PrivateIdentifier"
             const name = isPrivate ? `#${methodName}` : methodName
 
-            controller.methods.push(name)
+            controller._methods.push(new MethodDefinition(name, node.loc, "static"))
           }
         },
 
@@ -129,91 +142,24 @@ export class Parser {
         },
 
         PropertyDefinition(node: any): void {
-          const { name } = node.key
-
-          if (node.value && node.value.type === "ArrowFunctionExpression") {
-            controller.methods.push(name)
+          if ("decorators" in node && Array.isArray(node.decorators) && node.decorators.length > 0) {
+            return parser.parseDecoratedProperty(controller, node)
           }
 
-          if (name === "targets") {
-            controller.targets = node.value.elements.map((element: NodeElement) => element.value)
+          if (node.value?.type === "ArrowFunctionExpression") {
+            controller._methods.push(new MethodDefinition(node.key.name, node.loc, "static"))
           }
 
-          if (name === "classes") {
-            controller.classes = node.value.elements.map((element: NodeElement) => element.value)
-          }
+          if (!node.static) return
 
-          if (name === "values") {
-            node.value.properties.forEach((property: NodeElement) => {
-              const value = property.value
-
-              let type
-              let defaultValue
-
-              if (value.name && typeof value.name === "string") {
-                type = value.name
-                defaultValue = defaultValuesForType[type]
-              } else {
-                const properties = property.value.properties
-
-                const convertArrayExpression = (
-                  value: NodeElement | PropertyValue
-                ): NestedArray<PropertyValue> => {
-                  return value.elements.map((node) => {
-                    if (node.type === "ArrayExpression") {
-                      return convertArrayExpression(node)
-                    } else {
-                      return node.value
-                    }
-                  })
-                }
-
-                const convertObjectExpression = (
-                  value: PropertyValue
-                ): NestedObject<PropertyValue> => {
-                  return Object.fromEntries(
-                    value.properties.map((property) => {
-                      const value =
-                        property.value.type === "ObjectExpression"
-                          ? convertObjectExpression(property.value)
-                          : property.value.value
-
-                      return [property.key.name, value]
-                    })
-                  )
-                }
-
-                const convertProperty = (value: PropertyValue) => {
-                  switch (value.type) {
-                    case "ArrayExpression":
-                      return convertArrayExpression(value)
-                    case "ObjectExpression":
-                      return convertObjectExpression(value)
-                  }
-                }
-
-                const typeProperty = properties.find((property) => property.key.name === "type")
-                const defaultProperty = properties.find((property) => property.key.name === "default")
-
-                type = typeProperty?.value.name || ""
-                defaultValue = defaultProperty?.value.value
-
-                if (!defaultValue && defaultProperty) {
-                  defaultValue = convertProperty(defaultProperty.value)
-                }
-              }
-
-              controller.values[property.key.name] = {
-                type: type,
-                default: defaultValue,
-              }
-            })
-          }
+          parser.parseProperty(controller, node)
         },
       })
 
+      this.validate(controller)
+
       return controller
-    } catch(error: any) {
+    } catch (error: any) {
       console.error(`Error while parsing controller in '${filename}': ${error.message}`)
 
       const controller = new ControllerDefinition(this.project, filename)
@@ -221,6 +167,169 @@ export class Parser {
       controller.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
 
       return controller
+    }
+  }
+
+  public validate(controller: ControllerDefinition) {
+    if (controller.anyDecorator && !controller.isTyped) {
+      controller.errors.push(
+        new ParseError("LINT", "You need to decorate the controller with @TypedController to use decorators"),
+      )
+    }
+
+    if (!controller.anyDecorator && controller.isTyped) {
+      controller.errors.push(
+        new ParseError("LINT", "You decorated the controller with @TypedController to use decorators"),
+      )
+    }
+
+    this.uniqueErrorGenerator(controller, "target", controller._targets)
+    this.uniqueErrorGenerator(controller, "class", controller._classes)
+    // values are reported at the time of parsing since we're storing them as an object
+  }
+
+  private uniqueErrorGenerator(controller: ControllerDefinition, type: string, items: ControllerPropertyDefinition[]) {
+    const errors: string[] = []
+
+    items.forEach((item, index) => {
+      if (errors.includes(item.name)) return
+
+      items.forEach((item2, index2) => {
+        if (index2 === index) return
+
+        if (item.name === item2.name) {
+          errors.push(item.name)
+          controller.errors.push(new ParseError("LINT", `Duplicate definition of ${type}:${item.name}`, item2.loc))
+        }
+      })
+    })
+  }
+
+  public parseDecoratedProperty(controller: ControllerDefinition, node: any) {
+    const { name } = node.key
+
+    node.decorators.forEach((decorator: any) => {
+      switch (decorator.expression.name || decorator.expression.callee.name) {
+        case "Target":
+        case "Targets":
+          controller.anyDecorator = true
+          return controller._targets.push(
+            new TargetDefinition(this.stripDecoratorSuffix(name, "Target"), node.loc, "decorator"),
+          )
+        case "Class":
+        case "Classes":
+          controller.anyDecorator = true
+          return controller._classes.push(
+            new ClassDefinition(this.stripDecoratorSuffix(name, "Class"), node.loc, "decorator"),
+          )
+        case "Value":
+          controller.anyDecorator = true
+          if (decorator.expression.name !== undefined || decorator.expression.arguments.length !== 1) {
+            throw new Error("We dont support reflected types yet")
+          }
+
+          const key = this.stripDecoratorSuffix(name, "Value")
+          const type = decorator.expression.arguments[0].name
+
+          if (controller._values[key]) {
+            controller.errors.push(new ParseError("LINT", `Duplicate definition of value:${key}`, node.loc))
+          }
+
+          const defaultValue = {
+            type,
+            default: node.value ? this.getDefaultValueFromNode(node) : ValueDefinition.defaultValuesForType[type],
+          }
+
+          controller._values[key] = new ValueDefinition(key, defaultValue, node.loc, "decorator")
+      }
+    })
+  }
+
+  private stripDecoratorSuffix(name: string, type: string) {
+    return name.slice(0, name.indexOf(type))
+  }
+
+  public parseProperty(controller: ControllerDefinition, node: any) {
+    switch (node.key.name) {
+      case "targets":
+        return controller._targets.push(
+          ...node.value.elements.map((element: any) => new TargetDefinition(element.value, node.loc, "static")),
+        )
+      case "classes":
+        return controller._classes.push(
+          ...node.value.elements.map((element: any) => new ClassDefinition(element.value, node.loc, "static")),
+        )
+      case "values":
+        node.value.properties.forEach((property: NodeElement) => {
+          if (controller._values[property.key.name]) {
+            controller.errors.push(
+              new ParseError("LINT", `Duplicate definition of value:${property.key.name}`, node.loc),
+            )
+          }
+
+          controller._values[property.key.name] = new ValueDefinition(
+            property.key.name,
+            this.parseValuePropertyDefinition(property),
+            node.loc,
+            "static",
+          )
+        })
+    }
+  }
+
+  private parseValuePropertyDefinition(property: NodeElement): { type: any; default: any } {
+    const { value } = property
+    if (value.name && typeof value.name === "string") {
+      return {
+        type: value.name,
+        default: ValueDefinition.defaultValuesForType[value.name],
+      }
+    }
+
+    const properties = property.value.properties
+
+    const typeProperty = properties.find((property) => property.key.name === "type")
+    const defaultProperty = properties.find((property) => property.key.name === "default")
+
+    return {
+      type: typeProperty?.value.name || "",
+      default: this.getDefaultValueFromNode(defaultProperty),
+    }
+  }
+
+  private convertArrayExpression(value: NodeElement | PropertyValue): NestedArray<PropertyValue> {
+    return value.elements.map((node) => {
+      if (node.type === "ArrayExpression") {
+        return this.convertArrayExpression(node)
+      } else {
+        return node.value
+      }
+    })
+  }
+
+  private convertObjectExpression(value: PropertyValue): NestedObject<PropertyValue> {
+    return Object.fromEntries(
+      value.properties.map((property) => {
+        const isObjectExpression = property.value.type === "ObjectExpression"
+        const value = isObjectExpression ? this.convertObjectExpression(property.value) : property.value.value
+
+        return [property.key.name, value]
+      })
+    )
+  }
+
+  private getDefaultValueFromNode(node: any) {
+    if ("value" in node.value) {
+      return node.value.value
+    }
+
+    const value = node.value
+
+    switch (value.type) {
+      case "ArrayExpression":
+        return this.convertArrayExpression(value)
+      case "ObjectExpression":
+        return this.convertObjectExpression(value)
     }
   }
 }
