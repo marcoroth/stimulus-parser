@@ -3,7 +3,7 @@ import { glob } from "glob"
 
 import type { NodeModule } from "../types"
 import  { Project } from "../project"
-import { hasDepedency, findPackagePath } from "./util"
+import { hasDepedency, findPackagePath } from "../util/npm"
 
 export async function analyze(project: Project) {
   const packageName = "tailwindcss-stimulus-components"

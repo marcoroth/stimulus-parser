@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest"
-import { nestedFolderSort } from "../../src/util"
+import { nestedFolderSort } from "../../../src/util/fs"
 
-describe("util", () => {
+describe("util.fs", () => {
   describe("nestedFolderSort", () => {
     test("empty", () => {
       expect([].sort(nestedFolderSort)).toEqual([])

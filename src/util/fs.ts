@@ -1,14 +1,4 @@
-import type { ValueDefinitionValue } from "./types"
-
 import { promises as fs } from "fs"
-
-export function camelize(string: string) {
-  return string.replace(/(?:[_-])([a-z0-9])/g, (_, char) => char.toUpperCase())
-}
-
-export function dasherize(value: string) {
-  return value.replace(/([A-Z])/g, (_, char) => `-${char.toLowerCase()}`)
-}
 
 export async function resolvePathWhenFileExists(path: string): Promise<string|null> {
   const exists = await folderExists(path)
@@ -42,12 +32,4 @@ export function nestedFolderSort(a: string, b: string) {
   } else {
     return (aLength > bLength) ? 1 : -1
   }
-}
-
-export const defaultValuesForType: { [key: string]: ValueDefinitionValue } = {
-  Array: [],
-  Boolean: false,
-  Number: 0,
-  Object: {},
-  String: "",
 }

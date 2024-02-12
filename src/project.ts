@@ -5,7 +5,7 @@ import { ControllerDefinition } from "./controller_definition"
 import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
 
-import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util"
+import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { detectPackages } from "./packages"
 
 import type { NodeModule } from "./types"

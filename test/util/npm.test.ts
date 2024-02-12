@@ -1,10 +1,10 @@
 import { describe, test, expect } from "vitest"
 import { Project } from "../../src"
-import * as util from "../../src/packages/util"
+import * as util from "../../src/util/npm"
 
 const project = new Project(process.cwd())
 
-describe("util", () => {
+describe("util.npm", () => {
   describe("hasDepedency", () => {
     test("has dependency", async () => {
       expect(await util.hasDepedency(project.projectPath, "acorn")).toEqual(true)

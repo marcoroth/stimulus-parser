@@ -3,8 +3,8 @@ import { glob } from "glob"
 
 import type { NodeModule } from "../types"
 import  { Project } from "../project"
-import { readFile } from "../util"
-import { findNodeModulesPath } from "./util"
+import { readFile } from "../util/fs"
+import { findNodeModulesPath } from "../util/npm"
 
 export async function analyzeAll(project: Project) {
   const nodeModulesPath = await findNodeModulesPath(project.projectPath)

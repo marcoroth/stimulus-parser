@@ -1,6 +1,6 @@
 import path from "path"
 
-import { folderExists } from "../util"
+import { folderExists } from "../util/fs"
 
 export async function findPackagePath(startPath: string, packageName: string): Promise<string|null> {
   const nodeModulesPath = await findNodeModulesPath(startPath)
