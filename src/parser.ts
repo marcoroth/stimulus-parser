@@ -116,27 +116,12 @@ export class Parser {
 
         ExpressionStatement(node: any): void {
           const left = node.expression.left
-          const right = node.expression.right
 
           if (node.expression.type === "AssignmentExpression" && left.type === "MemberExpression" && left.object.type === "Identifier") {
             const classDeclaration = classDeclarations.find(c => c.className === left.object.name)
 
             if (classDeclaration && classDeclaration.isStimulusClass) {
-              if (right.type === "ArrayExpression") {
-                const values = right.elements.map((element: NodeElement) => element.value)
-
-                if (left.property.name === "targets") {
-                  controller.targets = values
-                }
-
-                if (left.property.name === "classes" && right.type === "ArrayExpression") {
-                  controller.classes = values
-                }
-              }
-
-              if (left.property.name === "values" && right.type === "ObjectExpression") {
-                // TODO
-              }
+              parser.parseProperty(controller, node.expression)
             }
           }
         },
@@ -250,17 +235,21 @@ export class Parser {
   }
 
   public parseProperty(controller: ControllerDefinition, node: any) {
-    switch (node.key.name) {
+    const name = node?.key?.name || node?.left?.property?.name
+    const elements = node?.value?.elements || node?.right?.elements
+    const properties = node?.value?.properties || node?.right?.properties
+
+    switch (name) {
       case "targets":
         return controller._targets.push(
-          ...node.value.elements.map((element: any) => new TargetDefinition(element.value, node.loc, "static")),
+          ...elements.map((element: any) => new TargetDefinition(element.value, node.loc, "static")),
         )
       case "classes":
         return controller._classes.push(
-          ...node.value.elements.map((element: any) => new ClassDefinition(element.value, node.loc, "static")),
+          ...elements.map((element: any) => new ClassDefinition(element.value, node.loc, "static")),
         )
       case "values":
-        node.value.properties.forEach((property: NodeElement) => {
+        properties.forEach((property: NodeElement) => {
           if (controller._values[property.key.name]) {
             controller.errors.push(
               new ParseError("LINT", `Duplicate definition of value:${property.key.name}`, node.loc),
