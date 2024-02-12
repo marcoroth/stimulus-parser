@@ -1,9 +1,22 @@
 import { expect, test, vi, describe } from "vitest"
-import { setupParser } from "../helpers/setup"
 
-const parser = setupParser()
+import { parseController } from "../helpers/parse"
+
+import { Project } from "../../src/project"
+import { SourceFile } from "../../src/source_file"
 
 describe("with JS Syntax", () => {
+  test("doesn't parse non Stimulus class", () => {
+    const code = `
+      export default class extends Controller {
+        static targets = ["one", "two", "three"]
+      }
+    `
+    const controller = parseController(code, "target_controller.js")
+
+    expect(controller).toBeUndefined()
+  })
+
   test("parse targets", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
@@ -12,7 +25,7 @@ describe("with JS Syntax", () => {
         static targets = ["one", "two", "three"]
       }
     `
-    const controller = parser.parseController(code, "target_controller.js")
+    const controller = parseController(code, "target_controller.js")
 
     expect(controller.targets).toEqual(["one", "two", "three"])
   })
@@ -25,9 +38,26 @@ describe("with JS Syntax", () => {
         static classes = ["one", "two", "three"]
       }
     `
-    const controller = parser.parseController(code, "class_controller.js")
+    const controller = parseController(code, "class_controller.js")
 
     expect(controller.classes).toEqual(["one", "two", "three"])
+  })
+
+  test("parse classes with spread", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static spread = ["one", "two"]
+        static classes = [...this.spread, "three"]
+      }
+    `
+    const controller = parseController(code, "class_controller.js")
+
+    expect(controller.classes).toEqual(["three"])
+
+    // TODO: this is expected
+    // expect(controller.classes).toEqual(["one", "two", "three"])
   })
 
   test("parse values", () => {
@@ -44,7 +74,7 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parser.parseController(code, "value_controller.js")
+    const controller = parseController(code, "value_controller.js")
 
     expect(controller.values).toEqual({
       string: { type: "String", default: "" },
@@ -69,11 +99,41 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parser.parseController(code, "value_controller.js")
+    const controller = parseController(code, "value_controller.js")
 
     expect(controller.values).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: { object: "Object" } },
+      boolean: { type: "Boolean", default: true },
+      array: { type: "Array", default: ["Array"] },
+      number: { type: "Number", default: 1 },
+    })
+  })
+
+  test("parse values with spread", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static spread = {
+          string: { type: String, default: "string" },
+          object: { type: Object, default: { object: "Object" } }
+        }
+
+        static values = {
+          ...this.spread,
+          boolean: { type: Boolean, default: true },
+          array: { type: Array, default: ["Array"] },
+          number: { type: Number, default: 1 }
+        }
+      }
+    `
+    const controller = parseController(code, "value_controller.js")
+
+    // TODO: this is expected
+    expect(controller.values).toEqual({
+      // string: { type: "String", default: "string" },
+      // object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
       array: { type: "Array", default: ["Array"] },
       number: { type: "Number", default: 1 },
@@ -88,15 +148,16 @@ describe("with JS Syntax", () => {
     `
     const spy = vi.spyOn(console, 'error')
 
-    const controller = parser.parseController(code, "error_controller.js")
+    const sourceFile = new SourceFile("error_controller.js", code, new Project(process.cwd()))
+    sourceFile.analyze()
 
-    expect(controller.identifier).toEqual("error")
-    expect(controller.hasErrors).toBeTruthy()
-    expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Error parsing controller")
-    expect(controller.errors[0].cause.message).toEqual("'}' expected.")
-    // expect(controller.errors[0].loc.start.line).toEqual(9)
-    // expect(controller.errors[0].loc.end.line).toEqual(9)
+    // expect(sourceFile.identifier).toEqual("error")
+    expect(sourceFile.hasErrors).toBeTruthy()
+    expect(sourceFile.errors).toHaveLength(1)
+    expect(sourceFile.errors[0].message).toEqual("Error parsing controller")
+    expect(sourceFile.errors[0].cause.message).toEqual("'}' expected.")
+    // expect(sourceFile.errors[0].loc.start.line).toEqual(9)
+    // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
 
     expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': '}' expected.")
   })
@@ -118,7 +179,7 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.methods).toEqual(["connect", "load"])
     expect(controller.hasErrors).toBeFalsy()
@@ -127,12 +188,14 @@ describe("with JS Syntax", () => {
 
   test("parse methods", () => {
     const code = `
+      import { Controller } from "@hotwired/stimulus"
+
       export default class extends Controller {
         load() {}
         unload() {}
       }
     `
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.methods).toEqual(["load", "unload"])
     expect(controller.hasErrors).toBeFalsy()
@@ -147,14 +210,14 @@ describe("with JS Syntax", () => {
         #load() {}
       }
     `
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.methods).toEqual(["#load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test.todo("parse nested object/array default value types", () => {
+  test("parse nested object/array default value types", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -165,7 +228,7 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parser.parseController(code, "value_controller.js")
+    const controller = parseController(code, "value_controller.js")
 
     expect(controller.values).toEqual({
       object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
@@ -185,7 +248,7 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
@@ -202,7 +265,7 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
@@ -220,7 +283,7 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
@@ -238,7 +301,7 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.js")
+    const controller = parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)

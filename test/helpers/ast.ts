@@ -23,11 +23,16 @@ export const stripSuperClasses = (objects: ClassDeclaration[]): ClassDeclaration
   return objects.map(object => {
     stripNodeField(object)
     stripNodeField(object.importDeclaration)
+    stripNodeField(object.exportDeclaration)
+
+    // @ts-ignore
+    delete object.sourceFile
+    delete object?.controllerDefinition
 
     if (object.superClass) {
       stripSuperClasses([object.superClass])
     }
 
-    return JSON.parse(JSON.stringify(object))
+    return object
   })
 }

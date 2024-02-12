@@ -1,46 +1,25 @@
 import path from "path"
 
-import { Project } from "./project"
-import { ParseError } from "./parse_error"
-
 import { identifierForContextKey } from "@hotwired/stimulus-webpack-helpers"
 
-type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
+import { Project } from "./project"
+import { ClassDeclaration } from "./class_declaration"
+import { ParseError } from "./parse_error"
 
-type ValueDefinition = {
-  type: string
-  default: ValueDefinitionValue
-}
-
-type ParentController = {
-  controllerFile?: string
-  constant: string
-  identifier?: string
-  definition?: ControllerDefinition
-  package?: string
-  parent?: ParentController
-  type: "default" | "application" | "package" | "import" | "unknown"
-}
-
-export const defaultValuesForType = {
-  Array: [],
-  Boolean: false,
-  Number: 0,
-  Object: {},
-  String: "",
-} as { [key: string]: ValueDefinitionValue }
+import type { ValueDefinitionObject } from "./types"
 
 export class ControllerDefinition {
   readonly path: string
   readonly project: Project
-  parent?: ParentController
+  readonly classDeclaration?: ClassDeclaration
 
   methods: Array<string> = []
   targets: Array<string> = []
   classes: Array<string> = []
-  values: { [key: string]: ValueDefinition } = {}
+  values: ValueDefinitionObject = {}
 
   readonly errors: ParseError[] = []
+
   get hasErrors() {
     return this.errors.length > 0
   }
@@ -51,9 +30,10 @@ export class ControllerDefinition {
     return `${path}_controller.${fileExtension}`
   }
 
-  constructor(project: Project, path: string) {
+  constructor(project: Project, path: string, classDeclaration?: ClassDeclaration) {
     this.project = project
     this.path = path
+    this.classDeclaration = classDeclaration
   }
 
   get controllerPath() {

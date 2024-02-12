@@ -17,7 +17,11 @@ export class Project {
   static readonly typescriptExtensions = ["ts", "mts", "tsx"]
 
   public detectedNodeModules: Array<NodeModule> = []
-  public controllerDefinitions: ControllerDefinition[] = []
+
+  get controllerDefinitions(): ControllerDefinition[] {
+    return this.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions)
+  }
+
   public parser: Parser = new Parser(this)
 
   private sourceFiles: Array<SourceFile> = []
@@ -110,12 +114,12 @@ export class Project {
 
   async analyze() {
     this.sourceFiles = []
-    this.controllerDefinitions = []
+    this.detectedNodeModules = []
 
     await this.readSourceFiles(await this.getSourceFiles())
     await detectPackages(this)
 
-    this.sourceFiles.map(async sourceFile => sourceFile.analyze())
+    this.sourceFiles.map(sourceFile => sourceFile.analyze())
   }
 
   private controllerRootForPath(path: string) {

@@ -12,27 +12,42 @@ describe("packages", () => {
 
       expect(project.detectedNodeModules.map(module => module.name)).toEqual(["tailwindcss-stimulus-components"])
       expect(project.controllerRoots).toEqual(["node_modules/tailwindcss-stimulus-components/src"])
-      expect(project.controllerDefinitions.length).toEqual(11)
       expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
         "alert",
         "autosave",
         "color-preview",
         "dropdown",
-        "index",
         "modal",
         "popover",
-        "slideover",
+        // "slideover", // TODO: this isn't supported yet since this uses an inherited class from another file
         "tabs",
         "toggle",
-        "transition",
       ])
 
-      const controller = project.controllerDefinitions.find(controller => controller.identifier === "modal")
+      const modalController = project.controllerDefinitions.find(controller => controller.identifier === "modal")
 
-      expect(controller.targets).toEqual(["container", "background"])
-      expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
-      expect(controller.values.open.type).toEqual("Boolean")
-      expect(controller.values.restoreScroll.type).toEqual("Boolean")
+      expect(modalController.targets).toEqual(["container", "background"])
+      expect(Object.keys(modalController.values)).toEqual(["open", "restoreScroll"])
+      expect(modalController.values.open.type).toEqual("Boolean")
+      expect(modalController.values.restoreScroll.type).toEqual("Boolean")
+      expect(modalController.classDeclaration.superClass.className).toEqual("Controller")
+      expect(modalController.classDeclaration.superClass.isStimulusDescendant).toEqual(true)
+      expect(modalController.classDeclaration.superClass.importDeclaration.source).toEqual("@hotwired/stimulus")
+      expect(modalController.classDeclaration.superClass.importDeclaration.localName).toEqual("Controller")
+      expect(modalController.classDeclaration.superClass.importDeclaration.originalName).toEqual("Controller")
+      expect(modalController.classDeclaration.superClass.importDeclaration.isStimulusImport).toEqual(true)
+
+      // TODO: uncomment once we support detecting imports from other files
+      // const slideoverSontroller = project.controllerDefinitions.find(controller => controller.identifier === "slideover")
+      //
+      // expect(slideoverSontroller.targets).toEqual(["menu", "overlay", "close"])
+      // expect(slideoverSontroller.values).toEqual({})
+      // expect(slideoverSontroller.classDeclaration.superClass.className).toEqual("Dropdown")
+      // expect(slideoverSontroller.classDeclaration.superClass.isStimulusDescendant).toEqual(true)
+      // expect(slideoverSontroller.classDeclaration.superClass.importDeclaration.source).toEqual("./dropdown.js")
+      // expect(slideoverSontroller.classDeclaration.superClass.importDeclaration.localName).toEqual("Dropdown")
+      // expect(slideoverSontroller.classDeclaration.superClass.importDeclaration.originalName).toEqual(undefined)
+      // expect(slideoverSontroller.classDeclaration.superClass.importDeclaration.isStimulusImport).toEqual(false)
     })
   })
 })

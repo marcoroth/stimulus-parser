@@ -1,7 +1,5 @@
 import { expect, test, describe } from "vitest"
-// import { setupParser } from "../helpers/setup"
-
-// const parser = setupParser()
+// import { parseController } from "../helpers/parse"
 
 describe("inheritance", () => {
   test.skip("inherits methods", () => {

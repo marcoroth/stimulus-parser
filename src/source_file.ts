@@ -1,24 +1,37 @@
+import * as Acorn from "acorn"
 import { simple } from "acorn-walk"
 
-import * as Acorn from "acorn"
+import { ParseError } from "./parse_error"
 import { Project } from "./project"
 import { ControllerDefinition } from "./controller_definition"
 import { ClassDeclaration } from "./class_declaration"
+import { readFile } from "./util"
 
 import type { AST } from "@typescript-eslint/typescript-estree"
-import type { ParserOptions, ImportDeclaration, ExportDeclaration, IdentifiableNode } from "./types"
-
+import type { ParserOptions, ImportDeclaration, ExportDeclaration } from "./types"
 
 export class SourceFile {
+  public content: string
   readonly path: string
-  readonly content: string
   readonly project: Project
 
   public ast?: AST<ParserOptions>
-  public controllerDefinitions: ControllerDefinition[] = []
-  public importDeclarations: ImportDeclaration[] = []
-  public exportDeclarations: ExportDeclaration[] = []
-  public classDeclarations: ClassDeclaration[] = []
+
+  readonly errors: ParseError[] = []
+  readonly importDeclarations: ImportDeclaration[] = []
+  readonly exportDeclarations: ExportDeclaration[] = []
+  readonly classDeclarations: ClassDeclaration[] = []
+
+  get controllerDefinitions(): ControllerDefinition[] {
+    return this
+      .classDeclarations
+      .map(classDeclaration => classDeclaration.controllerDefinition)
+      .filter(controllerDefinition => controllerDefinition) as ControllerDefinition[]
+  }
+
+  get hasErrors() {
+    return this.errors.length > 0
+  }
 
   constructor(path: string, content: string, project: Project) {
     this.path = path
@@ -29,19 +42,41 @@ export class SourceFile {
   }
 
   parse() {
-    this.ast = this.project.parser.parse(this.content, this.path)
+    try {
+      this.ast = this.project.parser.parse(this.content, this.path)
+    } catch(error: any) {
+      console.error(`Error while parsing controller in '${this.path}': ${error.message}`)
+
+      this.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
+    }
+  }
+
+  async read() {
+    this.content = await readFile(this.path)
+  }
+
+  async refresh() {
+    await this.read()
+    this.analyze()
+  }
+
+  // TODO
+  moduleType() {
+    return ["esm", "cjs"," umd", "ts"]
   }
 
   analyze() {
+    if (!this.ast) return
+
     this.analyzeImportDeclarations()
     this.analyzeExportDeclarations()
     this.analyzeClassDeclarations()
+    this.analyzeControllers()
+    this.analyzeStaticPropertiesExpressions()
+  }
 
-    const controllerDefinitions = this.project.parser.parseSourceFile(this)
-    const controllerDefinition = this.project.parser.parseController(this.content, this.path)
-
-    this.project.controllerDefinitions.push(controllerDefinition)
-    this.project.controllerDefinitions.push(...controllerDefinitions)
+  analyzeControllers() {
+    this.classDeclarations.forEach((classDeclaration) => classDeclaration.analyze())
   }
 
   analyzeImportDeclarations() {
@@ -49,7 +84,7 @@ export class SourceFile {
       ImportDeclaration: (node: Acorn.ImportDeclaration) => {
         node.specifiers.forEach(specifier => {
           const originalName = (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") ? specifier.imported.name : undefined
-          const source = this.extractLiteral(node.source) || ""
+          const source = this.extractLiteral(node.source) as string
           const isStimulusImport = (originalName === "Controller" && source === "@hotwired/stimulus")
 
           this.importDeclarations.push({
@@ -73,7 +108,7 @@ export class SourceFile {
           this.exportDeclarations.push({
             exportedName: this.extractIdentifier(specifier.exported),
             localName: this.extractIdentifier(specifier.local),
-            source: this.extractLiteral(node.source),
+            source: this.extractLiteralAsString(node.source),
             type: "named",
             node
           })
@@ -121,7 +156,7 @@ export class SourceFile {
         this.exportDeclarations.push({
           exportedName: this.extractIdentifier(node.exported),
           localName: undefined,
-          source: this.extractLiteral(node.source),
+          source: this.extractLiteralAsString(node.source),
           type: "namespace",
           node
         })
@@ -139,7 +174,7 @@ export class SourceFile {
         let superClass = this.classDeclarations.find(i => i.className === superClassName)
 
         if (!superClass && superClassName) {
-          superClass = new ClassDeclaration(superClassName, undefined)
+          superClass = new ClassDeclaration(superClassName, undefined, this)
 
           if (importDeclaration) {
             superClass.isStimulusDescendant = importDeclaration.isStimulusImport
@@ -147,23 +182,50 @@ export class SourceFile {
           }
         }
 
-        const classDeclaration = new ClassDeclaration(className, superClass, node)
+        const classDeclaration = new ClassDeclaration(className, superClass, this, node)
 
         this.classDeclarations.push(classDeclaration)
       }
     })
   }
 
-  private extractIdentifier(node: IdentifiableNode): string | undefined {
-    return (node && node.type === "Identifier") ? node.name : undefined
+  analyzeStaticPropertiesExpressions() {
+    simple(this.ast as any, {
+      AssignmentExpression: (expression: Acorn.AssignmentExpression): void => {
+        if (expression.left.type !== "MemberExpression") return
+
+        const object = expression.left.object
+        const property = expression.left.property
+
+        if (property.type !== "Identifier") return
+        if (object.type !== "Identifier") return
+
+        const classDeclaration = this.classDeclarations.find(c => c.className === object.name)
+
+        if (!classDeclaration || !classDeclaration.isStimulusDescendant) return
+
+        classDeclaration.parseStaticControllerProperties(property, expression.right)
+      },
+    })
   }
 
-  private extractLiteral(node: Acorn.Literal | null | undefined): string | undefined {
+  public extractIdentifier(node?: Acorn.AnyNode | null): string | undefined {
+    if (!node) return undefined
+    if (!(node.type === "Identifier" || node.type === "PrivateIdentifier")) return undefined
+
+    return node.name
+  }
+
+  public extractLiteral(node?: Acorn.AnyNode | null) {
     const isLiteral = node && node.type === "Literal"
 
     if (!isLiteral) return undefined
     if (!node.value) return undefined
 
-    return node.value.toString()
+    return node.value
+  }
+
+  public extractLiteralAsString(node?: Acorn.AnyNode | null): string | undefined {
+    return this.extractLiteral(node)?.toString()
   }
 }

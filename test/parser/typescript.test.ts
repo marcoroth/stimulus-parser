@@ -1,7 +1,8 @@
 import { expect, test, vi, describe } from "vitest"
-import { setupParser } from "../helpers/setup"
+import { parseController } from "../helpers/parse"
 
-const parser = setupParser()
+import { Project } from "../../src/project"
+import { SourceFile } from "../../src/source_file"
 
 describe("with TS Syntax", () => {
   test("parse targets", () => {
@@ -16,7 +17,7 @@ describe("with TS Syntax", () => {
         declare readonly threeTarget: HTMLElement
       }
     `
-    const controller = parser.parseController(code, "target_controller.ts")
+    const controller = parseController(code, "target_controller.ts")
 
     expect(controller.targets).toEqual(["one", "two", "three"])
   })
@@ -29,7 +30,7 @@ describe("with TS Syntax", () => {
         static classes = ["one", "two", "three"]
       }
     `
-    const controller = parser.parseController(code, "class_controller.ts")
+    const controller = parseController(code, "class_controller.ts")
 
     expect(controller.classes).toEqual(["one", "two", "three"])
   })
@@ -54,7 +55,7 @@ describe("with TS Syntax", () => {
         declare numberValue: number
       }
     `
-    const controller = parser.parseController(code, "value_controller.ts")
+    const controller = parseController(code, "value_controller.ts")
 
     expect(controller.values).toEqual({
       string: { type: "String", default: "" },
@@ -85,7 +86,7 @@ describe("with TS Syntax", () => {
         declare numberValue: number
       }
     `
-    const controller = parser.parseController(code, "value_controller.ts")
+    const controller = parseController(code, "value_controller.ts")
 
     expect(controller.values).toEqual({
       string: { type: "String", default: "string" },
@@ -104,15 +105,15 @@ describe("with TS Syntax", () => {
     `
 
     const spy = vi.spyOn(console, 'error')
-    const controller = parser.parseController(code, "error_controller.ts")
+    const sourceFile = new SourceFile("error_controller.ts", code, new Project(process.cwd()))
 
-    expect(controller.identifier).toEqual("error")
-    expect(controller.hasErrors).toBeTruthy()
-    expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Error parsing controller")
-    expect(controller.errors[0].cause.message).toEqual("'}' expected.")
-    // expect(controller.errors[0].loc.start.line).toEqual(9)
-    // expect(controller.errors[0].loc.end.line).toEqual(9)
+    // expect(sourceFile.identifier).toEqual("error")
+    expect(sourceFile.hasErrors).toBeTruthy()
+    expect(sourceFile.errors).toHaveLength(1)
+    expect(sourceFile.errors[0].message).toEqual("Error parsing controller")
+    expect(sourceFile.errors[0].cause.message).toEqual("'}' expected.")
+    // expect(sourceFile.errors[0].loc.start.line).toEqual(9)
+    // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
 
     expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.ts': '}' expected.")
   })
@@ -130,7 +131,7 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.ts")
+    const controller = parseController(code, "controller.ts")
 
     expect(controller.methods).toEqual(["connect", "load"])
     expect(controller.hasErrors).toBeFalsy()
@@ -139,6 +140,8 @@ describe("with TS Syntax", () => {
 
   test("parse methods", () => {
     const code = `
+      import { Controller } from "@hotwired/stimulus"
+
       export default class extends Controller {
         load(): void {}
 
@@ -147,7 +150,7 @@ describe("with TS Syntax", () => {
         isSomething(): Boolean {}
       }
     `
-    const controller = parser.parseController(code, "controller.ts")
+    const controller = parseController(code, "controller.ts")
 
     expect(controller.methods).toEqual(["load", "unload", "isSomething"])
     expect(controller.hasErrors).toBeFalsy()
@@ -163,14 +166,14 @@ describe("with TS Syntax", () => {
         private unload() {}
       }
     `
-    const controller = parser.parseController(code, "controller.ts")
+    const controller = parseController(code, "controller.ts")
 
     expect(controller.methods).toEqual(["#load", "#unload"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test.todo("parse nested object/array default value types", () => {
+  test("parse nested object/array default value types", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -181,7 +184,7 @@ describe("with TS Syntax", () => {
         }
       }
     `
-    const controller = parser.parseController(code, "value_controller.js")
+    const controller = parseController(code, "value_controller.js")
 
     expect(controller.values).toEqual({
       object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
@@ -201,7 +204,7 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.ts")
+    const controller = parseController(code, "controller.ts")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
@@ -218,7 +221,7 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.ts")
+    const controller = parseController(code, "controller.ts")
 
     expect(controller.methods).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
@@ -236,7 +239,7 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parser.parseController(code, "controller.ts")
+    const controller = parseController(code, "controller.ts")
 
     expect(controller.methods).toEqual([])
     expect(controller.hasErrors).toBeFalsy()

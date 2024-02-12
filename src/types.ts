@@ -1,5 +1,11 @@
 import type * as Acorn from "acorn"
 
+// TODO: get rid of these types
+export type NestedArray<T> = T | NestedArray<T>[]
+export type NestedObject<T> = {
+  [k: string]: T | NestedObject<T>
+}
+
 export interface NodeElement {
   key: { name: string }
   value: PropertyValue
@@ -22,6 +28,15 @@ export interface PropertyElement {
   value: PropertyValue
   properties: PropertyElement[]
 }
+
+export type ValueDefinitionValue = Array<any> | boolean | number | object | string | undefined
+
+export type ValueDefinition = {
+  type: string
+  default: ValueDefinitionValue
+}
+
+export type ValueDefinitionObject = { [key: string]: ValueDefinition }
 
 export interface NodeModule {
   name: string
@@ -56,13 +71,3 @@ export type ExportDeclaration = {
 }
 
 export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration
-
-export type IdentifiableNode =
-  Acorn.Literal |
-  Acorn.Pattern |
-  Acorn.Declaration |
-  Acorn.AnonymousFunctionDeclaration |
-  Acorn.AnonymousClassDeclaration |
-  Acorn.Expression |
-  null |
-  undefined

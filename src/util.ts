@@ -1,4 +1,5 @@
-import path from "path"
+import type { ValueDefinitionValue } from "./types"
+
 import { promises as fs } from "fs"
 
 export function camelize(string: string) {
@@ -41,4 +42,12 @@ export function nestedFolderSort(a: string, b: string) {
   } else {
     return (aLength > bLength) ? 1 : -1
   }
+}
+
+export const defaultValuesForType: { [key: string]: ValueDefinitionValue } = {
+  Array: [],
+  Boolean: false,
+  Number: 0,
+  Object: {},
+  String: "",
 }
