@@ -85,9 +85,7 @@ export class ClassDeclaration {
         const isPrivate = node.key.type === "PrivateIdentifier" || tsNode.accessibility === "private"
         const name = isPrivate ? `#${methodName}` : methodName
 
-        const loc = (node && node.loc) ? node.loc : undefined
-
-        if (loc) this.controllerDefinition._methods.push(new MethodDefinition(name, loc, "static"))
+        this.controllerDefinition._methods.push(new MethodDefinition(name, node.loc, "static"))
       },
 
       PropertyDefinition: node => {
@@ -95,9 +93,7 @@ export class ClassDeclaration {
         if (node.key.type !== "Identifier") return
         if (!node.value || node.value.type !== "ArrowFunctionExpression") return
 
-        const loc = (node && node.loc) ? node.loc : undefined
-
-        if (loc) this.controllerDefinition._methods.push(new MethodDefinition(node.key.name, loc, "static"))
+        this.controllerDefinition._methods.push(new MethodDefinition(node.key.name, node.loc, "static"))
       },
     })
   }
