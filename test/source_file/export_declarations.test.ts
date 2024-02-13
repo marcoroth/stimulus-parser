@@ -364,10 +364,10 @@ describe("SourceFile", () => {
       sourceFile.analyze()
 
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "default",
+        exportedName: undefined,
         localName: "default",
         isStimulusExport: false,
-        type: "named",
+        type: "default",
         source: "something"
       }])
     })
@@ -386,6 +386,24 @@ describe("SourceFile", () => {
         isStimulusExport: false,
         type: "named",
         source: "something"
+      }])
+    })
+
+    test("export named as default", () => {
+      const code = `
+        function something() {}
+
+        export { something as default }
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+        exportedName: undefined,
+        localName: "something",
+        isStimulusExport: false,
+        type: "default"
       }])
     })
 

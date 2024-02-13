@@ -131,14 +131,11 @@ export class SourceFile {
           const classDeclaration = findClass(localName)
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-          this.exportDeclarations.push({
-            exportedName,
-            localName,
-            source,
-            isStimulusExport,
-            type,
-            node
-          })
+          if (exportedName === "default") {
+            this.exportDeclarations.push({ localName, source, isStimulusExport, type: "default", node })
+          } else {
+            this.exportDeclarations.push({ exportedName, localName, source, isStimulusExport, type, node })
+          }
         })
 
         if (!declaration) return
@@ -149,13 +146,7 @@ export class SourceFile {
           const classDeclaration = findClass(localName)
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-          this.exportDeclarations.push({
-            exportedName,
-            localName,
-            isStimulusExport,
-            type,
-            node
-          })
+          this.exportDeclarations.push({ exportedName, localName, isStimulusExport, type, node })
         }
 
         if (declaration.type === "VariableDeclaration") {
@@ -165,18 +156,13 @@ export class SourceFile {
             const classDeclaration = findClass(localName)
             const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-            this.exportDeclarations.push({
-              exportedName,
-              localName,
-              isStimulusExport,
-              type,
-              node
-            })
+            this.exportDeclarations.push({ exportedName, localName, isStimulusExport, type, node })
           })
         }
       },
 
       ExportDefaultDeclaration: node => {
+        const type = "default"
         const name = ast.extractIdentifier(node.declaration)
         const nameFromId = ast.extractIdentifier((node.declaration as Acorn.ClassDeclaration | Acorn.FunctionDeclaration).id)
         const nameFromAssignment = ast.extractIdentifier((node.declaration as Acorn.AssignmentExpression).left)
@@ -185,24 +171,16 @@ export class SourceFile {
         const classDeclaration = findClass(localName)
         const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-        this.exportDeclarations.push({
-          exportedName: undefined,
-          localName,
-          isStimulusExport,
-          type: "default",
-          node
-        })
+        this.exportDeclarations.push({ localName, isStimulusExport, type, node })
       },
 
       ExportAllDeclaration: node => {
-        this.exportDeclarations.push({
-          exportedName: ast.extractIdentifier(node.exported),
-          localName: undefined,
-          source: ast.extractLiteralAsString(node.source),
-          isStimulusExport: false, // TODO: detect namespace Stimulus exports
-          type: "namespace",
-          node
-        })
+        const type = "namespace"
+        const exportedName = ast.extractIdentifier(node.exported)
+        const source = ast.extractLiteralAsString(node.source)
+        const isStimulusExport = false // TODO: detect namespace Stimulus exports
+
+        this.exportDeclarations.push({ exportedName, source, isStimulusExport, type, node })
       },
 
     })
