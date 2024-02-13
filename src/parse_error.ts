@@ -1,4 +1,4 @@
-import { SourceLocation } from "acorn"
+import type { SourceLocation } from "acorn"
 
 export class ParseError {
   constructor(

@@ -115,7 +115,7 @@ export class ClassDeclaration {
     if (!this.node) return
 
     simple(this.node, {
-      PropertyDefinition: (_node) => {
+      PropertyDefinition: _node => {
         const node = _node as unknown as TSESTree.PropertyDefinition
 
         decorators.extractDecorators(_node).forEach(decorator => {

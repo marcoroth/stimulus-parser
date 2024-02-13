@@ -1,4 +1,4 @@
-import { SourceLocation } from "acorn"
+import type { SourceLocation } from "acorn"
 
 import type { ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "./types"
 

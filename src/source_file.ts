@@ -1,4 +1,3 @@
-import * as Acorn from "acorn"
 import { simple } from "acorn-walk"
 
 import * as ast from "./util/ast"
@@ -10,6 +9,7 @@ import { Project } from "./project"
 import { ControllerDefinition } from "./controller_definition"
 import { ClassDeclaration } from "./class_declaration"
 
+import type * as Acorn from "acorn"
 import type { AST } from "@typescript-eslint/typescript-estree"
 import type { ParserOptions, ImportDeclaration, ExportDeclaration } from "./types"
 
@@ -96,7 +96,7 @@ export class SourceFile {
 
   analyzeImportDeclarations() {
     simple(this.ast as any, {
-      ImportDeclaration: (node: Acorn.ImportDeclaration) => {
+      ImportDeclaration: node => {
         node.specifiers.forEach(specifier => {
           const originalName = (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") ? specifier.imported.name : undefined
           const source = ast.extractLiteral(node.source) as string
@@ -120,7 +120,7 @@ export class SourceFile {
     }
 
     simple(this.ast as any, {
-      ExportNamedDeclaration: (node: Acorn.ExportNamedDeclaration) => {
+      ExportNamedDeclaration: node => {
         const { specifiers, declaration } = node
         const type = "named"
 
@@ -176,11 +176,9 @@ export class SourceFile {
         }
       },
 
-      ExportDefaultDeclaration: (node: Acorn.ExportDefaultDeclaration) => {
-        type declarable = Acorn.ClassDeclaration | Acorn.FunctionDeclaration
-
+      ExportDefaultDeclaration: node => {
         const name = ast.extractIdentifier(node.declaration)
-        const nameFromId = ast.extractIdentifier((node.declaration as declarable).id)
+        const nameFromId = ast.extractIdentifier((node.declaration as Acorn.ClassDeclaration | Acorn.FunctionDeclaration).id)
         const nameFromAssignment = ast.extractIdentifier((node.declaration as Acorn.AssignmentExpression).left)
 
         const localName = name || nameFromId || nameFromAssignment
@@ -196,12 +194,12 @@ export class SourceFile {
         })
       },
 
-      ExportAllDeclaration: (node: Acorn.ExportAllDeclaration) => {
+      ExportAllDeclaration: node => {
         this.exportDeclarations.push({
           exportedName: ast.extractIdentifier(node.exported),
           localName: undefined,
           source: ast.extractLiteralAsString(node.source),
-          isStimulusExport: false,
+          isStimulusExport: false, // TODO: detect namespace Stimulus exports
           type: "namespace",
           node
         })
@@ -212,12 +210,12 @@ export class SourceFile {
 
   analyzeClassDeclarations() {
     simple(this.ast as any, {
-      ClassDeclaration: (node: Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration) => {
+      ClassDeclaration: node => {
         const className = ast.extractIdentifier(node.id)
         ast.convertClassDeclarationNodeToClassDeclaration(this, className, node)
       },
 
-      VariableDeclaration: (node: Acorn.VariableDeclaration) => {
+      VariableDeclaration: node => {
         node.declarations.forEach(declaration => {
           if (declaration.type !== "VariableDeclarator") return
           if (declaration.id.type !== "Identifier") return
@@ -233,7 +231,7 @@ export class SourceFile {
 
   analyzeStaticPropertiesExpressions() {
     simple(this.ast as any, {
-      AssignmentExpression: (expression: Acorn.AssignmentExpression): void => {
+      AssignmentExpression: expression => {
         if (expression.left.type !== "MemberExpression") return
 
         const object = expression.left.object
