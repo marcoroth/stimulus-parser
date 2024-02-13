@@ -60,6 +60,14 @@ export class ControllerDefinition {
     return this.project.relativeControllerPath(this.path)
   }
 
+  get isExported(): boolean {
+    return this.classDeclaration.isExported
+  }
+
+  get isStimulusExport(): boolean {
+    return this.classDeclaration.isStimulusExport
+  }
+
   get identifier() {
     const className = this.classDeclaration?.className
     const hasMoreThanOneController = this.classDeclaration?.sourceFile.classDeclarations.filter(klass => klass.isStimulusDescendant).length > 1

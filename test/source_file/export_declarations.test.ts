@@ -17,12 +17,14 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
 
-    test("export named", () => {
+    test("export named variable", () => {
       const code = `
+        const something = "something"
         export { something }
       `
 
@@ -32,6 +34,24 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
+        type: "named"
+      }])
+    })
+
+    test("export named class", () => {
+      const code = `
+        class Something {}
+        export { Something }
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+        exportedName: "Something",
+        localName: "Something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -58,6 +78,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -75,6 +96,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -90,6 +112,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -107,6 +130,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -122,6 +146,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -137,6 +162,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -152,6 +178,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -169,6 +196,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -184,6 +212,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -199,6 +228,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -214,6 +244,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -229,6 +260,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -244,6 +276,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -259,6 +292,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -275,11 +309,13 @@ describe("SourceFile", () => {
         {
           exportedName: "something",
           localName: "something",
+          isStimulusExport: false,
           type: "named"
         },
         {
           exportedName: "somethingElse",
           localName: "somethingElse",
+          isStimulusExport: false,
           type: "named"
         }
       ])
@@ -296,6 +332,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "namespace",
         source: "something"
       }])
@@ -312,6 +349,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: undefined,
+        isStimulusExport: false,
         type: "namespace",
         source: "something"
       }])
@@ -328,6 +366,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "default",
         localName: "default",
+        isStimulusExport: false,
         type: "named",
         source: "something"
       }])
@@ -344,6 +383,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "default",
+        isStimulusExport: false,
         type: "named",
         source: "something"
       }])
@@ -360,6 +400,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
         localName: "something",
+        isStimulusExport: false,
         type: "named",
         source: "something"
       }])
@@ -376,6 +417,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
         localName: "Something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -393,6 +435,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -408,6 +451,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -423,6 +467,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -438,6 +483,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -453,6 +499,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -468,6 +515,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
+        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -483,6 +531,7 @@ describe("SourceFile", () => {
       expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -499,6 +548,7 @@ describe("SourceFile", () => {
         exportedName: "something",
         localName: "something",
         source: "something",
+        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -515,6 +565,7 @@ describe("SourceFile", () => {
         exportedName: undefined,
         localName: undefined,
         source: "something",
+        isStimulusExport: false,
         type: "namespace"
       }])
     })
@@ -531,6 +582,7 @@ describe("SourceFile", () => {
         exportedName: "something",
         localName: undefined,
         source: "something",
+        isStimulusExport: false,
         type: "namespace"
       }])
     })

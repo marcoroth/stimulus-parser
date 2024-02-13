@@ -83,8 +83,9 @@ export class SourceFile {
     if (!this.ast) return
 
     this.analyzeImportDeclarations()
-    this.analyzeExportDeclarations()
     this.analyzeClassDeclarations()
+    this.analyzeExportDeclarations()
+    this.analyzeClassExports()
     this.analyzeControllers()
     this.analyzeStaticPropertiesExpressions()
   }
@@ -114,16 +115,28 @@ export class SourceFile {
   }
 
   analyzeExportDeclarations() {
+    const findClass = (specifier?: string) => {
+      return this.classDeclarations.find(klass => klass.className == specifier)
+    }
+
     simple(this.ast as any, {
       ExportNamedDeclaration: (node: Acorn.ExportNamedDeclaration) => {
         const { specifiers, declaration } = node
+        const type = "named"
 
         specifiers.forEach(specifier => {
+          const exportedName = ast.extractIdentifier(specifier.exported)
+          const localName = ast.extractIdentifier(specifier.local)
+          const source = ast.extractLiteralAsString(node.source)
+          const classDeclaration = findClass(localName)
+          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+
           this.exportDeclarations.push({
-            exportedName: ast.extractIdentifier(specifier.exported),
-            localName: ast.extractIdentifier(specifier.local),
-            source: ast.extractLiteralAsString(node.source),
-            type: "named",
+            exportedName,
+            localName,
+            source,
+            isStimulusExport,
+            type,
             node
           })
         })
@@ -131,20 +144,32 @@ export class SourceFile {
         if (!declaration) return
 
         if (declaration.type === "FunctionDeclaration" || declaration.type === "ClassDeclaration") {
+          const exportedName = declaration.id.name
+          const localName = declaration.id.name
+          const classDeclaration = findClass(localName)
+          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+
           this.exportDeclarations.push({
-            exportedName: declaration.id.name,
-            localName: declaration.id.name,
-            type: "named",
+            exportedName,
+            localName,
+            isStimulusExport,
+            type,
             node
           })
         }
 
         if (declaration.type === "VariableDeclaration") {
           declaration.declarations.forEach(declaration => {
+            const exportedName = ast.extractIdentifier(declaration.id)
+            const localName = ast.extractIdentifier(declaration.id)
+            const classDeclaration = findClass(localName)
+            const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+
             this.exportDeclarations.push({
-              exportedName: ast.extractIdentifier(declaration.id),
-              localName: ast.extractIdentifier(declaration.id),
-              type: "named",
+              exportedName,
+              localName,
+              isStimulusExport,
+              type,
               node
             })
           })
@@ -158,9 +183,14 @@ export class SourceFile {
         const nameFromId = ast.extractIdentifier((node.declaration as declarable).id)
         const nameFromAssignment = ast.extractIdentifier((node.declaration as Acorn.AssignmentExpression).left)
 
+        const localName = name || nameFromId || nameFromAssignment
+        const classDeclaration = findClass(localName)
+        const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+
         this.exportDeclarations.push({
           exportedName: undefined,
-          localName: name || nameFromId || nameFromAssignment,
+          localName,
+          isStimulusExport,
           type: "default",
           node
         })
@@ -171,6 +201,7 @@ export class SourceFile {
           exportedName: ast.extractIdentifier(node.exported),
           localName: undefined,
           source: ast.extractLiteralAsString(node.source),
+          isStimulusExport: false,
           type: "namespace",
           node
         })
@@ -220,6 +251,16 @@ export class SourceFile {
 
         properties.parseStaticControllerProperties(classDeclaration.controllerDefinition, property, expression.right)
       },
+    })
+  }
+
+  analyzeClassExports() {
+    this.classDeclarations.forEach(classDeclaration => {
+      const exportDeclaration = this.exportDeclarations.find(exportDeclaration => exportDeclaration.localName === classDeclaration.className)
+
+      if (exportDeclaration) {
+        classDeclaration.exportDeclaration = exportDeclaration
+      }
     })
   }
 }

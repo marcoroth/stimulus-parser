@@ -19,15 +19,16 @@ export class ClassDeclaration {
   public readonly node?: ClassDeclarationNode
 
   public isStimulusDescendant: boolean = false
-  public importDeclaration?: ImportDeclaration;
-  public exportDeclaration?: ExportDeclaration;
+
+  public importDeclaration?: ImportDeclaration // TODO: technically a class can be imported more than once
+  public exportDeclaration?: ExportDeclaration // TODO: technically a class can be exported more than once
   public controllerDefinition?: ControllerDefinition
 
   constructor(className: string | undefined, superClass: ClassDeclaration | undefined, sourceFile: SourceFile, node?: ClassDeclarationNode | undefined) {
     this.className = className
     this.superClass = superClass
     this.sourceFile = sourceFile
-    this.isStimulusDescendant = (superClass && superClass.isStimulusDescendant) || false
+    this.isStimulusDescendant = superClass?.isStimulusDescendant || false
     this.node = node
 
     if (this.shouldParse) {
@@ -37,6 +38,16 @@ export class ClassDeclaration {
 
   get shouldParse() {
     return this.isStimulusDescendant
+  }
+
+  get isExported(): boolean {
+    return !!this.exportDeclaration
+  }
+
+  get isStimulusExport(): boolean {
+    if (!this.exportDeclaration) return false
+
+    return this.exportDeclaration.isStimulusExport
   }
 
   analyze() {

@@ -97,6 +97,10 @@ export class Project {
   }
 
   get controllerDefinitions(): ControllerDefinition[] {
+    return this.allControllerDefinitions.filter(definition => definition.isStimulusExport)
+  }
+
+  get allControllerDefinitions(): ControllerDefinition[] {
     return this.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions)
   }
 

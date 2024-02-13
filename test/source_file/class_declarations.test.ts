@@ -69,6 +69,12 @@ describe("SourceFile", () => {
           className: undefined,
           isStimulusDescendant: false,
           superClass: undefined,
+          exportDeclaration: {
+            isStimulusExport: false,
+            exportedName: undefined,
+            localName: undefined,
+            type: "default"
+          },
         },
       ])
     })
@@ -91,6 +97,12 @@ describe("SourceFile", () => {
         {
           className: undefined,
           isStimulusDescendant: false,
+          exportDeclaration: {
+            exportedName: undefined,
+            localName: undefined,
+            isStimulusExport: false,
+            type: "default"
+          },
           superClass: {
             className: "Something",
             isStimulusDescendant: false,

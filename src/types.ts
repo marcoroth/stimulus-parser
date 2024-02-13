@@ -43,6 +43,7 @@ export type ExportDeclaration = {
   localName?: string
   exportedName?: string
   source?: string
+  isStimulusExport: boolean
   type: "default" | "named" | "namespace"
   node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
 }
