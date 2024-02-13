@@ -17,14 +17,8 @@ export class Project {
   static readonly typescriptExtensions = ["ts", "mts", "tsx"]
 
   public detectedNodeModules: Array<NodeModule> = []
-
-  get controllerDefinitions(): ControllerDefinition[] {
-    return this.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions)
-  }
-
+  public sourceFiles: Array<SourceFile> = []
   public parser: Parser = new Parser(this)
-
-  sourceFiles: Array<SourceFile> = []
 
   static calculateControllerRoots(filenames: string[]) {
     let controllerRoots: string[] = [];
@@ -101,6 +95,10 @@ export class Project {
     return resolvedPath ? this.relativePath(resolvedPath) : null
   }
 
+  get controllerDefinitions(): ControllerDefinition[] {
+    return this.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions)
+  }
+
   get controllerRoot() {
     return this.controllerRoots[0] || this.controllerRootFallback
   }
@@ -116,7 +114,7 @@ export class Project {
     this.sourceFiles = []
     this.detectedNodeModules = []
 
-    await this.readSourceFiles(await this.getSourceFiles())
+    await this.readSourceFiles(await this.getProjectFiles())
     await detectPackages(this)
 
     this.sourceFiles.map(sourceFile => sourceFile.analyze())
@@ -129,20 +127,24 @@ export class Project {
     return relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
   }
 
-  async readSourceFiles(sourceFiles: string[]) {
-    const project = this
-
-    await Promise.allSettled(
-      sourceFiles.map(async (path: string) => {
-        const content = await readFile(path)
-        const sourceFile = new SourceFile(path, content, project)
-
-        this.sourceFiles.push(sourceFile)
-      })
-    )
+  async readSourceFiles(paths: string[]) {
+    await Promise.allSettled(paths.map(path => this.readSourceFile(path)))
   }
 
-  private async getSourceFiles(): Promise<string[]> {
+  async readSourceFile(path: string) {
+    const sourceFile = this.sourceFiles.find(file => file.path === path)
+
+    if (!sourceFile) {
+      const content = await readFile(path)
+      const sourceFile = new SourceFile(path, content, this)
+
+      this.sourceFiles.push(sourceFile)
+    } else {
+      await sourceFile.refresh()
+    }
+  }
+
+  private async getProjectFiles(): Promise<string[]> {
     return await glob(`${this.projectPath}/**/*controller${this.fileExtensionGlob}`, {
       ignore: `${this.projectPath}/**/node_modules/**/*`,
     })

@@ -6,6 +6,8 @@ import { Project } from "./project"
 import { ClassDeclaration } from "./class_declaration"
 import { ParseError } from "./parse_error"
 
+import { dasherize, uncapitalize } from "./util/string"
+
 import { MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } from "./controller_property_definition"
 
 export class ControllerDefinition {
@@ -59,6 +61,14 @@ export class ControllerDefinition {
   }
 
   get identifier() {
+    const className = this.classDeclaration?.className
+    const hasMoreThanOneController = this.classDeclaration?.sourceFile.classDeclarations.filter(klass => klass.isStimulusDescendant).length > 1
+    const isProjectFile = this.classDeclaration?.sourceFile.path.includes("node_modules")
+
+    if (className && ((isProjectFile && hasMoreThanOneController) || (!isProjectFile))) {
+      return dasherize(uncapitalize(className.replace("Controller", "")))
+    }
+
     const folder = path.dirname(this.controllerPath)
     const extension = path.extname(this.controllerPath)
     const file = path.basename(this.controllerPath)
