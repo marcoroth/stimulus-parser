@@ -11,7 +11,7 @@ import { MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } 
 export class ControllerDefinition {
   readonly path: string
   readonly project: Project
-  readonly classDeclaration?: ClassDeclaration
+  readonly classDeclaration: ClassDeclaration
 
   isTyped: boolean = false
   anyDecorator: boolean = false
@@ -28,7 +28,7 @@ export class ControllerDefinition {
     return `${path}_controller.${fileExtension}`
   }
 
-  constructor(project: Project, path: string, classDeclaration?: ClassDeclaration) {
+  constructor(project: Project, path: string, classDeclaration: ClassDeclaration) {
     this.project = project
     this.path = path
     this.classDeclaration = classDeclaration
