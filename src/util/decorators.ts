@@ -69,6 +69,7 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
   const hasOneArgument = (decorator.expression.type === "CallExpression" && decorator.expression.arguments.length === 1)
 
   if (isIdentifier || !hasOneArgument) {
+    // TODO: Support decorator + reflect-metadata value definitions
     throw new Error("We dont support reflected types yet")
   }
 

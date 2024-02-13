@@ -4,9 +4,6 @@ import { Project } from "./project"
 
 import type { ParserOptions } from "./types"
 
-// TODO: Support decorator + reflect-metadata value definitions
-// TODO: error or multiple classes
-
 export class Parser {
   readonly project: Project
 

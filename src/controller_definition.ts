@@ -15,8 +15,8 @@ export class ControllerDefinition {
   readonly project: Project
   readonly classDeclaration: ClassDeclaration
 
-  isTyped: boolean = false
-  anyDecorator: boolean = false
+  public isTyped: boolean = false
+  public anyDecorator: boolean = false
 
   readonly errors: ParseError[] = []
   readonly methods: Array<MethodDefinition> = []

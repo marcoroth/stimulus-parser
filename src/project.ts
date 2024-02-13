@@ -13,6 +13,7 @@ import type { NodeModule } from "./types"
 export class Project {
   readonly projectPath: string
   readonly controllerRootFallback = "app/javascript/controllers"
+
   static readonly javascriptExtensions = ["js", "mjs", "cjs", "jsx"]
   static readonly typescriptExtensions = ["ts", "mts", "tsx"]
 
