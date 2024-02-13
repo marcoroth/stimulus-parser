@@ -20,10 +20,10 @@ export class SourceFile {
 
   public ast?: AST<ParserOptions>
 
-  readonly errors: ParseError[] = []
-  readonly importDeclarations: ImportDeclaration[] = []
-  readonly exportDeclarations: ExportDeclaration[] = []
-  readonly classDeclarations: ClassDeclaration[] = []
+  public errors: ParseError[] = []
+  public importDeclarations: ImportDeclaration[] = []
+  public exportDeclarations: ExportDeclaration[] = []
+  public classDeclarations: ClassDeclaration[] = []
 
   get controllerDefinitions(): ControllerDefinition[] {
     return this
@@ -48,18 +48,29 @@ export class SourceFile {
     try {
       this.ast = this.project.parser.parse(this.content, this.path)
     } catch(error: any) {
-      console.error(`Error while parsing controller in '${this.path}': ${error.message}`)
-
+      this.ast = undefined
       this.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
     }
   }
 
   async read() {
-    this.content = await fs.readFile(this.path)
+    try {
+      this.content = await fs.readFile(this.path)
+    } catch (error: any) {
+      this.content = ""
+      this.errors.push(new ParseError("FAIL", "Error reading file", null, error))
+    }
   }
 
   async refresh() {
+    this.errors = []
+    this.importDeclarations = []
+    this.exportDeclarations = []
+    this.classDeclarations = []
+
     await this.read()
+
+    this.parse()
     this.analyze()
   }
 

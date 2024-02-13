@@ -1,4 +1,4 @@
-import { expect, test, vi, describe } from "vitest"
+import { expect, test, describe } from "vitest"
 
 import { parseController } from "../helpers/parse"
 
@@ -130,7 +130,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    // TODO: this is expected
+    // TODO: this would be expected
     expect(controller.valueDefinitions).toEqual({
       // string: { type: "String", default: "string" },
       // object: { type: "Object", default: { object: "Object" } },
@@ -146,7 +146,6 @@ describe("with JS Syntax", () => {
 
       export default class extends Controller {
     `
-    const spy = vi.spyOn(console, 'error')
 
     const sourceFile = new SourceFile("error_controller.js", code, new Project(process.cwd()))
     sourceFile.analyze()
@@ -158,8 +157,6 @@ describe("with JS Syntax", () => {
     expect(sourceFile.errors[0].cause.message).toEqual("'}' expected.")
     // expect(sourceFile.errors[0].loc.start.line).toEqual(9)
     // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
-
-    expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.js': '}' expected.")
   })
 
   test("parse arrow function", () => {

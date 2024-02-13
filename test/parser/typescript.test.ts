@@ -1,4 +1,4 @@
-import { expect, test, vi, describe } from "vitest"
+import { expect, test, describe } from "vitest"
 import { parseController } from "../helpers/parse"
 
 import { Project } from "../../src/project"
@@ -121,7 +121,6 @@ describe("with TS Syntax", () => {
       export default class extends Controller {
     `
 
-    const spy = vi.spyOn(console, 'error')
     const sourceFile = new SourceFile("error_controller.ts", code, new Project(process.cwd()))
 
     // expect(sourceFile.identifier).toEqual("error")
@@ -131,8 +130,6 @@ describe("with TS Syntax", () => {
     expect(sourceFile.errors[0].cause.message).toEqual("'}' expected.")
     // expect(sourceFile.errors[0].loc.start.line).toEqual(9)
     // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
-
-    expect(spy).toBeCalledWith("Error while parsing controller in 'error_controller.ts': '}' expected.")
   })
 
   test("parse arrow function", () => {
