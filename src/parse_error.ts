@@ -5,6 +5,6 @@ export class ParseError {
     public readonly severity: "LINT" | "FAIL",
     public readonly message: string,
     public readonly loc?: SourceLocation | null,
-    public readonly cause?: string,
+    public readonly cause?: Error,
   ) {}
 }

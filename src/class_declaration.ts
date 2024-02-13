@@ -132,13 +132,13 @@ export class ClassDeclaration {
 
     if (this.controllerDefinition.anyDecorator && !this.controllerDefinition.isTyped) {
       this.controllerDefinition.errors.push(
-        new ParseError("LINT", "You need to decorate the controller with @TypedController to use decorators"),
+        new ParseError("LINT", "Controller needs to be decorated with @TypedController in order to use decorators.", this.node?.loc),
       )
     }
 
     if (!this.controllerDefinition.anyDecorator && this.controllerDefinition.isTyped) {
       this.controllerDefinition.errors.push(
-        new ParseError("LINT", "You decorated the controller with @TypedController to use decorators"),
+        new ParseError("LINT", "Controller was decorated with @TypedController but Controller didn't use any decorators.", this.node?.loc),
       )
     }
 
@@ -158,7 +158,7 @@ export class ClassDeclaration {
 
         if (item.name === item2.name) {
           errors.push(item.name)
-          controller.errors.push(new ParseError("LINT", `Duplicate definition of ${type}:${item.name}`, item2.loc))
+          controller.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus ${type} "${item.name}"`, item2.loc))
         }
       })
     })

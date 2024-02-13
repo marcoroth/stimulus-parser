@@ -32,7 +32,7 @@ describe("parse classes", () => {
     expect(controller.classNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Duplicate definition of class:one")
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus class "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(5)
     expect(controller.errors[0].loc.end.line).toEqual(5)
   })

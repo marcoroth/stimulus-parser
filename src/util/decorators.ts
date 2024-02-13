@@ -79,7 +79,8 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
   const type = decorator.expression.arguments[0]
 
   if (controllerDefinition.values[key]) {
-    controllerDefinition.errors.push(new ParseError("LINT", `Duplicate definition of value:${key}`, node.loc))
+    // TODO: add test for this
+    controllerDefinition.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus value "${key}"`, node.loc))
   }
 
   if (type.type !== "Identifier") return

@@ -56,4 +56,40 @@ describe("decorator", () => {
 
     expect(controller.targetNames).toEqual(['output', 'name', 'one', 'two'])
   })
+
+  test("adds error when decorator is used be controller is not decorated with @TypedController", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+      import { Target } from "@vytant/stimulus-decorators";
+
+      export default class extends Controller {
+        @Target private readonly outputTarget!: HTMLDivElement;
+      }
+    `
+
+    const controller = parseController(code, 'target_controller.js')
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.errors.length).toEqual(1)
+    expect(controller.errors[0].message).toEqual("Controller needs to be decorated with @TypedController in order to use decorators.")
+    expect(controller.errors[0].loc.start).toEqual({ line: 5, column: 21 })
+    expect(controller.errors[0].loc.end).toEqual({ line: 7, column: 7 })
+    expect(controller.targetNames).toEqual(['output'])
+  })
+
+  test("adds error when controller is decorated with @TypedController but no decorated in controller is used", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+      import { TypedController } from "@vytant/stimulus-decorators";
+
+      @TypedController
+      export default class extends Controller {}
+    `
+
+    const controller = parseController(code, 'target_controller.js')
+    expect(controller.isTyped).toBeTruthy()
+    expect(controller.errors.length).toEqual(1)
+    expect(controller.errors[0].message).toEqual("Controller was decorated with @TypedController but Controller didn't use any decorators.")
+    expect(controller.errors[0].loc.start).toEqual({ line: 6, column: 21 })
+    expect(controller.errors[0].loc.end).toEqual({ line: 6, column: 48 })
+  })
 })

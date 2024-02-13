@@ -29,7 +29,7 @@ export function parseStaticControllerProperties(controllerDefinition: Controller
       const [name, valueDefinition] = definition
 
       if (controllerDefinition.values[name]) {
-        const error = new ParseError("LINT", `Duplicate definition of value:${name}`, right.loc)
+        const error = new ParseError("LINT", `Duplicate definition of Stimulus value "${name}"`, right.loc)
 
         controllerDefinition.errors.push(error)
       } else {
