@@ -84,7 +84,7 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
   if (type.type !== "Identifier") return
 
   const defaultValue: ValueDefinitionValue = node.value ?
-    ast.getDefaultValueFromNode(node.value as unknown as Acorn.PropertyDefinition)
+    ast.getDefaultValueFromNode(node.value as unknown as Acorn.Expression)
     : ValueDefinition.defaultValuesForType[type.name]
 
   const definition: ValueDefinitionType = {

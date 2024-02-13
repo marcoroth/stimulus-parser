@@ -1,7 +1,5 @@
 import { simple } from "acorn-walk"
 
-import type { TSESTree } from "@typescript-eslint/typescript-estree"
-
 import * as ast from "./util/ast"
 import * as decorators from "./util/decorators"
 import * as properties from "./util/properties"
@@ -11,11 +9,8 @@ import { SourceFile } from "./source_file"
 import { ControllerDefinition } from "./controller_definition"
 import { ControllerPropertyDefinition, MethodDefinition } from "./controller_property_definition"
 
-import type {
-  ClassDeclarationNode,
-  ExportDeclaration,
-  ImportDeclaration,
-} from "./types"
+import type { TSESTree } from "@typescript-eslint/typescript-estree"
+import type { ClassDeclarationNode, ExportDeclaration, ImportDeclaration } from "./types"
 
 export class ClassDeclaration {
   public readonly sourceFile: SourceFile

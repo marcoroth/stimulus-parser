@@ -1,7 +1,7 @@
 import { ValueDefinition } from "../controller_property_definition"
 
 import type * as Acorn from "acorn"
-import type { NestedObject, PropertyValue, ValueDefinition as ValueDefinitionType } from "../types"
+import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
 
 export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
@@ -24,7 +24,7 @@ export function convertArrayExpression(value: Acorn.ArrayExpression): Array<stri
   }).filter(value => value !== undefined) as string[]
 }
 
-export function convertObjectExpression(value: Acorn.ObjectExpression): NestedObject<PropertyValue> {
+export function convertObjectExpression(value: Acorn.ObjectExpression): NestedObject<ValueDefinitionValue> {
   const properties = value.properties.map(property => {
     if (property.type === "SpreadElement") return [] // TODO: implement support for spreads
     if (property.key.type !== "Identifier") return []
@@ -95,7 +95,7 @@ export function convertPropertyToValueDefinition(property: Acorn.Property): Valu
   }
 }
 
-export function getDefaultValueFromNode(node: Acorn.AnyNode | null | undefined) {
+export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
   if (!node) return
 
   switch (node.type) {
@@ -117,15 +117,12 @@ export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefi
   return node.name
 }
 
-export function extractLiteral(node?: Acorn.AnyNode | null): string | number | bigint | boolean | RegExp | null | undefined {
-  const isLiteral = node && node.type === "Literal"
-
-  if (!isLiteral) return undefined
-  if (!node.value) return undefined
+export function extractLiteral(node?: Acorn.Expression | null): string | number | bigint | boolean | RegExp | null | undefined {
+  if (node?.type !== "Literal") return undefined
 
   return node.value
 }
 
-export function extractLiteralAsString(node?: Acorn.AnyNode | null): string | undefined {
+export function extractLiteralAsString(node?: Acorn.Expression | null): string | undefined {
   return extractLiteral(node)?.toString()
 }

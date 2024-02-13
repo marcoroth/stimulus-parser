@@ -1,35 +1,13 @@
 import type * as Acorn from "acorn"
 
-// TODO: get rid of these types
 export type NestedArray<T> = T | NestedArray<T>[]
+
 export type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
 }
 
-export interface NodeElement {
-  key: { name: string }
-  value: PropertyValue
-  properties: PropertyElement[]
-  elements: NodeElement[]
-  type: string
-}
+export type ValueDefinitionValue = string | number | bigint | boolean | object | null | undefined
 
-export interface PropertyValue {
-  name: string
-  value: PropertyValue
-  raw: string
-  properties: PropertyElement[]
-  elements: NodeElement[]
-  type: string
-}
-
-export interface PropertyElement {
-  key: { name: string }
-  value: PropertyValue
-  properties: PropertyElement[]
-}
-
-export type ValueDefinitionValue = Array<any> | string | number | bigint | boolean | object | null | undefined
 export type ValueDefinition = {
   type: string
   default: ValueDefinitionValue
