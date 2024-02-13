@@ -23,7 +23,7 @@ export class ClassDeclaration {
   public exportDeclaration?: ExportDeclaration;
   public controllerDefinition?: ControllerDefinition
 
-  constructor(className: string | undefined, superClass: ClassDeclaration | undefined, sourceFile: SourceFile, node?: ClassDeclarationNode | undefined) {
+  constructor(className: string | undefined, superClass: ClassDeclaration | undefined, sourceFile: SourceFile, node?: ClassDeclarationNode | undefined) {
     this.className = className
     this.superClass = superClass
     this.sourceFile = sourceFile
@@ -70,7 +70,7 @@ export class ClassDeclaration {
 
         const tsNode = (node as unknown as TSESTree.MethodDefinition)
         const methodName = ast.extractIdentifier(node.key) as string
-        const isPrivate = node.key.type === "PrivateIdentifier" || tsNode.accessibility === "private"
+        const isPrivate = node.key.type === "PrivateIdentifier" || tsNode.accessibility === "private"
         const name = isPrivate ? `#${methodName}` : methodName
 
         this.controllerDefinition.methods.push(new MethodDefinition(name, node.loc, "static"))

@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest"
-import { parseController } from "../helpers/parse"
+import { parseController } from "../helpers/parse"
 
 import { Project } from "../../src/project"
 import { SourceFile } from "../../src/source_file"

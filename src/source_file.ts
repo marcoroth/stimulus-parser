@@ -160,7 +160,7 @@ export class SourceFile {
 
         this.exportDeclarations.push({
           exportedName: undefined,
-          localName: name || nameFromId || nameFromAssignment,
+          localName: name || nameFromId || nameFromAssignment,
           type: "default",
           node
         })
@@ -185,7 +185,7 @@ export class SourceFile {
         const className = ast.extractIdentifier(node.id)
         const superClassName = ast.extractIdentifier(node.superClass)
         const importDeclaration = this.importDeclarations.find(i => i.localName === superClassName)
-        let superClass = this.classDeclarations.find(i => i.className === superClassName)
+        let superClass = this.classDeclarations.find(i => i.className === superClassName)
 
         if (!superClass && superClassName) {
           superClass = new ClassDeclaration(superClassName, undefined, this)
@@ -216,7 +216,7 @@ export class SourceFile {
 
         const classDeclaration = this.classDeclarations.find(c => c.className === object.name)
 
-        if (!classDeclaration || !classDeclaration.isStimulusDescendant) return
+        if (!classDeclaration || !classDeclaration.isStimulusDescendant) return
 
         properties.parseStaticControllerProperties(classDeclaration.controllerDefinition, property, expression.right)
       },

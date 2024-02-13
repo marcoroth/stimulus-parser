@@ -1,11 +1,11 @@
-import { ValueDefinition, ClassDefinition, TargetDefinition } from "../controller_property_definition"
+import { ValueDefinition, ClassDefinition, TargetDefinition } from "../controller_property_definition"
 import { ControllerDefinition } from "../controller_definition"
 import { ParseError } from "../parse_error"
 
 import type * as Acorn from "acorn"
 import * as ast from "./ast"
 
-export function parseStaticControllerProperties(controllerDefinition: ControllerDefinition | undefined, left: Acorn.Identifier, right: Acorn.Expression): void {
+export function parseStaticControllerProperties(controllerDefinition: ControllerDefinition | undefined, left: Acorn.Identifier, right: Acorn.Expression): void {
   if (!controllerDefinition) return
 
   if (right.type === "ArrayExpression") {

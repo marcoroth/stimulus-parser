@@ -6,7 +6,7 @@ import { Project } from "./project"
 import { ClassDeclaration } from "./class_declaration"
 import { ParseError } from "./parse_error"
 
-import { dasherize, uncapitalize } from "./util/string"
+import { dasherize, uncapitalize } from "./util/string"
 
 import { MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } from "./controller_property_definition"
 
@@ -65,7 +65,7 @@ export class ControllerDefinition {
     const hasMoreThanOneController = this.classDeclaration?.sourceFile.classDeclarations.filter(klass => klass.isStimulusDescendant).length > 1
     const isProjectFile = this.classDeclaration?.sourceFile.path.includes("node_modules")
 
-    if (className && ((isProjectFile && hasMoreThanOneController) || (!isProjectFile))) {
+    if (className && ((isProjectFile && hasMoreThanOneController) || (!isProjectFile))) {
       return dasherize(uncapitalize(className.replace("Controller", "")))
     }
 

@@ -6,7 +6,7 @@ export type NestedObject<T> = {
   [k: string]: T | NestedObject<T>
 }
 
-export type ValueDefinitionValue = string | number | bigint | boolean | object | null | undefined
+export type ValueDefinitionValue = string | number | bigint | boolean | object | null | undefined
 
 export type ValueDefinition = {
   type: string

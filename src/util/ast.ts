@@ -1,9 +1,9 @@
-import { ValueDefinition } from "../controller_property_definition"
+import { ValueDefinition } from "../controller_property_definition"
 
 import type * as Acorn from "acorn"
 import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
 
-export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
+export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
 
   return properties.find(property =>
@@ -57,7 +57,7 @@ export function convertObjectExpressionToValueDefinitions(objectExpression: Acor
   return definitions
 }
 
-export function convertObjectExpressionToValueDefinition(objectExpression: Acorn.ObjectExpression): ValueDefinitionType | undefined {
+export function convertObjectExpressionToValueDefinition(objectExpression: Acorn.ObjectExpression): ValueDefinitionType | undefined {
   const typeProperty = findPropertyInProperties(objectExpression.properties, "type")
   const defaultProperty = findPropertyInProperties(objectExpression.properties, "default")
 
@@ -83,7 +83,7 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
   }
 }
 
-export function convertPropertyToValueDefinition(property: Acorn.Property): ValueDefinitionType | undefined {
+export function convertPropertyToValueDefinition(property: Acorn.Property): ValueDefinitionType | undefined {
   switch (property.value.type) {
     case "Identifier":
       return {
@@ -95,7 +95,7 @@ export function convertPropertyToValueDefinition(property: Acorn.Property): Valu
   }
 }
 
-export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
+export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
   if (!node) return
 
   switch (node.type) {
@@ -110,14 +110,14 @@ export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
   }
 }
 
-export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefined {
+export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefined {
   if (!node) return undefined
   if (!(node.type === "Identifier" || node.type === "PrivateIdentifier")) return undefined
 
   return node.name
 }
 
-export function extractLiteral(node?: Acorn.Expression | null): string | number | bigint | boolean | RegExp | null | undefined {
+export function extractLiteral(node?: Acorn.Expression | null): string | number | bigint | boolean | RegExp | null | undefined {
   if (node?.type !== "Literal") return undefined
 
   return node.value

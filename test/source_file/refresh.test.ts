@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
-import { mockFile } from "../helpers/mock"
+import { mockFile } from "../helpers/mock"
 
 const project = new Project(process.cwd())
 

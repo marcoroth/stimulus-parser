@@ -1,9 +1,9 @@
 import { expect, test, describe } from "vitest"
 
-import { parseController } from "../helpers/parse"
+import { parseController } from "../helpers/parse"
 
 import { Project } from "../../src/project"
-import { SourceFile } from "../../src/source_file"
+import { SourceFile } from "../../src/source_file"
 
 describe("with JS Syntax", () => {
   test("doesn't parse non Stimulus class", () => {
@@ -185,7 +185,7 @@ describe("with JS Syntax", () => {
 
   test("parse methods", () => {
     const code = `
-      import { Controller } from "@hotwired/stimulus"
+      import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
         load() {}

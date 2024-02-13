@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest"
-import { parseController } from "../helpers/parse"
+import { parseController } from "../helpers/parse"
 
 describe("compiled JavaScript", () => {
   test("transpiled", () => {

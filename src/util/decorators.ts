@@ -1,4 +1,4 @@
-import { ValueDefinition, ClassDefinition, TargetDefinition } from "../controller_property_definition"
+import { ValueDefinition, ClassDefinition, TargetDefinition } from "../controller_property_definition"
 import { ControllerDefinition } from "../controller_definition"
 import { ParseError } from "../parse_error"
 
@@ -26,7 +26,7 @@ export function parseDecorator(controllerDefinition: ControllerDefinition | unde
   const identifierName = (decorator.expression.type === "Identifier") ? decorator.expression.name : undefined
   const calleeName = (decorator.expression.type === "CallExpression" && decorator.expression.callee.type === "Identifier") ? decorator.expression.callee.name : undefined
 
-  const decoratorName = identifierName || calleeName
+  const decoratorName = identifierName || calleeName
 
   switch (decoratorName) {
     case "Target":
