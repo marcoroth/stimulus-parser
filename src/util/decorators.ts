@@ -23,12 +23,10 @@ export function extractDecorators(node: Acorn.AnyNode): TSESTree.Decorator[] {
 export function parseDecorator(controllerDefinition: ControllerDefinition | undefined, name: string, decorator: TSESTree.Decorator, node: TSESTree.PropertyDefinition): void {
   if (!controllerDefinition) return
 
-  const decoratorName =
-    (decorator.expression.type === "Identifier")
-      ? decorator.expression.name
-      : (decorator.expression.type === "CallExpression" && decorator.expression.callee.type === "Identifier")
-        ? decorator.expression.callee.name
-        : undefined
+  const identifierName = (decorator.expression.type === "Identifier") ? decorator.expression.name : undefined
+  const calleeName = (decorator.expression.type === "CallExpression" && decorator.expression.callee.type === "Identifier") ? decorator.expression.callee.name : undefined
+
+  const decoratorName = identifierName || calleeName
 
   switch (decoratorName) {
     case "Target":

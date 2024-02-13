@@ -95,10 +95,10 @@ export class Project {
 
   async findControllerPathForIdentifier(identifier: string): Promise<string|null> {
     const possiblePaths = this.possibleControllerPathsForIdentifier(identifier)
-    const promises = possiblePaths.map((path: string) => resolvePathWhenFileExists(`${this.projectPath}/${path}`))
-    const possiblePath = Array.from(await Promise.all(promises)).find(promise => promise)
+    const resolvedPaths = await Promise.all(possiblePaths.map(path => resolvePathWhenFileExists(`${this.projectPath}/${path}`)))
+    const resolvedPath = resolvedPaths.find(resolvedPath => resolvedPath)
 
-    return (possiblePath) ? this.relativePath(possiblePath) : null
+    return resolvedPath ? this.relativePath(resolvedPath) : null
   }
 
   get controllerRoot() {

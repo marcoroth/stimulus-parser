@@ -45,11 +45,7 @@ export class ClassDeclaration {
   }
 
   analyze() {
-    if (!this.shouldParse) {
-      console.info("didn't try to parse file at", this.sourceFile.path)
-
-      return
-    }
+    if (!this.shouldParse) return
 
     this.analyzeClassDecorators()
     this.analyzeMethods()
