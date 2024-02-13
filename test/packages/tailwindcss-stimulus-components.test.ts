@@ -26,10 +26,10 @@ describe("packages", () => {
 
       const modalController = project.controllerDefinitions.find(controller => controller.identifier === "modal")
 
-      expect(modalController.targets).toEqual(["container", "background"])
-      expect(Object.keys(modalController.values)).toEqual(["open", "restoreScroll"])
-      expect(modalController.values.open.type).toEqual("Boolean")
-      expect(modalController.values.restoreScroll.type).toEqual("Boolean")
+      expect(modalController.targetNames).toEqual(["container", "background"])
+      expect(Object.keys(modalController.valueDefinitions)).toEqual(["open", "restoreScroll"])
+      expect(modalController.valueDefinitions.open.type).toEqual("Boolean")
+      expect(modalController.valueDefinitions.restoreScroll.type).toEqual("Boolean")
       expect(modalController.classDeclaration.superClass.className).toEqual("Controller")
       expect(modalController.classDeclaration.superClass.isStimulusDescendant).toEqual(true)
       expect(modalController.classDeclaration.superClass.importDeclaration.source).toEqual("@hotwired/stimulus")
@@ -40,8 +40,8 @@ describe("packages", () => {
       // TODO: uncomment once we support detecting imports from other files
       // const slideoverSontroller = project.controllerDefinitions.find(controller => controller.identifier === "slideover")
       //
-      // expect(slideoverSontroller.targets).toEqual(["menu", "overlay", "close"])
-      // expect(slideoverSontroller.values).toEqual({})
+      // expect(slideoverSontroller.targetNames).toEqual(["menu", "overlay", "close"])
+      // expect(slideoverSontroller.valueDefinitions).toEqual({})
       // expect(slideoverSontroller.classDeclaration.superClass.className).toEqual("Dropdown")
       // expect(slideoverSontroller.classDeclaration.superClass.isStimulusDescendant).toEqual(true)
       // expect(slideoverSontroller.classDeclaration.superClass.importDeclaration.source).toEqual("./dropdown.js")

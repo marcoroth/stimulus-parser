@@ -58,10 +58,10 @@ describe("packages", () => {
 
       const controller = project.controllerDefinitions.find(controller => controller.identifier === "modal")
 
-      expect(controller.targets).toEqual(["container", "background"])
-      expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
-      expect(controller.values.open.type).toEqual("Boolean")
-      expect(controller.values.restoreScroll.type).toEqual("Boolean")
+      expect(controller.targetNames).toEqual(["container", "background"])
+      expect(Object.keys(controller.valueDefinitions)).toEqual(["open", "restoreScroll"])
+      expect(controller.valueDefinitions.open.type).toEqual("Boolean")
+      expect(controller.valueDefinitions.restoreScroll.type).toEqual("Boolean")
     })
   })
 })

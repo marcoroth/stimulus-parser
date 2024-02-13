@@ -17,10 +17,10 @@ export class ControllerDefinition {
   anyDecorator: boolean = false
 
   readonly errors: ParseError[] = []
-  readonly _methods: Array<MethodDefinition> = []
-  readonly _targets: Array<TargetDefinition> = []
-  readonly _classes: Array<ClassDefinition> = []
-  readonly _values: { [key: string]: ValueDefinition } = {}
+  readonly methods: Array<MethodDefinition> = []
+  readonly targets: Array<TargetDefinition> = []
+  readonly classes: Array<ClassDefinition> = []
+  readonly values: { [key: string]: ValueDefinition } = {}
 
   static controllerPathForIdentifier(identifier: string, fileExtension: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
@@ -38,20 +38,20 @@ export class ControllerDefinition {
     return this.errors.length > 0
   }
 
-  get methods() {
-    return this._methods.map((method) => method.name)
+  get methodNames() {
+    return this.methods.map(method => method.name)
   }
 
-  get targets() {
-    return this._targets.map((method) => method.name)
+  get targetNames() {
+    return this.targets.map(target => target.name)
   }
 
-  get classes() {
-    return this._classes.map((method) => method.name)
+  get classNames() {
+    return this.classes.map(klass => klass.name)
   }
 
-  get values() {
-    return Object.fromEntries(Object.entries(this._values).map(([key, def]) => [key, def.definition]))
+  get valueDefinitions() {
+    return Object.fromEntries(Object.entries(this.values).map(([key, def]) => [key, def.definition]))
   }
 
   get controllerPath() {

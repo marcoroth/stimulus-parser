@@ -10,13 +10,13 @@ export function parseStaticControllerProperties(controllerDefinition: Controller
 
   if (right.type === "ArrayExpression") {
     if (left.name === "targets") {
-      controllerDefinition._targets.push(
+      controllerDefinition.targets.push(
         ...ast.convertArrayExpression(right).map(element => new TargetDefinition(element, right.loc, "static")),
       )
     }
 
     if (left.name === "classes") {
-      controllerDefinition._classes.push(
+      controllerDefinition.classes.push(
         ...ast.convertArrayExpression(right).map(element => new ClassDefinition(element, right.loc, "static")),
       )
     }
@@ -28,12 +28,12 @@ export function parseStaticControllerProperties(controllerDefinition: Controller
     definitions.forEach(definition => {
       const [name, valueDefinition] = definition
 
-      if (controllerDefinition._values[name]) {
+      if (controllerDefinition.values[name]) {
         const error = new ParseError("LINT", `Duplicate definition of value:${name}`, right.loc)
 
         controllerDefinition.errors.push(error)
       } else {
-        controllerDefinition._values[name] = new ValueDefinition(name, valueDefinition, right.loc, "static")
+        controllerDefinition.values[name] = new ValueDefinition(name, valueDefinition, right.loc, "static")
       }
     })
   }

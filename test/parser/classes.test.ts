@@ -14,7 +14,7 @@ describe("parse classes", () => {
     const controller = parseController(code, "class_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.classes).toEqual(["one", "two", "three"])
+    expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
   test("duplicate static classes", () => {
@@ -29,7 +29,7 @@ describe("parse classes", () => {
     const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.classes).toEqual(["one", "one", "three"])
+    expect(controller.classNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual("Duplicate definition of class:one")
@@ -51,7 +51,7 @@ describe("parse classes", () => {
     const controller = parseController(code, "class_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["random"])
+    expect(controller.classNames).toEqual(["random"])
   })
 
   test("single @Classes decorator", () => {
@@ -68,7 +68,7 @@ describe("parse classes", () => {
     const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["random"])
+    expect(controller.classNames).toEqual(["random"])
   })
 
   test("parse multiple class definitions", () => {
@@ -86,7 +86,7 @@ describe("parse classes", () => {
     const controller = parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["one", "two"])
+    expect(controller.classNames).toEqual(["one", "two"])
   })
 
   test("parse mix decorator and static definitions", () => {
@@ -107,6 +107,6 @@ describe("parse classes", () => {
     const controller = parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["output", "name", "item", "one", "two"])
+    expect(controller.classNames).toEqual(["output", "name", "item", "one", "two"])
   })
 })

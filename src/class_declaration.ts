@@ -82,7 +82,7 @@ export class ClassDeclaration {
         const isPrivate = node.key.type === "PrivateIdentifier" || tsNode.accessibility === "private"
         const name = isPrivate ? `#${methodName}` : methodName
 
-        this.controllerDefinition._methods.push(new MethodDefinition(name, node.loc, "static"))
+        this.controllerDefinition.methods.push(new MethodDefinition(name, node.loc, "static"))
       },
 
       PropertyDefinition: node => {
@@ -90,7 +90,7 @@ export class ClassDeclaration {
         if (node.key.type !== "Identifier") return
         if (!node.value || node.value.type !== "ArrowFunctionExpression") return
 
-        this.controllerDefinition._methods.push(new MethodDefinition(node.key.name, node.loc, "static"))
+        this.controllerDefinition.methods.push(new MethodDefinition(node.key.name, node.loc, "static"))
       },
     })
   }
@@ -140,8 +140,8 @@ export class ClassDeclaration {
       )
     }
 
-    this.uniqueErrorGenerator(this.controllerDefinition, "target", this.controllerDefinition._targets)
-    this.uniqueErrorGenerator(this.controllerDefinition, "class", this.controllerDefinition._classes)
+    this.uniqueErrorGenerator(this.controllerDefinition, "target", this.controllerDefinition.targets)
+    this.uniqueErrorGenerator(this.controllerDefinition, "class", this.controllerDefinition.classes)
     // values are reported at the time of parsing since we're storing them as an object
   }
 

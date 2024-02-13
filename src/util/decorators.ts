@@ -53,7 +53,7 @@ export function parseTargetDecorator(controllerDefinition: ControllerDefinition,
 
   const targetDefinition = new TargetDefinition(stripDecoratorSuffix(name, "Target"), node.loc, "decorator")
 
-  controllerDefinition._targets.push(targetDefinition)
+  controllerDefinition.targets.push(targetDefinition)
 }
 
 export function parseClassDecorator(controllerDefinition: ControllerDefinition, name: string, node: TSESTree.PropertyDefinition): void {
@@ -61,7 +61,7 @@ export function parseClassDecorator(controllerDefinition: ControllerDefinition, 
 
   const classDefinition = new ClassDefinition(stripDecoratorSuffix(name, "Class"), node.loc, "decorator")
 
-  controllerDefinition._classes.push(classDefinition)
+  controllerDefinition.classes.push(classDefinition)
 }
 
 export function parseValueDecorator(controllerDefinition: ControllerDefinition, name: string, decorator: TSESTree.Decorator, node: TSESTree.PropertyDefinition): void {
@@ -79,7 +79,7 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
   const key = stripDecoratorSuffix(name, "Value")
   const type = decorator.expression.arguments[0]
 
-  if (controllerDefinition._values[key]) {
+  if (controllerDefinition.values[key]) {
     controllerDefinition.errors.push(new ParseError("LINT", `Duplicate definition of value:${key}`, node.loc))
   }
 
@@ -94,5 +94,5 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
     default: defaultValue
   }
 
-  controllerDefinition._values[key] = new ValueDefinition(key, definition, node.loc, "decorator")
+  controllerDefinition.values[key] = new ValueDefinition(key, definition, node.loc, "decorator")
 }

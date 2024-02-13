@@ -27,7 +27,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "target_controller.js")
 
-    expect(controller.targets).toEqual(["one", "two", "three"])
+    expect(controller.targetNames).toEqual(["one", "two", "three"])
   })
 
   test("parse classes", () => {
@@ -40,7 +40,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "class_controller.js")
 
-    expect(controller.classes).toEqual(["one", "two", "three"])
+    expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
   test("parse classes with spread", () => {
@@ -54,10 +54,10 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "class_controller.js")
 
-    expect(controller.classes).toEqual(["three"])
+    expect(controller.classNames).toEqual(["three"])
 
     // TODO: this is expected
-    // expect(controller.classes).toEqual(["one", "two", "three"])
+    // expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
   test("parse values", () => {
@@ -76,7 +76,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitions).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
@@ -101,7 +101,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitions).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
@@ -131,7 +131,7 @@ describe("with JS Syntax", () => {
     const controller = parseController(code, "value_controller.js")
 
     // TODO: this is expected
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitions).toEqual({
       // string: { type: "String", default: "string" },
       // object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
@@ -181,7 +181,7 @@ describe("with JS Syntax", () => {
 
     const controller = parseController(code, "controller.js")
 
-    expect(controller.methods).toEqual(["connect", "load"])
+    expect(controller.methodNames).toEqual(["connect", "load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -197,7 +197,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "controller.js")
 
-    expect(controller.methods).toEqual(["load", "unload"])
+    expect(controller.methodNames).toEqual(["load", "unload"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -212,7 +212,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "controller.js")
 
-    expect(controller.methods).toEqual(["#load"])
+    expect(controller.methodNames).toEqual(["#load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -230,7 +230,7 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitions).toEqual({
       object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
       array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
     })
@@ -250,7 +250,7 @@ describe("with JS Syntax", () => {
 
     const controller = parseController(code, "controller.js")
 
-    expect(controller.methods).toEqual([])
+    expect(controller.methodNames).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -270,7 +270,7 @@ describe("with JS Syntax", () => {
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
-    expect(controller.methods).toEqual([])
+    expect(controller.methodNames).toEqual([])
   })
 
   test("parse controller with private setter", () => {
@@ -288,7 +288,7 @@ describe("with JS Syntax", () => {
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
-    expect(controller.methods).toEqual([])
+    expect(controller.methodNames).toEqual([])
   })
 
   test("parse controller with variable declaration in method body", () => {
@@ -306,6 +306,6 @@ describe("with JS Syntax", () => {
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
-    expect(controller.methods).toEqual(["method"])
+    expect(controller.methodNames).toEqual(["method"])
   })
 })

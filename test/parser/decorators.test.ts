@@ -16,7 +16,7 @@ describe("decorator", () => {
     const controller = parseController(code, 'target_controller.js')
     expect(controller.isTyped).toBeTruthy()
 
-    expect(controller.targets).toEqual(['output'])
+    expect(controller.targetNames).toEqual(['output'])
   })
 
   test("parse multiple target definitions", () => {
@@ -34,7 +34,7 @@ describe("decorator", () => {
     const controller = parseController(code, 'decorator_controller.js')
     expect(controller.isTyped).toBeTruthy()
 
-    expect(controller.targets).toEqual(['output', 'name'])
+    expect(controller.targetNames).toEqual(['output', 'name'])
   })
 
   test("parse mix decorator and static definitions", () => {
@@ -54,6 +54,6 @@ describe("decorator", () => {
     const controller = parseController(code, 'decorator_controller.js')
     expect(controller.isTyped).toBeTruthy()
 
-    expect(controller.targets).toEqual(['output', 'name', 'one', 'two'])
+    expect(controller.targetNames).toEqual(['output', 'name', 'one', 'two'])
   })
 })

@@ -13,7 +13,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.targets).toEqual(["one", "two", "three"])
+    expect(controller.targetNames).toEqual(["one", "two", "three"])
   })
 
   test("duplicate static targets", () => {
@@ -28,7 +28,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.targets).toEqual(["one", "one", "three"])
+    expect(controller.targetNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual("Duplicate definition of target:one")
@@ -50,7 +50,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.targets).toEqual(["output"])
+    expect(controller.targetNames).toEqual(["output"])
   })
 
   test("duplicate @Target decorator", () => {
@@ -68,7 +68,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.targets).toEqual(["output", "output"])
+    expect(controller.targetNames).toEqual(["output", "output"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual("Duplicate definition of target:output")
@@ -90,7 +90,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.targets).toEqual(["output"])
+    expect(controller.targetNames).toEqual(["output"])
   })
 
   test("parse multiple target definitions", () => {
@@ -108,7 +108,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.targets).toEqual(["output", "name"])
+    expect(controller.targetNames).toEqual(["output", "name"])
   })
 
   test("parse mix decorator and static definitions", () => {
@@ -129,7 +129,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.targets).toEqual(["output", "name", "item", "one", "two"])
+    expect(controller.targetNames).toEqual(["output", "name", "item", "one", "two"])
   })
 
   test("duplicate target in mix", () => {
@@ -148,7 +148,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.targets).toEqual(["output", "output"])
+    expect(controller.targetNames).toEqual(["output", "output"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual("Duplicate definition of target:output")
