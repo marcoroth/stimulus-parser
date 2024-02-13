@@ -185,6 +185,24 @@ describe("SourceFile", () => {
       ])
     })
 
+    test("anonymous class assigned to variable from Stimulus Controller import", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+        const Something = class extends Controller {}
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
+        {
+          className: "Something",
+          isStimulusDescendant: true,
+          superClass: stimulusControllerSuperClass,
+        },
+      ])
+    })
+
     test("named class with superclass from import via second class", () => {
       const code = `
         import { Controller } from "@hotwired/stimulus"

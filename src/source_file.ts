@@ -214,22 +214,19 @@ export class SourceFile {
     simple(this.ast as any, {
       ClassDeclaration: (node: Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration) => {
         const className = ast.extractIdentifier(node.id)
-        const superClassName = ast.extractIdentifier(node.superClass)
-        const importDeclaration = this.importDeclarations.find(i => i.localName === superClassName)
-        let superClass = this.classDeclarations.find(i => i.className === superClassName)
+        ast.convertClassDeclarationNodeToClassDeclaration(this, className, node)
+      },
 
-        if (!superClass && superClassName) {
-          superClass = new ClassDeclaration(superClassName, undefined, this)
+      VariableDeclaration: (node: Acorn.VariableDeclaration) => {
+        node.declarations.forEach(declaration => {
+          if (declaration.type !== "VariableDeclarator") return
+          if (declaration.id.type !== "Identifier") return
+          if (!declaration.init || declaration.init.type !== "ClassExpression") return
 
-          if (importDeclaration) {
-            superClass.isStimulusDescendant = importDeclaration.isStimulusImport
-            superClass.importDeclaration = importDeclaration
-          }
-        }
+          const className = ast.extractIdentifier(declaration.id)
 
-        const classDeclaration = new ClassDeclaration(className, superClass, this, node)
-
-        this.classDeclarations.push(classDeclaration)
+          ast.convertClassDeclarationNodeToClassDeclaration(this, className, declaration.init)
+        })
       }
     })
   }

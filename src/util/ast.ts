@@ -1,7 +1,10 @@
 import { ValueDefinition } from "../controller_property_definition"
 
+import { SourceFile } from "../source_file"
+import { ClassDeclaration } from "../class_declaration"
+
 import type * as Acorn from "acorn"
-import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
+import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType, ClassDeclarationNode } from "../types"
 
 export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
@@ -109,6 +112,26 @@ export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
       throw new Error(`node type ${node?.type}`)
   }
 }
+
+export function convertClassDeclarationNodeToClassDeclaration(sourceFile: SourceFile, className: string | undefined, node: ClassDeclarationNode) {
+  const superClassName = extractIdentifier(node.superClass)
+  const importDeclaration = sourceFile.importDeclarations.find(i => i.localName === superClassName)
+  let superClass = sourceFile.classDeclarations.find(i => i.className === superClassName)
+
+  if (!superClass && superClassName) {
+    superClass = new ClassDeclaration(superClassName, undefined, sourceFile)
+
+    if (importDeclaration) {
+      superClass.isStimulusDescendant = importDeclaration.isStimulusImport
+      superClass.importDeclaration = importDeclaration
+    }
+  }
+
+  const classDeclaration = new ClassDeclaration(className, superClass, sourceFile, node)
+
+  sourceFile.classDeclarations.push(classDeclaration)
+}
+
 
 export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefined {
   if (!node) return undefined

@@ -159,6 +159,45 @@ describe("SourceFile", () => {
       }])
     })
 
+    test("import and export named class in-line", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+
+        export class Something extends Controller {}
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      const importDeclaration = {
+        isStimulusImport: true,
+        localName: "Controller",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
+      }
+
+      const exportDeclaration = {
+        exportedName: "Something",
+        localName: "Something",
+        isStimulusExport: true,
+        type: "named"
+      }
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+
+      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
+        className: "Something",
+        isStimulusDescendant: true,
+        superClass: {
+          className: "Controller",
+          isStimulusDescendant: true,
+          importDeclaration
+        },
+        exportDeclaration
+      }])
+    })
+
     test("import and export default Controller", () => {
       const code = `
         import { Controller } from "@hotwired/stimulus"
@@ -278,5 +317,178 @@ describe("SourceFile", () => {
       }])
     })
 
+    test("import and default export anonymous class assinged to const", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+
+        const Something = class extends Controller {}
+
+        export default Something
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      const importDeclaration = {
+        isStimulusImport: true,
+        localName: "Controller",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
+      }
+
+      const exportDeclaration = {
+        exportedName: undefined,
+        localName: "Something",
+        isStimulusExport: true,
+        type: "default"
+      }
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+
+      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
+        className: "Something",
+        isStimulusDescendant: true,
+        superClass: {
+          className: "Controller",
+          isStimulusDescendant: true,
+          importDeclaration
+        },
+        exportDeclaration
+      }])
+    })
+
+    test("import and name export anonymous class assigned to const", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+
+        const Something = class extends Controller {}
+
+        export { Something }
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      const importDeclaration = {
+        isStimulusImport: true,
+        localName: "Controller",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
+      }
+
+      const exportDeclaration = {
+        exportedName: "Something",
+        localName: "Something",
+        isStimulusExport: true,
+        type: "named"
+      }
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+
+      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
+        className: "Something",
+        isStimulusDescendant: true,
+        superClass: {
+          className: "Controller",
+          isStimulusDescendant: true,
+          importDeclaration
+        },
+        exportDeclaration
+      }])
+    })
+
+    test("import and name export anonymous class assigned to const inline", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+
+        export const Something = class extends Controller {}
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      const importDeclaration = {
+        isStimulusImport: true,
+        localName: "Controller",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
+      }
+
+      const exportDeclaration = {
+        exportedName: "Something",
+        localName: "Something",
+        isStimulusExport: true,
+        type: "named"
+      }
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+
+      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
+        className: "Something",
+        isStimulusDescendant: true,
+        superClass: {
+          className: "Controller",
+          isStimulusDescendant: true,
+          importDeclaration
+        },
+        exportDeclaration
+      }])
+    })
+
+    test("import and name export anonymous class assigned to const via class declaration", () => {
+      const code = `
+        import { Controller } from "@hotwired/stimulus"
+
+        class Something extends Controller {}
+        const AnotherThing = class extends Something {}
+
+        export { AnotherThing }
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      const importDeclaration = {
+        isStimulusImport: true,
+        localName: "Controller",
+        originalName: "Controller",
+        source: "@hotwired/stimulus"
+      }
+
+      const exportDeclaration = {
+        exportedName: "AnotherThing",
+        localName: "AnotherThing",
+        isStimulusExport: true,
+        type: "named"
+      }
+
+      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+
+      const something = {
+        className: "Something",
+        isStimulusDescendant: true,
+        superClass: {
+          className: "Controller",
+          isStimulusDescendant: true,
+          importDeclaration
+        }
+      }
+
+      const anotherThing = {
+        className: "AnotherThing",
+        isStimulusDescendant: true,
+        superClass: something,
+        exportDeclaration
+      }
+
+      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
+        something,
+        anotherThing
+      ])
+    })
   })
 })

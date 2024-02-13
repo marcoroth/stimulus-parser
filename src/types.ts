@@ -48,4 +48,4 @@ export type ExportDeclaration = {
   node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
 }
 
-export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration
+export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration | Acorn.ClassExpression
