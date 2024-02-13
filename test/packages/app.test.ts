@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest"
 import { Project } from "../../src"
 
-const project = new Project(`${process.cwd()}/test/fixtures/packages/app`)
+const project = new Project(`${process.cwd()}/test/fixtures/app`)
 
 describe("packages", () => {
   describe("app", () => {
@@ -14,6 +14,7 @@ describe("packages", () => {
         "@stimulus-library/controllers",
         "@stimulus-library/mixins",
         "@stimulus-library/utilities",
+        "@vytant/stimulus-decorators",
         "stimulus-checkbox",
         "stimulus-clipboard",
         "stimulus-datepicker",
@@ -25,6 +26,7 @@ describe("packages", () => {
       ])
 
       expect(project.controllerRoots).toEqual([
+        "src/controllers",
         "node_modules/@stimulus-library/controllers",
         "node_modules/stimulus-checkbox/src",
         "node_modules/stimulus-clipboard/dist",
@@ -55,6 +57,8 @@ describe("packages", () => {
       //   "toggle",
       //   "transition",
       // ])
+
+      // expect(project.controllerDefinitions.map(controller => controller.classDeclaration.sourceFile.path)).toEqual([])
 
       const controller = project.controllerDefinitions.find(controller => controller.identifier === "modal")
 

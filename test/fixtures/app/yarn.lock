@@ -40,6 +40,14 @@
     "@stimulus-library/utilities" "^1.0.2"
     mitt "^3.0.0"
 
+"@vytant/stimulus-decorators@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@vytant/stimulus-decorators/-/stimulus-decorators-1.1.0.tgz#3d8a202c73fe952f6f674191487aae5483841fd4"
+  integrity sha512-6vQiXRSozjLOw3lfeZbTplQL5d0o09U2saGa6tKsUP9eGXAfjxRTxFjdiL+6UclOhdAg4k0tvW1n+1DXdFWQZQ==
+  dependencies:
+    "@hotwired/stimulus" "^3.0.0"
+    reflect-metadata "^0.1.13"
+
 date-fns@^2.29.3:
   version "2.30.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.30.0.tgz#f367e644839ff57894ec6ac480de40cae4b0f4d0"
@@ -56,6 +64,11 @@ mitt@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.1.tgz#ea36cf0cc30403601ae074c8f77b7092cdab36d1"
   integrity sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==
+
+reflect-metadata@^0.1.13:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.14.tgz#24cf721fe60677146bb77eeb0e1f9dece3d65859"
+  integrity sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==
 
 regenerator-runtime@^0.14.0:
   version "0.14.1"

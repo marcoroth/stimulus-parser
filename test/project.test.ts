@@ -242,6 +242,9 @@ describe("calculateControllerRoots", () => {
 })
 
 test("possibleControllerPathsForIdentifier", async () => {
+  project = new Project(`${process.cwd()}/test/fixtures/controller-paths`)
+
+  // This is only using the controllerRootFallback because we haven't found/analyzed anything else yet
   expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
     "app/javascript/controllers/rails_controller.cjs",
     "app/javascript/controllers/rails_controller.js",
@@ -255,27 +258,27 @@ test("possibleControllerPathsForIdentifier", async () => {
   await project.analyze()
 
   expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.cjs",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.jsx",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mjs",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.mts",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.ts",
-    "test/fixtures/controller-paths/app/javascript/controllers/rails_controller.tsx",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.cjs",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.js",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.jsx",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mjs",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.mts",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.ts",
-    "test/fixtures/controller-paths/app/packs/controllers/rails_controller.tsx",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.cjs",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.js",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.jsx",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mjs",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.mts",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.ts",
-    "test/fixtures/controller-paths/resources/js/controllers/rails_controller.tsx",
+    "app/javascript/controllers/rails_controller.cjs",
+    "app/javascript/controllers/rails_controller.js",
+    "app/javascript/controllers/rails_controller.jsx",
+    "app/javascript/controllers/rails_controller.mjs",
+    "app/javascript/controllers/rails_controller.mts",
+    "app/javascript/controllers/rails_controller.ts",
+    "app/javascript/controllers/rails_controller.tsx",
+    "app/packs/controllers/rails_controller.cjs",
+    "app/packs/controllers/rails_controller.js",
+    "app/packs/controllers/rails_controller.jsx",
+    "app/packs/controllers/rails_controller.mjs",
+    "app/packs/controllers/rails_controller.mts",
+    "app/packs/controllers/rails_controller.ts",
+    "app/packs/controllers/rails_controller.tsx",
+    "resources/js/controllers/rails_controller.cjs",
+    "resources/js/controllers/rails_controller.js",
+    "resources/js/controllers/rails_controller.jsx",
+    "resources/js/controllers/rails_controller.mjs",
+    "resources/js/controllers/rails_controller.mts",
+    "resources/js/controllers/rails_controller.ts",
+    "resources/js/controllers/rails_controller.tsx",
   ])
 })
 
