@@ -24,7 +24,7 @@ export class Project {
 
   public parser: Parser = new Parser(this)
 
-  private sourceFiles: Array<SourceFile> = []
+  sourceFiles: Array<SourceFile> = []
 
   static calculateControllerRoots(filenames: string[]) {
     let controllerRoots: string[] = [];
