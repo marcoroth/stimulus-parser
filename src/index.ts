@@ -1,5 +1,7 @@
 export * from "./class_declaration"
 export * from "./controller_definition"
+export * from "./export_declaration"
+export * from "./import_declaration"
 export * from "./parse_error"
 export * from "./parser"
 export * from "./project"

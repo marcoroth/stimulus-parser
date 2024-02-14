@@ -8,10 +8,12 @@ import { ParseError } from "./parse_error"
 import { Project } from "./project"
 import { ControllerDefinition } from "./controller_definition"
 import { ClassDeclaration } from "./class_declaration"
+import { ImportDeclaration } from "./import_declaration"
+import { ExportDeclaration } from "./export_declaration"
 
 import type * as Acorn from "acorn"
 import type { AST } from "@typescript-eslint/typescript-estree"
-import type { ParserOptions, ImportDeclaration, ExportDeclaration } from "./types"
+import type { ParserOptions } from "./types"
 
 export class SourceFile {
   public content: string
@@ -99,16 +101,13 @@ export class SourceFile {
       ImportDeclaration: node => {
         node.specifiers.forEach(specifier => {
           const originalName = (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") ? specifier.imported.name : undefined
+          const localName = specifier.local.name
           const source = ast.extractLiteral(node.source) as string
           const isStimulusImport = (originalName === "Controller" && source === "@hotwired/stimulus")
 
-          this.importDeclarations.push({
-            originalName,
-            localName: specifier.local.name,
-            source,
-            isStimulusImport,
-            node
-          })
+          this.importDeclarations.push(
+            new ImportDeclaration({ originalName, localName, source, isStimulusImport, node })
+          )
         })
       },
     })
@@ -132,9 +131,13 @@ export class SourceFile {
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
           if (exportedName === "default") {
-            this.exportDeclarations.push({ localName, source, isStimulusExport, type: "default", node })
+            this.exportDeclarations.push(
+              new ExportDeclaration({ localName, source, isStimulusExport, type: "default", node })
+            )
           } else {
-            this.exportDeclarations.push({ exportedName, localName, source, isStimulusExport, type, node })
+            this.exportDeclarations.push(
+              new ExportDeclaration({ exportedName, localName, source, isStimulusExport, type, node })
+            )
           }
         })
 
@@ -146,7 +149,9 @@ export class SourceFile {
           const classDeclaration = findClass(localName)
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-          this.exportDeclarations.push({ exportedName, localName, isStimulusExport, type, node })
+          this.exportDeclarations.push(
+            new ExportDeclaration({ exportedName, localName, isStimulusExport, type, node })
+          )
         }
 
         if (declaration.type === "VariableDeclaration") {
@@ -156,7 +161,9 @@ export class SourceFile {
             const classDeclaration = findClass(localName)
             const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-            this.exportDeclarations.push({ exportedName, localName, isStimulusExport, type, node })
+            this.exportDeclarations.push(
+              new ExportDeclaration({ exportedName, localName, isStimulusExport, type, node })
+            )
           })
         }
       },
@@ -171,7 +178,9 @@ export class SourceFile {
         const classDeclaration = findClass(localName)
         const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-        this.exportDeclarations.push({ localName, isStimulusExport, type, node })
+        this.exportDeclarations.push(
+          new ExportDeclaration({ localName, isStimulusExport, type, node })
+        )
       },
 
       ExportAllDeclaration: node => {
@@ -180,7 +189,9 @@ export class SourceFile {
         const source = ast.extractLiteralAsString(node.source)
         const isStimulusExport = false // TODO: detect namespace Stimulus exports
 
-        this.exportDeclarations.push({ exportedName, source, isStimulusExport, type, node })
+        this.exportDeclarations.push(
+          new ExportDeclaration({ exportedName, source, isStimulusExport, type, node })
+        )
       },
 
     })

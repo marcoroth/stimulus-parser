@@ -1,5 +1,6 @@
-import { ClassDeclaration } from "../../src/class_declaration"
-import type { ImportDeclaration, ExportDeclaration } from "../../src/types"
+import type { ClassDeclaration } from "../../src/class_declaration"
+import type { ImportDeclaration } from "../../src/import_declaration"
+import type { ExportDeclaration } from "../../src/export_declaration"
 
 export const stripNodeField = (object: any): any => {
   if (object?.node) {

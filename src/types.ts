@@ -31,21 +31,4 @@ export type ParserOptions = {
   filePath?: string
 }
 
-export type ImportDeclaration = {
-  originalName?: string
-  localName: string
-  source: string
-  isStimulusImport: boolean
-  node: Acorn.ImportDeclaration
-}
-
-export type ExportDeclaration = {
-  localName?: string
-  exportedName?: string
-  source?: string
-  isStimulusExport: boolean
-  type: "default" | "named" | "namespace"
-  node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
-}
-
 export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration | Acorn.ClassExpression

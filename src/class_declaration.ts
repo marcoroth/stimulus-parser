@@ -7,10 +7,12 @@ import * as properties from "./util/properties"
 import { ParseError } from "./parse_error"
 import { SourceFile } from "./source_file"
 import { ControllerDefinition } from "./controller_definition"
+import { ImportDeclaration } from "./import_declaration"
+import { ExportDeclaration } from "./export_declaration"
 import { ControllerPropertyDefinition, MethodDefinition } from "./controller_property_definition"
 
 import type { TSESTree } from "@typescript-eslint/typescript-estree"
-import type { ClassDeclarationNode, ExportDeclaration, ImportDeclaration } from "./types"
+import type { ClassDeclarationNode } from "./types"
 
 export class ClassDeclaration {
   public readonly sourceFile: SourceFile
