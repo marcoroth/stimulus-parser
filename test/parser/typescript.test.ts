@@ -122,7 +122,7 @@ describe("with TS Syntax", () => {
       export default class extends Controller {
     `
 
-    const sourceFile = new SourceFile("error_controller.ts", code, new Project(process.cwd()))
+    const sourceFile = new SourceFile(new Project(process.cwd()), "error_controller.ts", code)
 
     // expect(sourceFile.identifier).toEqual("error")
     expect(sourceFile.hasErrors).toBeTruthy()

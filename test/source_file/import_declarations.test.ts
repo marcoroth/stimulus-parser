@@ -12,7 +12,7 @@ describe("SourceFile", () => {
         import "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([])
@@ -23,7 +23,7 @@ describe("SourceFile", () => {
         import Something from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
@@ -39,7 +39,7 @@ describe("SourceFile", () => {
         import { something } from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
@@ -55,7 +55,7 @@ describe("SourceFile", () => {
         import { something as somethingElse } from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
@@ -71,7 +71,7 @@ describe("SourceFile", () => {
         import * as something from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
@@ -87,7 +87,7 @@ describe("SourceFile", () => {
         import onething, { anotherthing, thirdthing as something } from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([
@@ -117,7 +117,7 @@ describe("SourceFile", () => {
         import { default as something } from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([
@@ -135,7 +135,7 @@ describe("SourceFile", () => {
         import type { something } from "something"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
@@ -151,7 +151,7 @@ describe("SourceFile", () => {
         import { Controller } from "@hotwired/stimulus"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
@@ -167,7 +167,7 @@ describe("SourceFile", () => {
         import { Controller as StimulusController } from "@hotwired/stimulus"
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{

@@ -13,7 +13,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const exportDeclaration = {
@@ -43,7 +43,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -85,7 +85,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -127,7 +127,7 @@ describe("SourceFile", () => {
         export { Something as SomethingController }
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -167,7 +167,7 @@ describe("SourceFile", () => {
         export class Something extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -208,7 +208,7 @@ describe("SourceFile", () => {
         export default Something
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -247,7 +247,7 @@ describe("SourceFile", () => {
         export default class Something extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -286,7 +286,7 @@ describe("SourceFile", () => {
         export default class extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -327,7 +327,7 @@ describe("SourceFile", () => {
         export default Something
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -368,7 +368,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -407,7 +407,7 @@ describe("SourceFile", () => {
         export const Something = class extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {
@@ -449,7 +449,7 @@ describe("SourceFile", () => {
         export { AnotherThing }
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const importDeclaration = {

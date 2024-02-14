@@ -140,7 +140,7 @@ export class Project {
 
     if (!sourceFile) {
       const content = await readFile(path)
-      const sourceFile = new SourceFile(path, content, this)
+      const sourceFile = new SourceFile(this, path, content)
 
       this.sourceFiles.push(sourceFile)
     } else {

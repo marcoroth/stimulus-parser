@@ -24,7 +24,7 @@ describe("SourceFile", () => {
         class Something {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
@@ -40,7 +40,7 @@ describe("SourceFile", () => {
         class Better {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -62,7 +62,7 @@ describe("SourceFile", () => {
         export default class {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -86,7 +86,7 @@ describe("SourceFile", () => {
         export default class extends Something {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -119,7 +119,7 @@ describe("SourceFile", () => {
         class Something extends Better {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -146,7 +146,7 @@ describe("SourceFile", () => {
         class Something extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -174,7 +174,7 @@ describe("SourceFile", () => {
         class Something extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -192,7 +192,7 @@ describe("SourceFile", () => {
         const Something = class extends Controller {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
@@ -212,7 +212,7 @@ describe("SourceFile", () => {
         class Something extends Better {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const even = {
@@ -248,7 +248,7 @@ describe("SourceFile", () => {
         class Something extends Better {}
       `
 
-      const sourceFile = new SourceFile("abc.js", code, project)
+      const sourceFile = new SourceFile(project, "abc.js", code)
       sourceFile.analyze()
 
       const superClass = {

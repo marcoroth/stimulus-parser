@@ -17,7 +17,7 @@ import type { AST } from "@typescript-eslint/typescript-estree"
 import type { ParserOptions } from "./types"
 
 export class SourceFile {
-  public content: string
+  public content?: string
   readonly path: string
   readonly project: Project
 
@@ -43,15 +43,20 @@ export class SourceFile {
     return path.extname(this.path)
   }
 
-  constructor(path: string, content: string, project: Project) {
+  constructor(project: Project, path: string, content?: string) {
+    this.project = project
     this.path = path
     this.content = content
-    this.project = project
 
     this.parse()
   }
 
   parse() {
+    if (this.content === undefined) {
+      this.errors.push(new ParseError("FAIL", "File content hasn't been read yet"))
+      return
+    }
+
     try {
       this.ast = this.project.parser.parse(this.content, this.path)
     } catch(error: any) {

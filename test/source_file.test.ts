@@ -4,8 +4,8 @@ import { Project, SourceFile } from "../src"
 const project = new Project(process.cwd())
 
 describe("SourceFile", () => {
-  test("parses", () => {
-    const sourceFile = new SourceFile("abc.js", "", project)
+  test("parses with content", () => {
+    const sourceFile = new SourceFile(project, "abc.js", "")
 
     expect(sourceFile.ast).toEqual({
       body: [],
@@ -26,6 +26,16 @@ describe("SourceFile", () => {
       type: "Program",
     })
 
+    expect(sourceFile.errors.length).toEqual(0)
+    expect(sourceFile.controllerDefinitions).toEqual([])
+  })
+
+  test("doesn't parse with no content", () => {
+    const sourceFile = new SourceFile(project, "abc.js", undefined)
+
+    expect(sourceFile.ast).toBeUndefined()
+    expect(sourceFile.errors.length).toEqual(1)
+    expect(sourceFile.errors[0].message).toEqual("File content hasn't been read yet")
     expect(sourceFile.controllerDefinitions).toEqual([])
   })
 })

@@ -7,7 +7,7 @@ const project = new Project(process.cwd())
 describe("SourceFile", () => {
   describe("refresh", () => {
     test("refreshes content", async () => {
-      const sourceFile = new SourceFile("file.js", "initial", project)
+      const sourceFile = new SourceFile(project, "file.js", "initial")
 
       expect(sourceFile.content).toEqual("initial")
 
@@ -18,7 +18,7 @@ describe("SourceFile", () => {
     })
 
     test("refreshes class declarations", async () => {
-      const sourceFile = new SourceFile("file.js", "", project)
+      const sourceFile = new SourceFile(project, "file.js", "")
 
       expect(sourceFile.classDeclarations.length).toEqual(0)
 

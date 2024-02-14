@@ -27,8 +27,8 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const applicationControllerFile = new SourceFile("app/javascript/application_controller.js", applicationControllerCode, project)
-      const helloControllerFile = new SourceFile("app/javascript/hello_controller.js", helloControllerCode, project)
+      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       applicationControllerFile.analyze()
       helloControllerFile.analyze()
@@ -46,8 +46,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile("app/javascript/nested/application_controller.ts", applicationControllerCode, project)
-      const helloControllerFile = new SourceFile("app/javascript/hello_controller.ts", helloControllerCode, project)
+      const applicationControllerFile = new SourceFile(project, "app/javascript/nested/application_controller.ts", applicationControllerCode)
+      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.ts", helloControllerCode)
 
       applicationControllerFile.analyze()
       helloControllerFile.analyze()
@@ -65,8 +65,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile("app/javascript/application_controller.js", applicationControllerCode, project)
-      const helloControllerFile = new SourceFile("app/javascript/hello_controller.js", helloControllerCode, project)
+      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       applicationControllerFile.analyze()
       helloControllerFile.analyze()
@@ -84,8 +84,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile("app/javascript/application_controller.ts", applicationControllerCode, project)
-      const helloControllerFile = new SourceFile("app/javascript/hello_controller.ts", helloControllerCode, project)
+      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.ts", applicationControllerCode)
+      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.ts", helloControllerCode)
 
       applicationControllerFile.analyze()
       helloControllerFile.analyze()
@@ -103,8 +103,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile("app/javascript/application_controller.js", applicationControllerCode, project)
-      const helloControllerFile = new SourceFile("app/javascript/nested/hello_controller.js", helloControllerCode, project)
+      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = new SourceFile(project, "app/javascript/nested/hello_controller.js", helloControllerCode)
 
       applicationControllerFile.analyze()
       helloControllerFile.analyze()
@@ -122,8 +122,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile("app/javascript/nested/application_controller.js", applicationControllerCode, project)
-      const helloControllerFile = new SourceFile("app/javascript/hello_controller.js", helloControllerCode, project)
+      const applicationControllerFile = new SourceFile(project, "app/javascript/nested/application_controller.js", applicationControllerCode)
+      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       applicationControllerFile.analyze()
       helloControllerFile.analyze()
@@ -139,7 +139,7 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const helloControllerFile = new SourceFile("app/javascript/hello_controller.js", helloControllerCode, project)
+      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
       helloControllerFile.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)

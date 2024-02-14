@@ -14,7 +14,7 @@ describe("@hotwired/stimulus Controller", () => {
       export default class extends Controller {}
     `
 
-    const sourceFile = new SourceFile("parent_controller.js", code, project)
+    const sourceFile = new SourceFile(project, "parent_controller.js", code)
     sourceFile.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
@@ -36,7 +36,7 @@ describe("@hotwired/stimulus Controller", () => {
       export default class extends StimulusController {}
     `
 
-    const sourceFile = new SourceFile("parent_controller.js", code, project)
+    const sourceFile = new SourceFile(project, "parent_controller.js", code)
     sourceFile.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
@@ -63,7 +63,7 @@ describe("with controller in same file", () => {
       export default class extends AbstractController {}
     `
 
-    const sourceFile = new SourceFile("parent_controller.js", code, project)
+    const sourceFile = new SourceFile(project, "parent_controller.js", code)
     sourceFile.analyze()
 
     const abstractController = sourceFile.classDeclarations[0]
@@ -96,7 +96,7 @@ describe("with controller from other file", () => {
       export default class extends ApplicationController {}
     `
 
-    const sourceFile = new SourceFile("parent_controller.js", code, project)
+    const sourceFile = new SourceFile(project, "parent_controller.js", code)
     sourceFile.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
@@ -126,7 +126,7 @@ describe("with controller from stimulus package", () => {
       export default class extends SomeController {}
     `
 
-    const sourceFile = new SourceFile("parent_controller.js", code, project)
+    const sourceFile = new SourceFile(project, "parent_controller.js", code)
     sourceFile.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
@@ -149,7 +149,7 @@ describe("with controller from stimulus package", () => {
       export default class extends SomeController {}
     `
 
-    const sourceFile = new SourceFile("parent_controller.js", code, project)
+    const sourceFile = new SourceFile(project, "parent_controller.js", code)
     sourceFile.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]

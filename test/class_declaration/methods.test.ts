@@ -16,7 +16,7 @@ describe("ClassDeclaration", () => {
         }
       `
 
-      const sourceFile = new SourceFile("something.js", code, project)
+      const sourceFile = new SourceFile(project, "something.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
@@ -37,7 +37,7 @@ describe("ClassDeclaration", () => {
         }
       `
 
-      const sourceFile = new SourceFile("something.js", code, project)
+      const sourceFile = new SourceFile(project, "something.js", code)
       sourceFile.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
@@ -70,7 +70,7 @@ describe("ClassDeclaration", () => {
         }
       `
 
-      const sourceFile = new SourceFile("something.js", code, project)
+      const sourceFile = new SourceFile(project, "something.js", code)
       sourceFile.analyze()
 
       expect(sourceFile.controllerDefinitions[0].methodNames).toEqual(["connect", "method", "disconnect"])
