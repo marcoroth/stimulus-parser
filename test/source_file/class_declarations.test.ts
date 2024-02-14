@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
@@ -19,7 +20,7 @@ const stimulusControllerSuperClass = {
 describe("SourceFile", () => {
   describe("classDeclarations", () => {
     test("named class", () => {
-      const code = `
+      const code = dedent`
         class Something {}
       `
 
@@ -34,7 +35,7 @@ describe("SourceFile", () => {
     })
 
     test("multiple classes", () => {
-      const code = `
+      const code = dedent`
         class Something {}
         class Better {}
       `
@@ -57,7 +58,7 @@ describe("SourceFile", () => {
     })
 
     test("anonymous class", () => {
-      const code = `
+      const code = dedent`
         export default class {}
       `
 
@@ -80,7 +81,7 @@ describe("SourceFile", () => {
     })
 
     test("anonymous class with extends", () => {
-      const code = `
+      const code = dedent`
         class Something {}
         export default class extends Something {}
       `
@@ -113,7 +114,7 @@ describe("SourceFile", () => {
     })
 
     test("named class with superclass", () => {
-      const code = `
+      const code = dedent`
         class Better {}
         class Something extends Better {}
       `
@@ -140,7 +141,7 @@ describe("SourceFile", () => {
     })
 
     test("named class with superclass from import", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "better"
         class Something extends Controller {}
       `
@@ -168,7 +169,7 @@ describe("SourceFile", () => {
     })
 
     test("named class with superclass from Stimulus Controller import", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
         class Something extends Controller {}
       `
@@ -186,7 +187,7 @@ describe("SourceFile", () => {
     })
 
     test("anonymous class assigned to variable from Stimulus Controller import", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
         const Something = class extends Controller {}
       `
@@ -204,7 +205,7 @@ describe("SourceFile", () => {
     })
 
     test("named class with superclass from import via second class", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
         class Even extends Controller {}
         class Better extends Even {}
@@ -240,7 +241,7 @@ describe("SourceFile", () => {
     })
 
     test("named class with superclass from import rename via second class", () => {
-      const code = `
+      const code = dedent`
         import { Controller as StimulusController } from "@hotwired/stimulus"
         class Even extends StimulusController {}
         class Better extends Even {}

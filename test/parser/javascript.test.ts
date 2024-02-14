@@ -1,5 +1,5 @@
+import dedent from "dedent"
 import { expect, test, describe } from "vitest"
-
 import { parseController } from "../helpers/parse"
 
 import { Project } from "../../src/project"
@@ -7,7 +7,7 @@ import { SourceFile } from "../../src/source_file"
 
 describe("with JS Syntax", () => {
   test("doesn't parse non Stimulus class", () => {
-    const code = `
+    const code = dedent`
       export default class extends Controller {
         static targets = ["one", "two", "three"]
       }
@@ -18,7 +18,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse targets", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -31,7 +31,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse classes", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -46,7 +46,7 @@ describe("with JS Syntax", () => {
   // TODO: instead, we could also mark the SpreadElement node with
   // a warning that says that we couldn't parse it
   test.todo("parse classes with spread", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -61,7 +61,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -86,7 +86,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse values with with default values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -111,7 +111,7 @@ describe("with JS Syntax", () => {
   })
 
   test.todo("parse values with spread", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -140,7 +140,7 @@ describe("with JS Syntax", () => {
   })
 
   test("should handle syntax errors", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -159,7 +159,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse arrow function", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -183,7 +183,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse methods", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -199,7 +199,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse private methods", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -214,7 +214,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse nested object/array default value types", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -233,7 +233,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse controller with public class fields", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -252,7 +252,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse controller with private getter", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -270,7 +270,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse controller with private setter", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -288,7 +288,7 @@ describe("with JS Syntax", () => {
   })
 
   test("parse controller with variable declaration in method body", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {

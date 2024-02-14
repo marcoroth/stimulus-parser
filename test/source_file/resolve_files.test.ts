@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 import { Project, SourceFile, ClassDeclaration } from "../../src"
 
@@ -18,7 +19,7 @@ describe("SourceFile", () => {
     test("relative path same directory with .js files", async () => {
       const applicationControllerCode = emptyController
 
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import ApplicationController from "./application_controller"
 
         export default class extends ApplicationController {}
@@ -39,7 +40,7 @@ describe("SourceFile", () => {
     test("relative path same directory with .ts files", () => {
       const applicationControllerCode = emptyController
 
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import ApplicationController from "./nested/application_controller"
 
         export default class extends ApplicationController {}
@@ -58,7 +59,7 @@ describe("SourceFile", () => {
     test("relative path same directory with .js file extension", () => {
       const applicationControllerCode = emptyController
 
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import ApplicationController from "./application_controller.js"
 
         export default class extends ApplicationController {}
@@ -77,7 +78,7 @@ describe("SourceFile", () => {
     test("relative path same directory with .ts file extension", () => {
       const applicationControllerCode = emptyController
 
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import ApplicationController from "./application_controller.ts"
 
         export default class extends ApplicationController {}
@@ -96,7 +97,7 @@ describe("SourceFile", () => {
     test("relative path directory above", () => {
       const applicationControllerCode = emptyController
 
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import ApplicationController from "../application_controller"
 
         export default class extends ApplicationController {}
@@ -115,7 +116,7 @@ describe("SourceFile", () => {
     test("relative path directory below", () => {
       const applicationControllerCode = emptyController
 
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import ApplicationController from "./nested/application_controller"
 
         export default class extends ApplicationController {}
@@ -132,7 +133,7 @@ describe("SourceFile", () => {
     })
 
     test("resolve node module package path with node module not in detectedNodeModules", () => {
-      const helloControllerCode = `
+      const helloControllerCode = dedent`
         import { Modal } from "some-unknown-package"
 
         export default class extends ApplicationController {}

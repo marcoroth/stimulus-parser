@@ -1,9 +1,10 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { parseController } from "../helpers/parse"
 
 describe("parse values", () => {
   test("static", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -30,7 +31,7 @@ describe("parse values", () => {
   })
 
   test("static with default values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -57,7 +58,7 @@ describe("parse values", () => {
   })
 
   test("duplicate static values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -76,12 +77,14 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(5)
-    expect(controller.errors[0].loc.end.line).toEqual(9)
+    expect(controller.errors[0].loc.start.line).toEqual(4)
+    expect(controller.errors[0].loc.start.column).toEqual(18)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.end.column).toEqual(3)
   })
 
   test("duplicate decorator mixed with static values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Value, TypedController } from "@vytant/stimulus-decorators";
 
@@ -102,12 +105,14 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(9)
-    expect(controller.errors[0].loc.end.line).toEqual(11)
+    expect(controller.errors[0].loc.start.line).toEqual(8)
+    expect(controller.errors[0].loc.start.column).toEqual(18)
+    expect(controller.errors[0].loc.end.line).toEqual(10)
+    expect(controller.errors[0].loc.end.column).toEqual(3)
   })
 
   test("duplicate static values mixed with decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Value, TypedController } from "@vytant/stimulus-decorators";
 
@@ -128,12 +133,14 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(7)
-    expect(controller.errors[0].loc.end.line).toEqual(9)
+    expect(controller.errors[0].loc.start.line).toEqual(6)
+    expect(controller.errors[0].loc.start.column).toEqual(18)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.end.column).toEqual(3)
   })
 
   test("decorated", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus";
       import { Value, TypedController } from "@vytant/stimulus-decorators";
 
@@ -160,7 +167,7 @@ describe("parse values", () => {
   })
 
   test("decorated with default values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus";
       import { Value, TypedController } from "@vytant/stimulus-decorators";
 
@@ -187,7 +194,7 @@ describe("parse values", () => {
   })
 
   test("parse static value with nested object/array default value", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -214,7 +221,7 @@ describe("parse values", () => {
   })
 
   test("parse decorated @Value with nested object/array with default value", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus";
       import { Value, TypedController } from "@vytant/stimulus-decorators";
 

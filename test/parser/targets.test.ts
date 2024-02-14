@@ -1,9 +1,10 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { parseController } from "../helpers/parse"
 
 describe("parse targets", () => {
   test("static targets", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -17,7 +18,7 @@ describe("parse targets", () => {
   })
 
   test("duplicate static targets", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -32,12 +33,14 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(5)
-    expect(controller.errors[0].loc.end.line).toEqual(5)
+    expect(controller.errors[0].loc.start.line).toEqual(4)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(4)
+    expect(controller.errors[0].loc.end.column).toEqual(42)
   })
 
   test("other literals are treated a strings in static targets array", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -53,7 +56,7 @@ describe("parse targets", () => {
   })
 
   test.todo("variable reference in static targets array", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       const variable = "two"
@@ -71,7 +74,7 @@ describe("parse targets", () => {
   })
 
   test.todo("trace variable reference in static targets array", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       const variable = "two"
@@ -90,7 +93,7 @@ describe("parse targets", () => {
   })
 
   test.todo("trace static property literal reference in static targets array", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -107,7 +110,7 @@ describe("parse targets", () => {
   })
 
   test("single @Target decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -124,7 +127,7 @@ describe("parse targets", () => {
   })
 
   test("duplicate @Target decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -142,12 +145,14 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "output"`)
-    expect(controller.errors[0].loc.start.line).toEqual(8)
-    expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.start.line).toEqual(7)
+    expect(controller.errors[0].loc.start.column).toEqual(2)
+    expect(controller.errors[0].loc.end.line).toEqual(7)
+    expect(controller.errors[0].loc.end.column).toEqual(57)
   })
 
   test("single @Targets decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Targets, TypedController } from "@vytant/stimulus-decorators";
 
@@ -164,7 +169,7 @@ describe("parse targets", () => {
   })
 
   test("parse multiple target definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -182,7 +187,7 @@ describe("parse targets", () => {
   })
 
   test("parse mix decorator and static definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -203,7 +208,7 @@ describe("parse targets", () => {
   })
 
   test("duplicate target in mix", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -222,7 +227,9 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "output"`)
-    expect(controller.errors[0].loc.start.line).toEqual(7)
-    expect(controller.errors[0].loc.end.line).toEqual(7)
+    expect(controller.errors[0].loc.start.line).toEqual(6)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(6)
+    expect(controller.errors[0].loc.end.column).toEqual(29)
   })
 })

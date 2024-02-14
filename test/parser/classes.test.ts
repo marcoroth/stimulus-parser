@@ -1,9 +1,10 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { parseController } from "../helpers/parse"
 
 describe("parse classes", () => {
   test("static", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -18,7 +19,7 @@ describe("parse classes", () => {
   })
 
   test("duplicate static classes", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -33,12 +34,14 @@ describe("parse classes", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus class "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(5)
-    expect(controller.errors[0].loc.end.line).toEqual(5)
+    expect(controller.errors[0].loc.start.line).toEqual(4)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(4)
+    expect(controller.errors[0].loc.end.column).toEqual(42)
   })
 
   test("single @Class decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Class, TypedController } from "@vytant/stimulus-decorators";
 
@@ -55,7 +58,7 @@ describe("parse classes", () => {
   })
 
   test("single @Classes decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Classes, TypedController } from "@vytant/stimulus-decorators";
 
@@ -72,7 +75,7 @@ describe("parse classes", () => {
   })
 
   test("parse multiple class definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Class, TypedController } from "@vytant/stimulus-decorators";
 
@@ -90,7 +93,7 @@ describe("parse classes", () => {
   })
 
   test("parse mix decorator and static definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Class, Classes, TypedController } from "@vytant/stimulus-decorators";
 

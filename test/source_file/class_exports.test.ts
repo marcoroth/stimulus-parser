@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
@@ -7,7 +8,7 @@ const project = new Project(process.cwd())
 describe("SourceFile", () => {
   describe("class exports", () => {
     test("export named class", () => {
-      const code = `
+      const code = dedent`
         class Something {}
         export { Something }
       `
@@ -34,7 +35,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export named class", () => {
-      const code = `
+      const code = dedent`
         import { SuperClass } from "./super_class"
 
         class Something extends SuperClass {}
@@ -76,7 +77,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export named Controller", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         class Something extends Controller {}
@@ -118,7 +119,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export named Controller with alias", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         class Something extends Controller {}
@@ -160,7 +161,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export named class in-line", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         export class Something extends Controller {}
@@ -199,7 +200,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export default Controller", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         class Something extends Controller {}
@@ -240,7 +241,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export default Controller in single statement", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         export default class Something extends Controller {}
@@ -279,7 +280,7 @@ describe("SourceFile", () => {
     })
 
     test("import and export default anonymous Controller class in single statement", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         export default class extends Controller {}
@@ -318,7 +319,7 @@ describe("SourceFile", () => {
     })
 
     test("import and default export anonymous class assinged to const", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         const Something = class extends Controller {}
@@ -359,7 +360,7 @@ describe("SourceFile", () => {
     })
 
     test("import and name export anonymous class assigned to const", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         const Something = class extends Controller {}
@@ -400,7 +401,7 @@ describe("SourceFile", () => {
     })
 
     test("import and name export anonymous class assigned to const inline", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         export const Something = class extends Controller {}
@@ -439,7 +440,7 @@ describe("SourceFile", () => {
     })
 
     test("import and name export anonymous class assigned to const via class declaration", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         class Something extends Controller {}

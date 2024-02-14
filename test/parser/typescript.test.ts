@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { expect, test, describe } from "vitest"
 import { parseController } from "../helpers/parse"
 
@@ -6,7 +7,7 @@ import { SourceFile } from "../../src/source_file"
 
 describe("with TS Syntax", () => {
   test("parse typescript code", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -23,7 +24,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse targets", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -40,7 +41,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse classes", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -53,7 +54,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -84,7 +85,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse values with with default values", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -115,7 +116,7 @@ describe("with TS Syntax", () => {
   })
 
   test("should handle syntax errors", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -133,7 +134,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse arrow function", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -153,7 +154,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse methods", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -172,7 +173,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse private methods", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -188,7 +189,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse nested object/array default value types", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -207,7 +208,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse controller with public class fields", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -225,7 +226,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse controller with private getter", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -243,7 +244,7 @@ describe("with TS Syntax", () => {
   })
 
   test("parse controller with private setter", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {

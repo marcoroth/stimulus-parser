@@ -1,9 +1,10 @@
+import dedent from "dedent"
 import { expect, test, describe } from "vitest"
 import { parseController } from "../helpers/parse"
 
 describe("decorator", () => {
   test("parse single target", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -20,7 +21,7 @@ describe("decorator", () => {
   })
 
   test("parse multiple target definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -38,7 +39,7 @@ describe("decorator", () => {
   })
 
   test("parse mix decorator and static definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
 
@@ -58,7 +59,7 @@ describe("decorator", () => {
   })
 
   test("adds error when decorator is used be controller is not decorated with @TypedController", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target } from "@vytant/stimulus-decorators";
 
@@ -71,13 +72,15 @@ describe("decorator", () => {
     expect(controller.isTyped).toBeFalsy()
     expect(controller.errors.length).toEqual(1)
     expect(controller.errors[0].message).toEqual("Controller needs to be decorated with @TypedController in order to use decorators.")
-    expect(controller.errors[0].loc.start).toEqual({ line: 5, column: 21 })
-    expect(controller.errors[0].loc.end).toEqual({ line: 7, column: 7 })
+    expect(controller.errors[0].loc.start.line).toEqual(4)
+    expect(controller.errors[0].loc.start.column).toEqual(15)
+    expect(controller.errors[0].loc.end.line).toEqual(6)
+    expect(controller.errors[0].loc.end.column).toEqual(1)
     expect(controller.targetNames).toEqual(['output'])
   })
 
   test("adds error when controller is decorated with @TypedController but no decorated in controller is used", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { TypedController } from "@vytant/stimulus-decorators";
 
@@ -89,7 +92,9 @@ describe("decorator", () => {
     expect(controller.isTyped).toBeTruthy()
     expect(controller.errors.length).toEqual(1)
     expect(controller.errors[0].message).toEqual("Controller was decorated with @TypedController but Controller didn't use any decorators.")
-    expect(controller.errors[0].loc.start).toEqual({ line: 6, column: 21 })
-    expect(controller.errors[0].loc.end).toEqual({ line: 6, column: 48 })
+    expect(controller.errors[0].loc.start.line).toEqual(5)
+    expect(controller.errors[0].loc.start.column).toEqual(15)
+    expect(controller.errors[0].loc.end.line).toEqual(5)
+    expect(controller.errors[0].loc.end.column).toEqual(42)
   })
 })

@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
@@ -7,7 +8,7 @@ const project = new Project(process.cwd())
 describe("SourceFile", () => {
   describe("importDeclarations", () => {
     test("file import", () => {
-      const code = `
+      const code = dedent`
         import "something"
       `
 
@@ -18,7 +19,7 @@ describe("SourceFile", () => {
     })
 
     test("default import", () => {
-      const code = `
+      const code = dedent`
         import Something from "something"
       `
 
@@ -34,7 +35,7 @@ describe("SourceFile", () => {
     })
 
     test("named import", () => {
-      const code = `
+      const code = dedent`
         import { something } from "something"
       `
 
@@ -50,7 +51,7 @@ describe("SourceFile", () => {
     })
 
     test("named import with rename", () => {
-      const code = `
+      const code = dedent`
         import { something as somethingElse } from "something"
       `
 
@@ -66,7 +67,7 @@ describe("SourceFile", () => {
     })
 
     test("namespace import", () => {
-      const code = `
+      const code = dedent`
         import * as something from "something"
       `
 
@@ -82,7 +83,7 @@ describe("SourceFile", () => {
     })
 
     test("mixed import", () => {
-      const code = `
+      const code = dedent`
         import onething, { anotherthing, thirdthing as something } from "something"
       `
 
@@ -112,7 +113,7 @@ describe("SourceFile", () => {
     })
 
     test("import default as", () => {
-      const code = `
+      const code = dedent`
         import { default as something } from "something"
       `
 
@@ -130,7 +131,7 @@ describe("SourceFile", () => {
     })
 
     test("type import", () => {
-      const code = `
+      const code = dedent`
         import type { something } from "something"
       `
 
@@ -146,7 +147,7 @@ describe("SourceFile", () => {
     })
 
     test("stimulus controller import", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
       `
 
@@ -162,7 +163,7 @@ describe("SourceFile", () => {
     })
 
     test("stimulus controller import with alias", () => {
-      const code = `
+      const code = dedent`
         import { Controller as StimulusController } from "@hotwired/stimulus"
       `
 

@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { expect, test, describe } from "vitest"
 import { setupProject } from "../helpers/setup"
 
@@ -7,7 +8,7 @@ const project = setupProject()
 
 describe("@hotwired/stimulus Controller", () => {
   test("parse parent", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {}
@@ -29,7 +30,7 @@ describe("@hotwired/stimulus Controller", () => {
   })
 
   test("parse parent with import alias", () => {
-    const code = `
+    const code = dedent`
       import { Controller as StimulusController } from "@hotwired/stimulus"
 
       export default class extends StimulusController {}
@@ -54,7 +55,7 @@ describe("@hotwired/stimulus Controller", () => {
 
 describe("with controller in same file", () => {
   test("parse parent", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       class AbstractController extends Controller {}
@@ -89,7 +90,7 @@ describe("with controller in same file", () => {
 
 describe("with controller from other file", () => {
   test("parse parent", () => {
-    const code = `
+    const code = dedent`
       import ApplicationController from "./application_controller"
 
       export default class extends ApplicationController {}
@@ -119,7 +120,7 @@ describe("with controller from other file", () => {
 
 describe("with controller from stimulus package", () => {
   test("parse parent with default import", () => {
-    const code = `
+    const code = dedent`
       import SomeController from "some-package"
 
       export default class extends SomeController {}
@@ -142,7 +143,7 @@ describe("with controller from stimulus package", () => {
   })
 
   test("parse parent with regular import", () => {
-    const code = `
+    const code = dedent`
       import { SomeController } from "some-package"
 
       export default class extends SomeController {}

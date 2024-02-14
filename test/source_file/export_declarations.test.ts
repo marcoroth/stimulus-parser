@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
@@ -7,7 +8,7 @@ const project = new Project(process.cwd())
 describe("SourceFile", () => {
   describe("exportDeclarations", () => {
     test("export default", () => {
-      const code = `
+      const code = dedent`
         export default Something
       `
 
@@ -23,7 +24,7 @@ describe("SourceFile", () => {
     })
 
     test("export named variable", () => {
-      const code = `
+      const code = dedent`
         const something = "something"
         export { something }
       `
@@ -40,7 +41,7 @@ describe("SourceFile", () => {
     })
 
     test("export named class", () => {
-      const code = `
+      const code = dedent`
         class Something {}
         export { Something }
       `
@@ -57,7 +58,7 @@ describe("SourceFile", () => {
     })
 
     test("export object", () => {
-      const code = `
+      const code = dedent`
         export {}
       `
 
@@ -68,7 +69,7 @@ describe("SourceFile", () => {
     })
 
     test("export function", () => {
-      const code = `
+      const code = dedent`
         export function something() {}
       `
 
@@ -84,7 +85,7 @@ describe("SourceFile", () => {
     })
 
     test("export default named function ", () => {
-      const code = `
+      const code = dedent`
         function something() {}
 
         export default something
@@ -102,7 +103,7 @@ describe("SourceFile", () => {
     })
 
     test("export named arrow function ", () => {
-      const code = `
+      const code = dedent`
         export const something = () => {}
       `
 
@@ -118,7 +119,7 @@ describe("SourceFile", () => {
     })
 
     test("export default named arrow function", () => {
-      const code = `
+      const code = dedent`
         const something = () => {}
 
         export default something
@@ -136,7 +137,7 @@ describe("SourceFile", () => {
     })
 
     test("export const", () => {
-      const code = `
+      const code = dedent`
         export const something = 0
       `
 
@@ -152,7 +153,7 @@ describe("SourceFile", () => {
     })
 
     test("export let", () => {
-      const code = `
+      const code = dedent`
         export let something = 0
       `
 
@@ -168,7 +169,7 @@ describe("SourceFile", () => {
     })
 
     test("export var", () => {
-      const code = `
+      const code = dedent`
         export var something = 0
       `
 
@@ -184,7 +185,7 @@ describe("SourceFile", () => {
     })
 
     test("export default const", () => {
-      const code = `
+      const code = dedent`
         const something = 0
 
         export default something
@@ -202,7 +203,7 @@ describe("SourceFile", () => {
     })
 
     test("export default literal", () => {
-      const code = `
+      const code = dedent`
         export default 0
       `
 
@@ -218,7 +219,7 @@ describe("SourceFile", () => {
     })
 
     test("export default anonymous function ", () => {
-      const code = `
+      const code = dedent`
         export default function() {}
       `
 
@@ -234,7 +235,7 @@ describe("SourceFile", () => {
     })
 
     test("export default anonymous arrow function ", () => {
-      const code = `
+      const code = dedent`
         export default () => {}
       `
 
@@ -250,7 +251,7 @@ describe("SourceFile", () => {
     })
 
     test("export default anonymous array expression", () => {
-      const code = `
+      const code = dedent`
         export default []
       `
 
@@ -266,7 +267,7 @@ describe("SourceFile", () => {
     })
 
     test("export default anonymous object expression", () => {
-      const code = `
+      const code = dedent`
         export default {}
       `
 
@@ -282,7 +283,7 @@ describe("SourceFile", () => {
     })
 
     test("export named with rename", () => {
-      const code = `
+      const code = dedent`
         export { something as somethingElse }
       `
 
@@ -298,7 +299,7 @@ describe("SourceFile", () => {
     })
 
     test("export named mulitple", () => {
-      const code = `
+      const code = dedent`
         export { something, somethingElse }
       `
 
@@ -322,7 +323,7 @@ describe("SourceFile", () => {
     })
 
     test("export namespace", () => {
-      const code = `
+      const code = dedent`
         export * from "something"
       `
 
@@ -339,7 +340,7 @@ describe("SourceFile", () => {
     })
 
     test("export namespace with rename", () => {
-      const code = `
+      const code = dedent`
         export * as something from "something"
       `
 
@@ -356,7 +357,7 @@ describe("SourceFile", () => {
     })
 
     test("export default from namespace", () => {
-      const code = `
+      const code = dedent`
         export { default } from "something"
       `
 
@@ -373,7 +374,7 @@ describe("SourceFile", () => {
     })
 
     test("export default with rename from namespace", () => {
-      const code = `
+      const code = dedent`
         export { default as something } from "something"
       `
 
@@ -390,7 +391,7 @@ describe("SourceFile", () => {
     })
 
     test("export named as default", () => {
-      const code = `
+      const code = dedent`
         function something() {}
 
         export { something as default }
@@ -408,7 +409,7 @@ describe("SourceFile", () => {
     })
 
     test("export named with rename from", () => {
-      const code = `
+      const code = dedent`
         export { something as somethingElse } from "something"
       `
 
@@ -425,7 +426,7 @@ describe("SourceFile", () => {
     })
 
     test("export class", () => {
-      const code = `
+      const code = dedent`
         export class Something {}
       `
 
@@ -441,7 +442,7 @@ describe("SourceFile", () => {
     })
 
     test("export default class", () => {
-      const code = `
+      const code = dedent`
         class Something {}
 
         export default Something
@@ -459,7 +460,7 @@ describe("SourceFile", () => {
     })
 
     test("export default class inline", () => {
-      const code = `
+      const code = dedent`
         export default class Something {}
       `
 
@@ -475,7 +476,7 @@ describe("SourceFile", () => {
     })
 
     test("export default named function inline", () => {
-      const code = `
+      const code = dedent`
         export default function something() {}
       `
 
@@ -491,7 +492,7 @@ describe("SourceFile", () => {
     })
 
     test("export default named arrow function inline", () => {
-      const code = `
+      const code = dedent`
         export default something = () => {}
       `
 
@@ -507,7 +508,7 @@ describe("SourceFile", () => {
     })
 
     test("export default anonymous class", () => {
-      const code = `
+      const code = dedent`
         export default class {}
       `
 
@@ -523,7 +524,7 @@ describe("SourceFile", () => {
     })
 
     test("export default anonymous class with extends", () => {
-      const code = `
+      const code = dedent`
         export default class extends Controller {}
       `
 
@@ -539,7 +540,7 @@ describe("SourceFile", () => {
     })
 
     test("export type", () => {
-      const code = `
+      const code = dedent`
         export type { something }
       `
 
@@ -555,7 +556,7 @@ describe("SourceFile", () => {
     })
 
     test("export type from namespace", () => {
-      const code = `
+      const code = dedent`
         export type { something } from "something"
       `
 
@@ -572,7 +573,7 @@ describe("SourceFile", () => {
     })
 
     test("export type * namespace", () => {
-      const code = `
+      const code = dedent`
         export type * from "something"
       `
 
@@ -589,7 +590,7 @@ describe("SourceFile", () => {
     })
 
     test("export type * with rename from namespace", () => {
-      const code = `
+      const code = dedent`
         export type * as something from "something"
       `
 

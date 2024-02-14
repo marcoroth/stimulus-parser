@@ -1,3 +1,4 @@
+import dedent from "dedent"
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
@@ -7,7 +8,7 @@ const project = new Project(process.cwd())
 describe("ClassDeclaration", () => {
   describe("non stimulus classes", () => {
     test("regular class", () => {
-      const code = `
+      const code = dedent`
         class Something {
           connect() {}
           method() {}
@@ -26,7 +27,7 @@ describe("ClassDeclaration", () => {
     })
 
     test("imports controller from somewhere", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "somewhere"
 
         class Something extends Controller {
@@ -59,7 +60,7 @@ describe("ClassDeclaration", () => {
 
   describe("extends Stimulus Controller class", () => {
     test("imports and extends controller from Stimulus", () => {
-      const code = `
+      const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
         class Something extends Controller {
