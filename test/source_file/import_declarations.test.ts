@@ -111,6 +111,24 @@ describe("SourceFile", () => {
       ])
     })
 
+    test("import default as", () => {
+      const code = `
+        import { default as something } from "something"
+      `
+
+      const sourceFile = new SourceFile("abc.js", code, project)
+      sourceFile.analyze()
+
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([
+        {
+          isStimulusImport: false,
+          localName: "something",
+          originalName: undefined,
+          source: "something"
+        }
+      ])
+    })
+
     test("type import", () => {
       const code = `
         import type { something } from "something"

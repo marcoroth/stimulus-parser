@@ -105,7 +105,8 @@ export class SourceFile {
     simple(this.ast as any, {
       ImportDeclaration: node => {
         node.specifiers.forEach(specifier => {
-          const originalName = (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") ? specifier.imported.name : undefined
+          const original = (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") ? specifier.imported.name : undefined
+          const originalName = (original === "default") ? undefined : original
           const localName = specifier.local.name
           const source = ast.extractLiteral(node.source) as string
           const isStimulusImport = (originalName === "Controller" && source === "@hotwired/stimulus")
@@ -137,7 +138,11 @@ export class SourceFile {
 
           if (exportedName === "default") {
             this.exportDeclarations.push(
-              new ExportDeclaration(this, { localName, source, isStimulusExport, type: "default", node })
+              new ExportDeclaration(this, { localName: (localName === "default" ? undefined : localName), source, isStimulusExport, type: "default", node })
+            )
+          } else if (localName === "default") {
+            this.exportDeclarations.push(
+              new ExportDeclaration(this, { exportedName: (exportedName === "default" ? undefined : exportedName), source, isStimulusExport, type: exportedName === "default" ? "default" : "named", node })
             )
           } else {
             this.exportDeclarations.push(

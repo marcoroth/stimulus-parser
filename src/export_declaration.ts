@@ -1,6 +1,8 @@
-import { SourceFile } from "./source_file"
+import path from "path"
 
 import type * as Acorn from "acorn"
+import type { SourceFile } from "./source_file"
+import type { ClassDeclaration } from "./class_declaration"
 
 export class ExportDeclaration {
   public readonly sourceFile: SourceFile
@@ -21,7 +23,54 @@ export class ExportDeclaration {
     this.node = args.node
   }
 
-  resolvedPath() {
-    return this.source
+  get project() {
+    return this.sourceFile.project
+  }
+
+  get resolvedPath(): string | undefined {
+    if (this.source?.startsWith(".")) {
+      const thisFolder = path.dirname(this.sourceFile.path)
+      const folder = path.dirname(this.source)
+      let file = path.basename(this.source)
+
+      if (!file.endsWith(this.sourceFile.fileExtension)) {
+        file += this.sourceFile.fileExtension
+      }
+
+      return path.join(thisFolder, folder, file)
+    }
+
+    return undefined
+  }
+
+  get resolvedSourceFile(): SourceFile | undefined {
+    if (!this.resolvedPath) return undefined
+
+    return this.project.sourceFiles.find(file => file.path === this.resolvedPath)
+  }
+
+  get resolvedExportDeclaration(): ExportDeclaration | undefined {
+    if (!this.resolvedSourceFile) return undefined
+
+    if (this.type === "default" || (this.type === "named" && this.localName === "default")) {
+      return this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.type === "default")
+    } else if (this.type === "named") {
+      return this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.type === "named" && declaration.exportedName === this.localName)
+    } else if (this.type === "namespace"){
+      return undefined
+    }
+  }
+
+  get resolvedClassDeclaration(): ClassDeclaration | undefined {
+    if (this.resolvedExportDeclaration) {
+      return this.resolvedExportDeclaration.resolvedClassDeclaration
+    }
+
+    // TODO: is this the right logic?
+    const classDeclaration = this.sourceFile.classDeclarations.find(klass => klass.exportDeclaration === this)
+
+    if (classDeclaration) return classDeclaration
+
+    return undefined
   }
 }

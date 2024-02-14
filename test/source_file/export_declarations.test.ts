@@ -365,7 +365,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
-        localName: "default",
+        localName: undefined,
         isStimulusExport: false,
         type: "default",
         source: "something"
@@ -382,7 +382,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
-        localName: "default",
+        localName: undefined,
         isStimulusExport: false,
         type: "named",
         source: "something"
