@@ -128,7 +128,7 @@ export class SourceFile {
           const localName = ast.extractIdentifier(specifier.local)
           const source = ast.extractLiteralAsString(node.source)
           const classDeclaration = findClass(localName)
-          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
           if (exportedName === "default") {
             this.exportDeclarations.push(
@@ -147,7 +147,7 @@ export class SourceFile {
           const exportedName = declaration.id.name
           const localName = declaration.id.name
           const classDeclaration = findClass(localName)
-          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
           this.exportDeclarations.push(
             new ExportDeclaration({ exportedName, localName, isStimulusExport, type, node })
@@ -159,7 +159,7 @@ export class SourceFile {
             const exportedName = ast.extractIdentifier(declaration.id)
             const localName = ast.extractIdentifier(declaration.id)
             const classDeclaration = findClass(localName)
-            const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+            const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
             this.exportDeclarations.push(
               new ExportDeclaration({ exportedName, localName, isStimulusExport, type, node })
@@ -176,7 +176,7 @@ export class SourceFile {
 
         const localName = name || nameFromId || nameFromAssignment
         const classDeclaration = findClass(localName)
-        const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+        const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
         this.exportDeclarations.push(
           new ExportDeclaration({ localName, isStimulusExport, type, node })
