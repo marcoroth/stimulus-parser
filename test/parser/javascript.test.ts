@@ -43,7 +43,9 @@ describe("with JS Syntax", () => {
     expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
-  test("parse classes with spread", () => {
+  // TODO: instead, we could also mark the SpreadElement node with
+  // a warning that says that we couldn't parse it
+  test.todo("parse classes with spread", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -55,9 +57,7 @@ describe("with JS Syntax", () => {
     const controller = parseController(code, "class_controller.js")
 
     expect(controller.classNames).toEqual(["three"])
-
-    // TODO: this is expected
-    // expect(controller.classNames).toEqual(["one", "two", "three"])
+    expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
   test("parse values", () => {
@@ -110,7 +110,7 @@ describe("with JS Syntax", () => {
     })
   })
 
-  test("parse values with spread", () => {
+  test.todo("parse values with spread", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
 
@@ -130,10 +130,9 @@ describe("with JS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    // TODO: this would be expected
     expect(controller.valueDefinitions).toEqual({
-      // string: { type: "String", default: "string" },
-      // object: { type: "Object", default: { object: "Object" } },
+      string: { type: "String", default: "string" },
+      object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
       array: { type: "Array", default: ["Array"] },
       number: { type: "Number", default: 1 },

@@ -36,6 +36,76 @@ describe("parse targets", () => {
     expect(controller.errors[0].loc.end.line).toEqual(5)
   })
 
+  test("other literals are treated a strings in static targets array", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static targets = ["one", 1, 3.14, /something/, true, false, null, undefined]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.targetNames).toEqual(["one", "1", "3.14", "/something/", "true", "false"])
+    expect(controller.hasErrors).toBeFalsy()
+  })
+
+  test.todo("variable reference in static targets array", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      const variable = "two"
+
+      export default class extends Controller {
+        static targets = ["one", variable]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.targetNames).toEqual(["one", "two"])
+    expect(controller.hasErrors).toBeFalsy()
+  })
+
+  test.todo("trace variable reference in static targets array", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      const variable = "two"
+      const another = variable
+
+      export default class extends Controller {
+        static targets = ["one", another]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.targetNames).toEqual(["one", "two"])
+    expect(controller.hasErrors).toBeFalsy()
+  })
+
+  test.todo("trace static property literal reference in static targets array", () => {
+    const code = `
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {
+        static property = "another"
+        static targets = ["one", this.property]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.targetNames).toEqual(["one", "two"])
+    expect(controller.hasErrors).toBeFalsy()
+  })
+
   test("single @Target decorator", () => {
     const code = `
       import { Controller } from "@hotwired/stimulus"
