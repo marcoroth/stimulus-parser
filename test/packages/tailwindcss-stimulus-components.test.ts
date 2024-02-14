@@ -11,8 +11,11 @@ describe("packages", () => {
       await project.analyze()
 
       expect(project.detectedNodeModules.map(module => module.name)).toEqual(["tailwindcss-stimulus-components"])
-      expect(project.controllerRoots).toEqual(["node_modules/tailwindcss-stimulus-components/src"])
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
+      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(project.allControllerRoots).toEqual(["node_modules/tailwindcss-stimulus-components/src"])
+      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual([])
+
+      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
         "alert",
         "autosave",
         "color-preview",
@@ -24,7 +27,7 @@ describe("packages", () => {
         "toggle",
       ])
 
-      const modalController = project.controllerDefinitions.find(controller => controller.identifier === "modal")
+      const modalController = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
 
       expect(modalController.targetNames).toEqual(["container", "background"])
       expect(Object.keys(modalController.valueDefinitions)).toEqual(["open", "restoreScroll"])

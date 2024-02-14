@@ -27,6 +27,10 @@ describe("packages", () => {
 
       expect(project.controllerRoots).toEqual([
         "src/controllers",
+      ])
+
+      expect(project.allControllerRoots).toEqual([
+        "src/controllers",
         "node_modules/@stimulus-library/controllers",
         "node_modules/stimulus-checkbox/src",
         "node_modules/stimulus-clipboard/dist",
@@ -75,7 +79,8 @@ describe("packages", () => {
         "window-resize",
       ]
 
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
+      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
+      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
 
       const allIdentifiers = [
         ...exportedIdentifiers,
@@ -95,23 +100,29 @@ describe("packages", () => {
         "window-resize-composable",
       ].sort()
 
-      const sourceFileCount = project.sourceFiles.length
 
-      expect(project.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.identifier).sort()).toEqual(allIdentifiers)
+      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.identifier).sort()).toEqual(allIdentifiers)
 
-      const controller = project.controllerDefinitions.find(controller => controller.identifier === "modal")
-
+      const controller = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
       expect(Object.keys(controller.valueDefinitions)).toEqual(["open", "restoreScroll"])
       expect(controller.valueDefinitions.open.type).toEqual("Boolean")
       expect(controller.valueDefinitions.restoreScroll.type).toEqual("Boolean")
 
+      const sourceFileCount = project.sourceFiles.length
+      const allSourceFileCount = project.allSourceFiles.length
+
+      expect(sourceFileCount).toEqual(1)
+      expect(allSourceFileCount).toEqual(165)
+
       // re-analyzing shouldn't add source files or controllers twice
       await project.analyze()
 
       expect(project.sourceFiles.length).toEqual(sourceFileCount)
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
-      expect(project.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.identifier).sort()).toEqual(allIdentifiers)
-    })
+      expect(project.allSourceFiles.length).toEqual(allSourceFileCount)
+      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
+      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
+      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.identifier).sort()).toEqual(allIdentifiers)
+    }, 10_000)
   })
 })

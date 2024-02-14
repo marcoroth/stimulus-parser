@@ -56,6 +56,10 @@ export class ControllerDefinition {
     return Object.fromEntries(Object.entries(this.values).map(([key, def]) => [key, def.definition]))
   }
 
+  get controllerRoot(): string {
+    return this.project.controllerRootForPath(this.path)
+  }
+
   get controllerPath() {
     return this.project.relativeControllerPath(this.path)
   }

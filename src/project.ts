@@ -6,8 +6,8 @@ import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
 import { NodeModule } from "./node_module"
 
-import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { detectPackages } from "./packages"
+import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 
 export class Project {
   readonly projectPath: string
@@ -96,11 +96,17 @@ export class Project {
   }
 
   get controllerDefinitions(): ControllerDefinition[] {
-    return this.allControllerDefinitions.filter(definition => definition.isStimulusExport)
+    return this.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions.filter(definition => definition.isStimulusExport))
   }
 
   get allControllerDefinitions(): ControllerDefinition[] {
-    return this.sourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions)
+    return this.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions.filter(definition => definition.isStimulusExport))
+  }
+
+  get allSourceFiles() {
+    return this.sourceFiles.concat(
+      ...this.detectedNodeModules.flatMap(module => module.sourceFiles)
+    )
   }
 
   get controllerRoot() {
@@ -114,38 +120,45 @@ export class Project {
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
 
+  get allControllerRoots() {
+    const relativePaths = this.allSourceFiles.map(file => this.relativePath(file.path))
+    const roots = Project.calculateControllerRoots(relativePaths).sort(nestedFolderSort)
+
+    return (roots.length > 0) ? roots : [this.controllerRootFallback]
+  }
+
   async analyze() {
     this.sourceFiles = []
     this.detectedNodeModules = []
 
-    await this.readSourceFiles(await this.getProjectFiles())
+    await this.searchProjectFiles()
+    await this.readSourceFiles()
     await detectPackages(this)
 
-    this.sourceFiles.map(sourceFile => sourceFile.analyze())
+    // TODO: in the future we should only analyze node modules that are actually referenced in project source files
+    await Promise.allSettled(this.detectedNodeModules.map(module => module.analyze()))
   }
 
-  private controllerRootForPath(path: string) {
-    const relativePath = this.relativePath(path)
-    const relativeRoots = this.controllerRoots.map(root => this.relativePath(root))
+  controllerRootForPath(filePath: string) {
+    const relativePath = this.relativePath(filePath)
+    const relativeRoots = this.allControllerRoots.map(root => this.relativePath(root)) // TODO: this should be this.controllerRoots
 
     return relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
   }
 
-  async readSourceFiles(paths: string[]) {
-    await Promise.allSettled(paths.map(path => this.readSourceFile(path)))
+  private async readSourceFiles() {
+    await Promise.allSettled(this.sourceFiles.map(file => file.refresh()))
   }
 
-  async readSourceFile(path: string) {
-    const sourceFile = this.sourceFiles.find(file => file.path === path)
+  private async searchProjectFiles() {
+    const projectFiles = await this.getProjectFiles()
+    const sourceFilePaths = this.sourceFiles.map(file => file.path)
 
-    if (!sourceFile) {
-      const content = await readFile(path)
-      const sourceFile = new SourceFile(this, path, content)
-
-      this.sourceFiles.push(sourceFile)
-    } else {
-      await sourceFile.refresh()
-    }
+    projectFiles.forEach(path => {
+      if (!sourceFilePaths.includes(path)) {
+        this.sourceFiles.push(new SourceFile(this, path))
+      }
+    })
   }
 
   private async getProjectFiles(): Promise<string[]> {

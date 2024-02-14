@@ -1,10 +1,7 @@
-import path from "path"
 import { glob } from "glob"
 
-import { NodeModule } from "../node_module"
 import { Project } from "../project"
-import { readFile } from "../util/fs"
-import { findNodeModulesPath } from "../util/npm"
+import { findNodeModulesPath, parsePackageJSON, nodeModuleForPackageJSONPath } from "../util/npm"
 
 export async function analyzeAll(project: Project) {
   const nodeModulesPath = await findNodeModulesPath(project.projectPath)
@@ -19,10 +16,8 @@ export async function analyzeAll(project: Project) {
 
   await Promise.allSettled(
     packages.map(async packagePath => {
-      const folder = path.dirname(packagePath)
-      const packageJSON = await readFile(packagePath)
-      const parsed = JSON.parse(packageJSON)
-      const packageName = parsed.name
+      const packageJSON = await parsePackageJSON(packagePath)
+      const packageName = packageJSON.name
 
       if (packageName === "@hotwired/stimulus") return
       if (packageName === "@hotwired/stimulus-webpack-helpers") return
@@ -30,26 +25,10 @@ export async function analyzeAll(project: Project) {
       if (packageName === "bun-stimulus-plugin") return
       if (packageName === "esbuild-plugin-stimulus") return
 
-      const types = [["source", parsed.source], ["module", parsed.module], ["main", parsed.main]]
-      const [type, entrypoint] = types.find(([_type, entrypoint]) => !!entrypoint) || []
+      const nodeModule = await nodeModuleForPackageJSONPath(project, packagePath)
 
-      if (entrypoint) {
-        const directory = path.dirname(entrypoint)
-        const basePath = path.join(folder, directory)
-        const files = await glob(`${basePath}/**/*.{js,mjs}`)
-
-        const detectedModule = new NodeModule(project, {
-          entrypoint: path.join(folder, entrypoint),
-          name: packageName,
-          path: packagePath,
-          controllerRoots: [basePath],
-          type,
-          files,
-        })
-
-        project.detectedNodeModules.push(detectedModule)
-
-        await project.readSourceFiles(files)
+      if (nodeModule) {
+        project.detectedNodeModules.push(nodeModule)
       }
     })
   )

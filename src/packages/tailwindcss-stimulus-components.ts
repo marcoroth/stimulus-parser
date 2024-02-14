@@ -1,30 +1,12 @@
-import path from "path"
-import { glob } from "glob"
-
-import { NodeModule } from "../node_module"
 import { Project } from "../project"
-import { hasDepedency, findPackagePath } from "../util/npm"
+import { hasDepedency, nodeModuleForPackageName } from "../util/npm"
 
 export async function analyze(project: Project) {
   const packageName = "tailwindcss-stimulus-components"
   const hasPackage = await hasDepedency(project.projectPath, packageName)
-  const packagePath = await findPackagePath(project.projectPath, packageName)
+  const nodeModule = await nodeModuleForPackageName(project, packageName)
 
-  if (!hasPackage || !packagePath) return
+  if (!nodeModule || !hasPackage) return
 
-  const basePath = path.join(packagePath, "src")
-  const files = await glob(`${basePath}/**/*.js`)
-
-  const detectedModule = new NodeModule(project, {
-    entrypoint: path.join(basePath),
-    name: packageName,
-    path: packagePath,
-    controllerRoots: [basePath],
-    type: "source",
-    files
-  })
-
-  project.detectedNodeModules.push(detectedModule)
-
-  await project.readSourceFiles(files)
+  project.detectedNodeModules.push(nodeModule)
 }
