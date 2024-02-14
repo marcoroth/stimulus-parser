@@ -30,17 +30,21 @@ export async function analyzeAll(project: Project) {
       if (packageName === "bun-stimulus-plugin") return
       if (packageName === "esbuild-plugin-stimulus") return
 
-      const source = parsed.source || parsed.module || parsed.main
+      const types = [["source", parsed.source], ["module", parsed.module], ["main", parsed.main]]
+      const [type, entrypoint] = types.find(([_type, entrypoint]) => !!entrypoint) || []
 
-      if (source) {
-        const directory = path.dirname(source)
+      if (entrypoint) {
+        const directory = path.dirname(entrypoint)
         const basePath = path.join(folder, directory)
         const files = await glob(`${basePath}/**/*.{js,mjs}`)
 
         const detectedModule: NodeModule = {
+          entrypoint: path.join(folder, entrypoint),
           name: packageName,
           path: packagePath,
-          controllerRoots: [basePath]
+          controllerRoots: [basePath],
+          type,
+          files,
         }
 
         project.detectedNodeModules.push(detectedModule)

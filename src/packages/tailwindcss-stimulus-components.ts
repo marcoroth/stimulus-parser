@@ -16,9 +16,12 @@ export async function analyze(project: Project) {
   const files = await glob(`${basePath}/**/*.js`)
 
   const detectedModule: NodeModule = {
+    entrypoint: path.join(basePath),
     name: packageName,
     path: packagePath,
-    controllerRoots: [basePath]
+    controllerRoots: [basePath],
+    type: "source",
+    files,
   }
 
   project.detectedNodeModules.push(detectedModule)
