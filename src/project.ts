@@ -4,11 +4,10 @@ import { glob } from "glob"
 import { ControllerDefinition } from "./controller_definition"
 import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
+import { NodeModule } from "./node_module"
 
 import { readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { detectPackages } from "./packages"
-
-import type { NodeModule } from "./types"
 
 export class Project {
   readonly projectPath: string

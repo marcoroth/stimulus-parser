@@ -1,8 +1,8 @@
 import path from "path"
 import { glob } from "glob"
 
-import type { NodeModule } from "../types"
-import  { Project } from "../project"
+import { NodeModule } from "../node_module"
+import { Project } from "../project"
 import { hasDepedency, findPackagePath } from "../util/npm"
 
 export async function analyze(project: Project) {
@@ -15,14 +15,14 @@ export async function analyze(project: Project) {
   const basePath = path.join(packagePath, "src")
   const files = await glob(`${basePath}/**/*.js`)
 
-  const detectedModule: NodeModule = {
+  const detectedModule = new NodeModule(project, {
     entrypoint: path.join(basePath),
     name: packageName,
     path: packagePath,
     controllerRoots: [basePath],
     type: "source",
-    files,
-  }
+    files
+  })
 
   project.detectedNodeModules.push(detectedModule)
 

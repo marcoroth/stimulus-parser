@@ -15,15 +15,6 @@ export type ValueDefinition = {
 
 export type ValueDefinitionObject = { [key: string]: ValueDefinition }
 
-export interface NodeModule {
-  entrypoint: string
-  name: string
-  path: string
-  controllerRoots: string[]
-  files: string[]
-  type: "main" | "module" | "source"
-}
-
 export type ParserOptions = {
   loc: true
   range: true

@@ -1,7 +1,7 @@
 import path from "path"
 
 import type * as Acorn from "acorn"
-import type { NodeModule } from "./types"
+import type { NodeModule } from "./node_module"
 import type { SourceFile } from "./source_file"
 import type { ClassDeclaration } from "./class_declaration"
 import type { ControllerDefinition} from "./controller_definition"

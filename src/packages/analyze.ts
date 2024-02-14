@@ -1,8 +1,8 @@
 import path from "path"
 import { glob } from "glob"
 
-import type { NodeModule } from "../types"
-import  { Project } from "../project"
+import { NodeModule } from "../node_module"
+import { Project } from "../project"
 import { readFile } from "../util/fs"
 import { findNodeModulesPath } from "../util/npm"
 
@@ -38,14 +38,14 @@ export async function analyzeAll(project: Project) {
         const basePath = path.join(folder, directory)
         const files = await glob(`${basePath}/**/*.{js,mjs}`)
 
-        const detectedModule: NodeModule = {
+        const detectedModule = new NodeModule(project, {
           entrypoint: path.join(folder, entrypoint),
           name: packageName,
           path: packagePath,
           controllerRoots: [basePath],
           type,
           files,
-        }
+        })
 
         project.detectedNodeModules.push(detectedModule)
 
