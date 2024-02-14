@@ -9,7 +9,7 @@ import { SourceFile } from "./source_file"
 import { ControllerDefinition } from "./controller_definition"
 import { ImportDeclaration } from "./import_declaration"
 import { ExportDeclaration } from "./export_declaration"
-import { ControllerPropertyDefinition, MethodDefinition } from "./controller_property_definition"
+import { MethodDefinition } from "./controller_property_definition"
 
 import type { TSESTree } from "@typescript-eslint/typescript-estree"
 import type { ClassDeclarationNode } from "./types"
@@ -143,26 +143,5 @@ export class ClassDeclaration {
         new ParseError("LINT", "Controller was decorated with @TypedController but Controller didn't use any decorators.", this.node?.loc),
       )
     }
-
-    this.uniqueErrorGenerator(this.controllerDefinition, "target", this.controllerDefinition.targets)
-    this.uniqueErrorGenerator(this.controllerDefinition, "class", this.controllerDefinition.classes)
-    // values are reported at the time of parsing since we're storing them as an object
-  }
-
-  private uniqueErrorGenerator(controller: ControllerDefinition, type: string, items: ControllerPropertyDefinition[]) {
-    const errors: string[] = []
-
-    items.forEach((item, index) => {
-      if (errors.includes(item.name)) return
-
-      items.forEach((item2, index2) => {
-        if (index2 === index) return
-
-        if (item.name === item2.name) {
-          errors.push(item.name)
-          controller.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus ${type} "${item.name}"`, item2.loc))
-        }
-      })
-    })
   }
 }

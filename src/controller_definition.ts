@@ -110,4 +110,30 @@ export class ControllerDefinition {
 
     return "javascript"
   }
+
+  addTargetDefinition(targetDefinition: TargetDefinition): void {
+    if (this.targetNames.includes(targetDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus target "${targetDefinition.name}"`, targetDefinition.loc))
+    }
+
+    this.targets.push(targetDefinition)
+  }
+
+  addClassDefinition(classDefinition: ClassDefinition) {
+    if (this.classNames.includes(classDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus class "${classDefinition.name}"`, classDefinition.loc))
+    }
+
+    this.classes.push(classDefinition)
+  }
+
+  addValueDefinition(valueDefinition: ValueDefinition) {
+    if (this.values[valueDefinition.name]) {
+      const error = new ParseError("LINT", `Duplicate definition of Stimulus value "${valueDefinition.name}"`, valueDefinition.loc)
+
+      this.errors.push(error)
+    } else {
+      this.values[valueDefinition.name] = valueDefinition
+    }
+  }
 }
