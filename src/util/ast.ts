@@ -140,7 +140,9 @@ export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefin
   return node.name
 }
 
-export function extractLiteral(node?: Acorn.Expression | null): string | number | bigint | boolean | RegExp | null | undefined {
+type AcornLiteral = string | number | bigint | boolean | RegExp | null | undefined
+
+export function extractLiteral(node?: Acorn.Expression | null): AcornLiteral {
   if (node?.type !== "Literal") return undefined
 
   return node.value
