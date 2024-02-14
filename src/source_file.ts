@@ -1,3 +1,4 @@
+import path from "path"
 import { simple } from "acorn-walk"
 
 import * as ast from "./util/ast"
@@ -36,6 +37,10 @@ export class SourceFile {
 
   get hasErrors() {
     return this.errors.length > 0
+  }
+
+  get fileExtension() {
+    return path.extname(this.path)
   }
 
   constructor(path: string, content: string, project: Project) {
