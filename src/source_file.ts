@@ -106,7 +106,7 @@ export class SourceFile {
           const isStimulusImport = (originalName === "Controller" && source === "@hotwired/stimulus")
 
           this.importDeclarations.push(
-            new ImportDeclaration({ originalName, localName, source, isStimulusImport, node })
+            new ImportDeclaration(this, { originalName, localName, source, isStimulusImport, node })
           )
         })
       },
@@ -132,11 +132,11 @@ export class SourceFile {
 
           if (exportedName === "default") {
             this.exportDeclarations.push(
-              new ExportDeclaration({ localName, source, isStimulusExport, type: "default", node })
+              new ExportDeclaration(this, { localName, source, isStimulusExport, type: "default", node })
             )
           } else {
             this.exportDeclarations.push(
-              new ExportDeclaration({ exportedName, localName, source, isStimulusExport, type, node })
+              new ExportDeclaration(this, { exportedName, localName, source, isStimulusExport, type, node })
             )
           }
         })
@@ -150,7 +150,7 @@ export class SourceFile {
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
           this.exportDeclarations.push(
-            new ExportDeclaration({ exportedName, localName, isStimulusExport, type, node })
+            new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
           )
         }
 
@@ -162,7 +162,7 @@ export class SourceFile {
             const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
             this.exportDeclarations.push(
-              new ExportDeclaration({ exportedName, localName, isStimulusExport, type, node })
+              new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
             )
           })
         }
@@ -179,7 +179,7 @@ export class SourceFile {
         const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
         this.exportDeclarations.push(
-          new ExportDeclaration({ localName, isStimulusExport, type, node })
+          new ExportDeclaration(this, { localName, isStimulusExport, type, node })
         )
       },
 
@@ -190,7 +190,7 @@ export class SourceFile {
         const isStimulusExport = false // TODO: detect namespace Stimulus exports
 
         this.exportDeclarations.push(
-          new ExportDeclaration({ exportedName, source, isStimulusExport, type, node })
+          new ExportDeclaration(this, { exportedName, source, isStimulusExport, type, node })
         )
       },
 

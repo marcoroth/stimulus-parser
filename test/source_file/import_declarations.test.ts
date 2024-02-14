@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
-import { nodelessCompare } from "../helpers/ast"
+import { stripSuperClasses } from "../helpers/ast"
 
 const project = new Project(process.cwd())
 
@@ -14,7 +14,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([])
     })
 
     test("default import", () => {
@@ -25,7 +25,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: false,
         localName: "Something",
         originalName: undefined,
@@ -41,7 +41,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: false,
         localName: "something",
         originalName: "something",
@@ -57,7 +57,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: false,
         localName: "somethingElse",
         originalName: "something",
@@ -73,7 +73,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: false,
         localName: "something",
         originalName: undefined,
@@ -89,7 +89,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([
         {
           isStimulusImport: false,
           localName: "onething",
@@ -119,7 +119,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: false,
         localName: "something",
         originalName: "something",
@@ -135,7 +135,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
@@ -151,7 +151,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
         isStimulusImport: true,
         localName: "StimulusController",
         originalName: "Controller",

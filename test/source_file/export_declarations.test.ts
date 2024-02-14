@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
-import { nodelessCompare } from "../helpers/ast"
+import { stripSuperClasses } from "../helpers/ast"
 
 const project = new Project(process.cwd())
 
@@ -14,7 +14,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
         isStimulusExport: false,
@@ -31,7 +31,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -48,7 +48,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
         localName: "Something",
         isStimulusExport: false,
@@ -64,7 +64,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([])
     })
 
     test("export function", () => {
@@ -75,7 +75,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -93,7 +93,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
         isStimulusExport: false,
@@ -109,7 +109,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -127,7 +127,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
         isStimulusExport: false,
@@ -143,7 +143,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -159,7 +159,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -175,7 +175,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -193,7 +193,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
         isStimulusExport: false,
@@ -209,7 +209,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -225,7 +225,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -241,7 +241,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -257,7 +257,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -273,7 +273,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -289,7 +289,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
         localName: "something",
         isStimulusExport: false,
@@ -305,7 +305,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([
         {
           exportedName: "something",
           localName: "something",
@@ -329,7 +329,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -346,7 +346,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: undefined,
         isStimulusExport: false,
@@ -363,7 +363,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "default",
         isStimulusExport: false,
@@ -380,7 +380,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "default",
         isStimulusExport: false,
@@ -399,7 +399,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
         isStimulusExport: false,
@@ -415,7 +415,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
         localName: "something",
         isStimulusExport: false,
@@ -432,7 +432,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
         localName: "Something",
         isStimulusExport: false,
@@ -450,7 +450,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
         isStimulusExport: false,
@@ -466,7 +466,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
         isStimulusExport: false,
@@ -482,7 +482,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
         isStimulusExport: false,
@@ -498,7 +498,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
         isStimulusExport: false,
@@ -514,7 +514,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -530,7 +530,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         isStimulusExport: false,
@@ -546,7 +546,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         isStimulusExport: false,
@@ -562,7 +562,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
         source: "something",
@@ -579,7 +579,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
         source: "something",
@@ -596,7 +596,7 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile("abc.js", code, project)
       sourceFile.analyze()
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([{
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: undefined,
         source: "something",

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { Project, SourceFile } from "../../src"
-import { nodelessCompare, stripSuperClasses } from "../helpers/ast"
+import { stripSuperClasses } from "../helpers/ast"
 
 const project = new Project(process.cwd())
 
@@ -23,7 +23,7 @@ describe("SourceFile", () => {
         source: undefined,
       }
 
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -60,8 +60,8 @@ describe("SourceFile", () => {
         source: undefined,
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -102,8 +102,8 @@ describe("SourceFile", () => {
         source: undefined,
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -144,8 +144,8 @@ describe("SourceFile", () => {
         source: undefined,
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -183,8 +183,8 @@ describe("SourceFile", () => {
         type: "named"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -224,8 +224,8 @@ describe("SourceFile", () => {
         type: "default",
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -263,8 +263,8 @@ describe("SourceFile", () => {
         type: "default"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -302,8 +302,8 @@ describe("SourceFile", () => {
         type: "default"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: undefined,
@@ -343,8 +343,8 @@ describe("SourceFile", () => {
         type: "default"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -384,8 +384,8 @@ describe("SourceFile", () => {
         type: "named"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -423,8 +423,8 @@ describe("SourceFile", () => {
         type: "named"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
@@ -465,8 +465,8 @@ describe("SourceFile", () => {
         type: "named"
       }
 
-      expect(nodelessCompare(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(nodelessCompare(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
+      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       const something = {
         className: "Something",
