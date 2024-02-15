@@ -1,0 +1,12 @@
+{
+  "name": "rollup",
+  "private": true,
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.11.0"
+  },
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs rollup.config.js"
+  }
+}

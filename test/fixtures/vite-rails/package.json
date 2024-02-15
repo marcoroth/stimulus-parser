@@ -1,0 +1,14 @@
+{
+  "name": "vite-rails",
+  "private": true,
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "stimulus-vite-helpers": "^3.1.0",
+    "vite": "^5.1.3",
+    "vite-plugin-rails": "^0.5.0",
+    "vite-plugin-ruby": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "vite"
+  }
+}
