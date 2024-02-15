@@ -82,6 +82,13 @@ export class Project {
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
 
+  get referencedNodeModules() {
+    return this.sourceFiles
+      .flatMap(sourceFile => sourceFile.importDeclarations)
+      .filter(declaration => declaration.isNodeModuleImport)
+      .map(declaration => declaration.source)
+  }
+
   async analyze() {
     this.sourceFiles = []
     this.detectedNodeModules = []

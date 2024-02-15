@@ -27,8 +27,16 @@ export class ImportDeclaration {
     return this.sourceFile.project
   }
 
+  get isRelativeImport() {
+    return this.source.startsWith(".")
+  }
+
+  get isNodeModuleImport() {
+    return !this.isRelativeImport
+  }
+
   get resolvedRelativePath(): string | undefined {
-    if (this.source.startsWith(".")) {
+    if (this.isRelativeImport) {
       const thisFolder = path.dirname(this.sourceFile.path)
       const folder = path.dirname(this.source)
       let file = path.basename(this.source)

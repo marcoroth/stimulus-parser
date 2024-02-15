@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach } from "vitest"
-import { Project } from "../src"
+import { Project } from "../../src"
 
 let project: Project
 
