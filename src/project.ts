@@ -96,8 +96,16 @@ export class Project {
     await this.searchProjectFiles()
     await this.readSourceFiles()
     await detectPackages(this)
+    await this.analyzeReferencedModules()
+  }
 
-    // TODO: in the future we should only analyze node modules that are actually referenced in project source files
+  async analyzeReferencedModules() {
+    const referencesModules = this.detectedNodeModules.filter(module => this.referencedNodeModules.includes(module.name))
+
+    await Promise.allSettled(referencesModules.map(module => module.analyze()))
+  }
+
+  async analyzeAllDetectedModules() {
     await Promise.allSettled(this.detectedNodeModules.map(module => module.analyze()))
   }
 

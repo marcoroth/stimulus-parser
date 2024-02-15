@@ -15,6 +15,10 @@ describe("packages", () => {
       expect(project.allControllerRoots).toEqual(["node_modules/tailwindcss-stimulus-components/src"])
       expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual([])
 
+      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([])
+
+      await project.analyzeAllDetectedModules()
+
       expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
         "alert",
         "autosave",

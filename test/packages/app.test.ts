@@ -10,6 +10,10 @@ describe("packages", () => {
 
       await project.analyze()
 
+      expect(project.referencedNodeModules.sort()).toEqual([
+        "@hotwired/stimulus",
+      ])
+
       expect(project.detectedNodeModules.map(module => module.name).sort()).toEqual([
         "@stimulus-library/controllers",
         "@stimulus-library/mixins",
@@ -80,6 +84,10 @@ describe("packages", () => {
       ]
 
       expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
+      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
+
+      await project.analyzeAllDetectedModules()
+
       expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
 
       const allIdentifiers = [
@@ -117,6 +125,10 @@ describe("packages", () => {
 
       // re-analyzing shouldn't add source files or controllers twice
       await project.analyze()
+
+      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
+
+      await project.analyzeAllDetectedModules()
 
       expect(project.sourceFiles.length).toEqual(sourceFileCount)
       expect(project.allSourceFiles.length).toEqual(allSourceFileCount)
