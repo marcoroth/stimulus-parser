@@ -1,4 +1,3 @@
-import path from "path"
 import { glob } from "glob"
 
 import { ControllerDefinition } from "./controller_definition"
@@ -8,6 +7,7 @@ import { NodeModule } from "./node_module"
 
 import { detectPackages } from "./packages"
 import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
+import { calculateControllerRoots } from "./util/project"
 
 export class Project {
   readonly projectPath: string
@@ -19,51 +19,6 @@ export class Project {
   public detectedNodeModules: Array<NodeModule> = []
   public sourceFiles: Array<SourceFile> = []
   public parser: Parser = new Parser(this)
-
-  static calculateControllerRoots(filenames: string[]) {
-    let controllerRoots: string[] = [];
-
-    filenames = filenames.sort(nestedFolderSort)
-
-    const findClosest = (basename: string) => {
-      const splits = basename.split("/")
-
-      for (let i = 0; i < splits.length + 1; i++) {
-        const possbilePath = splits.slice(0, i).join("/")
-
-        if (controllerRoots.includes(possbilePath) && possbilePath !== basename) {
-          return possbilePath
-        }
-      }
-    }
-
-    filenames.forEach(filename => {
-      const splits = path.dirname(filename).split("/")
-      const controllersIndex = splits.indexOf("controllers")
-
-      if (controllersIndex !== -1) {
-        const controllerRoot = splits.slice(0, controllersIndex + 1).join("/")
-
-        if (!controllerRoots.includes(controllerRoot)) {
-          controllerRoots.push(controllerRoot)
-        }
-      } else {
-        const controllerRoot = splits.slice(0, splits.length).join("/")
-        const found = findClosest(controllerRoot)
-
-        if (found) {
-          const index = controllerRoots.indexOf(controllerRoot)
-          if (index !== -1) controllerRoots.splice(index, 1)
-        } else {
-          if (!controllerRoots.includes(controllerRoot)) {
-            controllerRoots.push(controllerRoot)
-          }
-        }
-      }
-    })
-
-    return controllerRoots.sort(nestedFolderSort)
-  }
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
@@ -115,14 +70,14 @@ export class Project {
 
   get controllerRoots() {
     const relativePaths = this.sourceFiles.map(file => this.relativePath(file.path))
-    const roots = Project.calculateControllerRoots(relativePaths).sort(nestedFolderSort)
+    const roots = calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
 
   get allControllerRoots() {
     const relativePaths = this.allSourceFiles.map(file => this.relativePath(file.path))
-    const roots = Project.calculateControllerRoots(relativePaths).sort(nestedFolderSort)
+    const roots = calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
   }
@@ -162,14 +117,10 @@ export class Project {
   }
 
   private async getProjectFiles(): Promise<string[]> {
-    return await glob(`${this.projectPath}/**/*controller${this.fileExtensionGlob}`, {
-      ignore: `${this.projectPath}/**/node_modules/**/*`,
-    })
-  }
-
-  get fileExtensionGlob(): string {
     const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions).join(",")
 
-    return `.{${extensions}}`
+    return await glob(`${this.projectPath}/**/*controller.{${extensions}}`, {
+      ignore: `${this.projectPath}/**/node_modules/**/*`,
+    })
   }
 }
