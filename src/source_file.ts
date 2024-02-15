@@ -15,6 +15,7 @@ import { ExportDeclaration } from "./export_declaration"
 import type * as Acorn from "acorn"
 import type { AST } from "@typescript-eslint/typescript-estree"
 import type { ParserOptions } from "./types"
+import type { ImportDeclarationType } from "./import_declaration"
 
 export class SourceFile {
   public content?: string
@@ -97,6 +98,10 @@ export class SourceFile {
     return this.classDeclarations.find(klass => klass.className === className)
   }
 
+  findImport(localName: string) {
+    return this.importDeclarations.find(declaration => declaration.localName === localName)
+  }
+
   analyze() {
     this.parse()
 
@@ -124,8 +129,15 @@ export class SourceFile {
           const source = ast.extractLiteral(node.source) as string
           const isStimulusImport = (originalName === "Controller" && source === "@hotwired/stimulus")
 
+          let type: ImportDeclarationType = "default"
+
+          if (specifier.type === "ImportSpecifier")          type = "named"
+          if (specifier.type === "ImportDefaultSpecifier")   type = "default"
+          if (specifier.type === "ImportNamespaceSpecifier") type = "namespace"
+          if (original === "default")                        type = "default"
+
           this.importDeclarations.push(
-            new ImportDeclaration(this, { originalName, localName, source, isStimulusImport, node })
+            new ImportDeclaration(this, { originalName, localName, source, isStimulusImport, node, type })
           )
         })
       },

@@ -6,21 +6,34 @@ import type { SourceFile } from "./source_file"
 import type { ClassDeclaration } from "./class_declaration"
 import type { ControllerDefinition} from "./controller_definition"
 
+export type ImportDeclarationType = "default" | "named" | "namespace"
+
+type ImportDeclarationArgs = {
+  type: ImportDeclarationType
+  originalName?: string
+  localName: string
+  source: string
+  isStimulusImport: boolean // TODO: check if this really needs to be in the args on initialization
+  node: Acorn.ImportDeclaration
+}
+
 export class ImportDeclaration {
   public readonly sourceFile: SourceFile
   public readonly originalName?: string
   public readonly localName: string
   public readonly source: string
+  public readonly type: ImportDeclarationType
   public readonly isStimulusImport: boolean
   public readonly node: Acorn.ImportDeclaration
 
-  constructor(sourceFile: SourceFile, args: { originalName?: string, localName: string, source: string, isStimulusImport: boolean, node: Acorn.ImportDeclaration}) {
+  constructor(sourceFile: SourceFile, args: ImportDeclarationArgs) {
     this.sourceFile = sourceFile
     this.originalName = args.originalName
     this.localName = args.localName
     this.source = args.source
     this.isStimulusImport = args.isStimulusImport
     this.node = args.node
+    this.type = args.type
   }
 
   get project() {
@@ -49,6 +62,12 @@ export class ImportDeclaration {
     }
 
     return undefined
+  }
+
+  get isRenamedImport(): boolean {
+    if (this.type !== "named") return false
+
+    return this.originalName !== this.localName
   }
 
   get resolvedNodeModule(): NodeModule | undefined {
