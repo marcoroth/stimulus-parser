@@ -102,7 +102,7 @@ export class Project {
 
     await this.searchProjectFiles()
     await this.analyzeProjectFiles()
-    await detectPackages(this)
+    await this.detectAvailablePackages()
     await this.analyzeReferencedModules()
   }
 
@@ -110,6 +110,10 @@ export class Project {
     const referencesModules = this.detectedNodeModules.filter(module => this.referencedNodeModules.includes(module.name))
 
     await Promise.allSettled(referencesModules.map(module => module.analyze()))
+  }
+
+  async detectAvailablePackages() {
+    await detectPackages(this)
   }
 
   async analyzeAllDetectedModules() {

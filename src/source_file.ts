@@ -102,6 +102,16 @@ export class SourceFile {
     return this.importDeclarations.find(declaration => declaration.localName === localName)
   }
 
+  get resolvedClassDeclarations(): ClassDeclaration[] {
+    return this.exportDeclarations
+      .flatMap(declaration => declaration.resolvedClassDeclaration)
+      .filter(dec => dec !== undefined) as ClassDeclaration[]
+  }
+
+  get resolvedControllerDefinitions() {
+    return this.resolvedClassDeclarations.filter(klass => klass.controllerDefinition)
+  }
+
   analyze() {
     this.parse()
 

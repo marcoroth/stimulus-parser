@@ -2,7 +2,9 @@ import path from "path"
 
 import type * as Acorn from "acorn"
 import type { SourceFile } from "./source_file"
+import type { NodeModule } from "./node_module"
 import type { ClassDeclaration } from "./class_declaration"
+import type { ControllerDefinition } from "./controller_definition"
 
 export class ExportDeclaration {
   public readonly sourceFile: SourceFile
@@ -27,8 +29,22 @@ export class ExportDeclaration {
     return this.sourceFile.project
   }
 
-  get resolvedPath(): string | undefined {
-    if (this.source?.startsWith(".")) {
+  get isRelativeImport(): boolean {
+    if (!this.source) return false
+
+    return this.source.startsWith(".")
+  }
+
+  get isNodeModuleImport() {
+    return !this.isRelativeImport
+  }
+
+  get exportedClassDeclaration() {
+    return this.sourceFile.classDeclarations.find(klass => klass.exportDeclaration === this)
+  }
+
+  get resolvedRelativePath(): string | undefined {
+    if (this.isRelativeImport && this.source) {
       const thisFolder = path.dirname(this.sourceFile.path)
       const folder = path.dirname(this.source)
       let file = path.basename(this.source)
@@ -43,16 +59,45 @@ export class ExportDeclaration {
     return undefined
   }
 
+  get resolvedNodeModule(): NodeModule | undefined {
+    if (this.resolvedRelativePath) return undefined
+
+    // TODO: account for exportmaps
+    const nodeModule = this.project.detectedNodeModules.find(node => node.name === this.source)
+
+    if (nodeModule) return nodeModule
+
+    return undefined
+  }
+
+  get resolvedPath(): string | undefined {
+    if (this.resolvedRelativePath) return this.resolvedRelativePath
+
+    if (this.resolvedNodeModule && this.resolvedNodeModule.entrypointSourceFile) {
+      throw new Error("resolved node module")
+    }
+
+    if (this.exportedClassDeclaration) {
+      const klass = this.exportedClassDeclaration.highestAncestor
+
+      if (klass && klass.importDeclaration) {
+        return klass.importDeclaration.resolvedPath
+      }
+    }
+
+    return undefined
+  }
+
   get resolvedSourceFile(): SourceFile | undefined {
     if (!this.resolvedPath) return undefined
 
-    return this.project.projectFiles.find(file => file.path === this.resolvedPath)
+    return this.project.allSourceFiles.find(file => file.path === this.resolvedPath)
   }
 
   get resolvedExportDeclaration(): ExportDeclaration | undefined {
     if (!this.resolvedSourceFile) return undefined
 
-    if (this.type === "default" || (this.type === "named" && this.localName === "default")) {
+    if (this.type === "default") {
       return this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.type === "default")
     } else if (this.type === "named") {
       return this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.type === "named" && declaration.exportedName === this.localName)
@@ -62,15 +107,28 @@ export class ExportDeclaration {
   }
 
   get resolvedClassDeclaration(): ClassDeclaration | undefined {
+    if (this.exportedClassDeclaration) {
+      const ancestor = this.exportedClassDeclaration.highestAncestor
+
+      if (ancestor.importDeclaration) {
+        return ancestor.importDeclaration.resolvedClassDeclaration
+      }
+    }
+
+    if (this.exportedClassDeclaration) {
+      return this.exportedClassDeclaration
+    }
+
     if (this.resolvedExportDeclaration) {
       return this.resolvedExportDeclaration.resolvedClassDeclaration
     }
 
-    // TODO: is this the right logic?
-    const classDeclaration = this.sourceFile.classDeclarations.find(klass => klass.exportDeclaration === this)
-
-    if (classDeclaration) return classDeclaration
-
     return undefined
+  }
+
+  get resolvedControllerDefinition(): ControllerDefinition | undefined {
+    if (!this.resolvedClassDeclaration) return undefined
+
+    return this.resolvedClassDeclaration.controllerDefinition
   }
 }

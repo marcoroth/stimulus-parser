@@ -4,6 +4,7 @@ import type * as Acorn from "acorn"
 import type { NodeModule } from "./node_module"
 import type { SourceFile } from "./source_file"
 import type { ClassDeclaration } from "./class_declaration"
+import type { ExportDeclaration } from "./export_declaration"
 import type { ControllerDefinition} from "./controller_definition"
 
 export type ImportDeclarationType = "default" | "named" | "namespace"
@@ -40,12 +41,18 @@ export class ImportDeclaration {
     return this.sourceFile.project
   }
 
-  get isRelativeImport() {
-    return this.source.startsWith(".")
+  get isRenamedImport(): boolean {
+    if (this.type !== "named") return false
+
+    return this.originalName !== this.localName
   }
 
   get isNodeModuleImport() {
     return !this.isRelativeImport
+  }
+
+  get isRelativeImport() {
+    return this.source.startsWith(".")
   }
 
   get resolvedRelativePath(): string | undefined {
@@ -64,12 +71,6 @@ export class ImportDeclaration {
     return undefined
   }
 
-  get isRenamedImport(): boolean {
-    if (this.type !== "named") return false
-
-    return this.originalName !== this.localName
-  }
-
   get resolvedNodeModule(): NodeModule | undefined {
     if (this.resolvedRelativePath) return
 
@@ -83,7 +84,22 @@ export class ImportDeclaration {
 
   get resolvedPath() {
     if (this.resolvedRelativePath) return this.resolvedRelativePath
-    if (this.resolvedNodeModule) return this.resolvedNodeModule.entrypoint
+
+    if (this.resolvedNodeModule && this.resolvedNodeModule.entrypointSourceFile) {
+      const { exportDeclarations } = this.resolvedNodeModule.entrypointSourceFile
+
+      if (this.type === "default") {
+        // TODO
+      } else if (this.type === "named") {
+        const exportDeclaration = exportDeclarations.find(declaration => declaration.exportedName === this.originalName)
+
+        if (exportDeclaration) {
+          return exportDeclaration.resolvedPath
+        }
+      } else {
+        // TODO
+      }
+    }
 
     return undefined
   }
@@ -91,11 +107,17 @@ export class ImportDeclaration {
   get resolvedSourceFile(): SourceFile | undefined {
     if (!this.resolvedPath) return
 
-    return this.project.projectFiles.find(file => file.path === this.resolvedPath)
+    return this.project.allSourceFiles.find(file => file.path === this.resolvedPath)
+  }
+
+  get resolvedExportDeclaration(): ExportDeclaration | undefined {
+    if (!this.resolvedSourceFile) return
+
+    return this.resolvedSourceFile.exportDeclarations[0]
   }
 
   get resolvedClassDeclaration(): ClassDeclaration | undefined {
-    if (!this.resolvedSourceFile) return
+    if (!this.resolvedExportDeclaration) return
 
     // const classDeclaration = this.resolvedSourceFile.findClass(this.originalName)
     // if (classDeclaration) return classDeclaration
@@ -103,8 +125,14 @@ export class ImportDeclaration {
     // const importDeclaration = this.resolvedSourceFile.importDeclarations.find(declaration => declaration.originalName === this.originalName)
     // if (importDeclaration) return importDeclaration.resolvedClassDeclaration
 
-    const exportDeclaration = this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.exportedName === this.originalName)
-    if (exportDeclaration) return exportDeclaration.resolvedClassDeclaration
+    // const exportDeclaration = this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.exportedName === this.originalName)
+    // if (exportDeclaration) return exportDeclaration.resolvedClassDeclaration
+
+    const classDeclaration = this.resolvedExportDeclaration.exportedClassDeclaration
+
+    if (classDeclaration) return classDeclaration
+
+    return undefined
   }
 
   get resolvedControllerDefinition(): ControllerDefinition | undefined {
