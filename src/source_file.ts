@@ -39,6 +39,10 @@ export class SourceFile {
     return this.errors.length > 0
   }
 
+  get hasContent() {
+    return this.content !== undefined
+  }
+
   get fileExtension() {
     return path.extname(this.path)
   }
@@ -47,8 +51,6 @@ export class SourceFile {
     this.project = project
     this.path = path
     this.content = content
-
-    this.parse()
   }
 
   parse() {
@@ -92,6 +94,8 @@ export class SourceFile {
   }
 
   analyze() {
+    this.parse()
+
     if (!this.ast) return
 
     this.analyzeImportDeclarations()

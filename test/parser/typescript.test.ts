@@ -123,6 +123,7 @@ describe("with TS Syntax", () => {
     `
 
     const sourceFile = new SourceFile(new Project(process.cwd()), "error_controller.ts", code)
+    sourceFile.analyze()
 
     // expect(sourceFile.identifier).toEqual("error")
     expect(sourceFile.hasErrors).toBeTruthy()
