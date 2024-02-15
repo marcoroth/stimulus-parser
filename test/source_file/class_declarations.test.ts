@@ -12,6 +12,7 @@ const stimulusControllerSuperClass = {
     localName: "Controller",
     originalName: "Controller",
     source: "@hotwired/stimulus",
+    type: "named",
   },
   isStimulusDescendant: true,
   superClass: undefined,
@@ -161,7 +162,8 @@ describe("SourceFile", () => {
               originalName: "Controller",
               localName: "Controller",
               source: "better",
-              isStimulusImport: false
+              isStimulusImport: false,
+              type: "named",
             }
           },
         },

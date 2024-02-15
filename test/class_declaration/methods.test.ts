@@ -50,7 +50,8 @@ describe("ClassDeclaration", () => {
             localName: "Controller",
             originalName: "Controller",
             source: "somewhere",
-            isStimulusImport: false
+            isStimulusImport: false,
+            type: "named",
           }
         }
       }])
@@ -85,7 +86,8 @@ describe("ClassDeclaration", () => {
             localName: "Controller",
             originalName: "Controller",
             source: "@hotwired/stimulus",
-            isStimulusImport: true
+            isStimulusImport: true,
+            type: "named",
           }
         }
       }])

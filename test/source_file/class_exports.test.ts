@@ -50,7 +50,8 @@ describe("SourceFile", () => {
         isStimulusImport: false,
         localName: "SuperClass",
         originalName: "SuperClass",
-        source: "./super_class"
+        source: "./super_class",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -92,7 +93,8 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -134,7 +136,8 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -174,14 +177,15 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
         isStimulusExport: true,
-        type: "named"
+        type: "named",
       }
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
@@ -215,7 +219,8 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -254,7 +259,8 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -293,7 +299,8 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -334,7 +341,8 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
@@ -375,14 +383,15 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
         isStimulusExport: true,
-        type: "named"
+        type: "named",
       }
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
@@ -414,14 +423,15 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
         isStimulusExport: true,
-        type: "named"
+        type: "named",
       }
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
@@ -456,14 +466,15 @@ describe("SourceFile", () => {
         isStimulusImport: true,
         localName: "Controller",
         originalName: "Controller",
-        source: "@hotwired/stimulus"
+        source: "@hotwired/stimulus",
+        type: "named",
       }
 
       const exportDeclaration = {
         exportedName: "AnotherThing",
         localName: "AnotherThing",
         isStimulusExport: true,
-        type: "named"
+        type: "named",
       }
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
