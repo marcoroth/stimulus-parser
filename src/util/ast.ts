@@ -122,7 +122,7 @@ export function convertClassDeclarationNodeToClassDeclaration(sourceFile: Source
     superClass = new ClassDeclaration(superClassName, undefined, sourceFile)
 
     if (importDeclaration) {
-      superClass.isStimulusDescendant = importDeclaration.isStimulusImport
+      // superClass.isStimulusDescendant = importDeclaration.isStimulusImport
       superClass.importDeclaration = importDeclaration
     }
   }

@@ -225,6 +225,81 @@ describe("SourceFile", () => {
       ])
     })
 
+    test("resovles file through ancestors", async () => {
+      const helloControllerCode = dedent`
+        import { Modal } from "tailwindcss-stimulus-components"
+
+        class ApplicationController extends Modal {
+          third() {}
+        }
+
+        class IntermediateController extends ApplicationController {
+          second() {}
+        }
+
+        export default class extends IntermediateController {
+          first() {}
+        }
+      `
+
+      const helloControllerFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/hello_controller.js"), helloControllerCode)
+      helloControllerFile.analyze()
+
+      project.projectFiles.push(helloControllerFile)
+
+      expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
+      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+
+      await project.detectAvailablePackages()
+      await project.analyzeReferencedModules()
+
+      expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
+      expect(project.detectedNodeModules.map(m => m.name)).toContain("tailwindcss-stimulus-components")
+      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+
+      expect(helloControllerFile.exportDeclarations).toHaveLength(1)
+
+      const declaration = helloControllerFile.exportDeclarations[0]
+      const klass = declaration.exportedClassDeclaration
+
+      expect(klass.ancestors).toHaveLength(4)
+
+      console.log(klass.ancestors.map(klass => klass.node))
+
+
+      expect(klass.ancestors.map(klass => project.relativePath(klass.sourceFile.path))).toEqual([
+        "app/javascript/hello_controller.js",
+        "app/javascript/hello_controller.js",
+        "app/javascript/hello_controller.js",
+        "node_modules/tailwindcss-stimulus-components/src/modal.js",
+      ])
+
+      expect(klass.ancestors.map(klass => klass.className)).toEqual([
+        undefined,
+        "IntermediateController",
+        "ApplicationController",
+        undefined,
+      ])
+
+      expect(klass.ancestors.map(klass => klass.controllerDefinition?.methodNames)).toEqual([
+        ["first"],
+        ["second"],
+        ["third"],
+        [
+          "disconnect",
+          "open",
+          "close",
+          "closeBackground",
+          "openValueChanged",
+          "lockScroll",
+          "unlockScroll",
+          "saveScrollPosition",
+          "restoreScrollPosition"
+        ],
+      ])
+
+    })
+
     test.skip("resolve node module package path with node module in detectedNodeModules via second file", async () => {
       const applicationControllerCode = dedent`
         import { Autosave } from "tailwindcss-stimulus-components"

@@ -20,7 +20,7 @@ export class ClassDeclaration {
   public readonly superClass?: ClassDeclaration
   public readonly node?: ClassDeclarationNode
 
-  public isStimulusDescendant: boolean = false
+  // public isStimulusDescendant: boolean = false
 
   public importDeclaration?: ImportDeclaration // TODO: technically a class can be imported more than once
   public exportDeclaration?: ExportDeclaration // TODO: technically a class can be exported more than once
@@ -30,16 +30,21 @@ export class ClassDeclaration {
     this.className = className
     this.superClass = superClass
     this.sourceFile = sourceFile
-    this.isStimulusDescendant = superClass?.isStimulusDescendant || false
+    // this.isStimulusDescendant = superClass?.isStimulusDescendant || false
     this.node = node
 
-    if (this.shouldParse) {
+    // if (this.shouldParse) {
       this.controllerDefinition = new ControllerDefinition(this.sourceFile.project, this.sourceFile.path, this)
-    }
+    // }
   }
 
   get shouldParse() {
-    return this.isStimulusDescendant
+    return true
+    // return this.isStimulusDescendant
+  }
+
+  get isStimulusDescendant() {
+    return this.ancestors.reverse()[0].importDeclaration?.isStimulusImport
   }
 
   get isExported(): boolean {
@@ -58,6 +63,35 @@ export class ClassDeclaration {
     }
 
     return this
+  }
+
+  get ancestors(): ClassDeclaration[] {
+    const ancestors: ClassDeclaration[] = []
+
+    let previous: ClassDeclaration | undefined = this
+
+    while (previous !== undefined) {
+      ancestors.push(previous)
+
+      previous = previous.resolveNextClassDeclaration
+    }
+
+    return ancestors.filter(ancestor => ancestor)
+  }
+
+  get resolveNextClassDeclaration(): ClassDeclaration | undefined {
+    if (this.superClass) {
+      if (this.superClass.importDeclaration) {
+        return this.superClass.resolveNextClassDeclaration
+      }
+      return this.superClass
+    }
+
+    if (this.importDeclaration) {
+      return this.importDeclaration.resolveNextClassDeclaration
+    }
+
+    return
   }
 
   analyze() {

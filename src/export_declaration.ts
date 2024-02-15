@@ -43,6 +43,10 @@ export class ExportDeclaration {
     return this.sourceFile.classDeclarations.find(klass => klass.exportDeclaration === this)
   }
 
+  get resolveNextClassDeclaration() {
+    return this.exportedClassDeclaration
+  }
+
   get resolvedRelativePath(): string | undefined {
     if (this.isRelativeImport && this.source) {
       const thisFolder = path.dirname(this.sourceFile.path)

@@ -55,6 +55,10 @@ export class ImportDeclaration {
     return this.source.startsWith(".")
   }
 
+  get resolveNextClassDeclaration(): ClassDeclaration | undefined {
+    return this.resolvedClassDeclaration
+  }
+
   get resolvedRelativePath(): string | undefined {
     if (this.isRelativeImport) {
       const thisFolder = path.dirname(this.sourceFile.path)
