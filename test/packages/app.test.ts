@@ -117,7 +117,7 @@ describe("packages", () => {
       expect(controller.valueDefinitions.open.type).toEqual("Boolean")
       expect(controller.valueDefinitions.restoreScroll.type).toEqual("Boolean")
 
-      const sourceFileCount = project.sourceFiles.length
+      const sourceFileCount = project.projectFiles.length
       const allSourceFileCount = project.allSourceFiles.length
 
       expect(sourceFileCount).toEqual(1)
@@ -130,7 +130,7 @@ describe("packages", () => {
 
       await project.analyzeAllDetectedModules()
 
-      expect(project.sourceFiles.length).toEqual(sourceFileCount)
+      expect(project.projectFiles.length).toEqual(sourceFileCount)
       expect(project.allSourceFiles.length).toEqual(allSourceFileCount)
       expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
       expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)

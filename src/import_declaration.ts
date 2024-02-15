@@ -72,7 +72,7 @@ export class ImportDeclaration {
   get resolvedSourceFile(): SourceFile | undefined {
     if (!this.resolvedPath) return
 
-    return this.project.sourceFiles.find(file => file.path === this.resolvedPath)
+    return this.project.projectFiles.find(file => file.path === this.resolvedPath)
   }
 
   get resolvedClassDeclaration(): ClassDeclaration | undefined {

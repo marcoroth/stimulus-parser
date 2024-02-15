@@ -16,7 +16,7 @@ describe("Project", () => {
 
     test("detects default import", () => {
       const sourceFile = new SourceFile(project, "abc.js", `import Something from "somewhere"`)
-      project.sourceFiles.push(sourceFile)
+      project.projectFiles.push(sourceFile)
 
       expect(project.referencedNodeModules).toEqual([])
 
@@ -27,7 +27,7 @@ describe("Project", () => {
 
     test("detects named import", () => {
       const sourceFile = new SourceFile(project, "abc.js", `import { Something } from "somewhere"`)
-      project.sourceFiles.push(sourceFile)
+      project.projectFiles.push(sourceFile)
 
       expect(project.referencedNodeModules).toEqual([])
 
@@ -38,7 +38,7 @@ describe("Project", () => {
 
     test("doesn't detect relative import", () => {
       const sourceFile = new SourceFile(project, "abc.js", `import { Something } from "./somewhere"`)
-      project.sourceFiles.push(sourceFile)
+      project.projectFiles.push(sourceFile)
 
       expect(project.referencedNodeModules).toEqual([])
 

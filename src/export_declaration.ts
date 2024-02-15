@@ -46,7 +46,7 @@ export class ExportDeclaration {
   get resolvedSourceFile(): SourceFile | undefined {
     if (!this.resolvedPath) return undefined
 
-    return this.project.sourceFiles.find(file => file.path === this.resolvedPath)
+    return this.project.projectFiles.find(file => file.path === this.resolvedPath)
   }
 
   get resolvedExportDeclaration(): ExportDeclaration | undefined {
