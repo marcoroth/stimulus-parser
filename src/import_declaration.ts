@@ -78,7 +78,7 @@ export class ImportDeclaration {
   get resolvedClassDeclaration(): ClassDeclaration | undefined {
     if (!this.resolvedSourceFile) return
 
-    // const classDeclaration = this.resolvedSourceFile.classDeclarations.find(klass => klass.className === this.originalName)
+    // const classDeclaration = this.resolvedSourceFile.findClass(this.originalName)
     // if (classDeclaration) return classDeclaration
     //
     // const importDeclaration = this.resolvedSourceFile.importDeclarations.find(declaration => declaration.originalName === this.originalName)

@@ -52,6 +52,14 @@ export class ClassDeclaration {
     return this.exportDeclaration.isStimulusExport
   }
 
+  get highestAncestor(): ClassDeclaration {
+    if (this.superClass) {
+      return this.superClass.highestAncestor
+    }
+
+    return this
+  }
+
   analyze() {
     if (!this.shouldParse) return
 

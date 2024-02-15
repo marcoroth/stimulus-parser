@@ -93,6 +93,10 @@ export class SourceFile {
     return ["esm", "cjs"," umd", "ts"]
   }
 
+  findClass(className: string) {
+    return this.classDeclarations.find(klass => klass.className === className)
+  }
+
   analyze() {
     this.parse()
 
