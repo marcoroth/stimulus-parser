@@ -1,4 +1,3 @@
-import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import * as builder from "../../src/util/ast_builder"
 
