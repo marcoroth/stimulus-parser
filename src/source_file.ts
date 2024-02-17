@@ -122,9 +122,10 @@ export class SourceFile {
     this.analyzeExportDeclarations()
     this.analyzeClassExports()
     this.analyzeControllers()
-    this.analyzeStaticPropertiesExpressions()
+    // this.analyzeStaticPropertiesExpressions()
   }
 
+  // TODO: this shouldn't be needed anymore
   analyzeControllers() {
     this.classDeclarations.forEach((classDeclaration) => classDeclaration.analyze())
   }
@@ -146,9 +147,10 @@ export class SourceFile {
           if (specifier.type === "ImportNamespaceSpecifier") type = "namespace"
           if (original === "default")                        type = "default"
 
-          this.importDeclarations.push(
-            new ImportDeclaration(this, { originalName, localName, source, isStimulusImport, node, type })
-          )
+          const declaration = new ImportDeclaration(this, { originalName, localName, source, isStimulusImport, node, type })
+
+          this.importDeclarations.push(declaration)
+          this.project.registerReferencedNodeModule(declaration)
         })
       },
     })
@@ -170,20 +172,17 @@ export class SourceFile {
           const source = ast.extractLiteralAsString(node.source)
           const classDeclaration = findClass(localName)
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+          let exportDeclaration
 
           if (exportedName === "default") {
-            this.exportDeclarations.push(
-              new ExportDeclaration(this, { localName: (localName === "default" ? undefined : localName), source, isStimulusExport, type: "default", node })
-            )
+            exportDeclaration = new ExportDeclaration(this, { localName: (localName === "default" ? undefined : localName), source, isStimulusExport, type: "default", node })
           } else if (localName === "default") {
-            this.exportDeclarations.push(
-              new ExportDeclaration(this, { exportedName: (exportedName === "default" ? undefined : exportedName), source, isStimulusExport, type: exportedName === "default" ? "default" : "named", node })
-            )
+            exportDeclaration = new ExportDeclaration(this, { exportedName: (exportedName === "default" ? undefined : exportedName), source, isStimulusExport, type: exportedName === "default" ? "default" : "named", node })
           } else {
-            this.exportDeclarations.push(
-              new ExportDeclaration(this, { exportedName, localName, source, isStimulusExport, type, node })
-            )
+            exportDeclaration = new ExportDeclaration(this, { exportedName, localName, source, isStimulusExport, type, node })
           }
+
+          this.exportDeclarations.push(exportDeclaration)
         })
 
         if (!declaration) return
@@ -193,10 +192,9 @@ export class SourceFile {
           const localName = declaration.id.name
           const classDeclaration = findClass(localName)
           const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+          const exportDeclaration = new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
 
-          this.exportDeclarations.push(
-            new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
-          )
+          this.exportDeclarations.push(exportDeclaration)
         }
 
         if (declaration.type === "VariableDeclaration") {
@@ -205,10 +203,9 @@ export class SourceFile {
             const localName = ast.extractIdentifier(declaration.id)
             const classDeclaration = findClass(localName)
             const isStimulusExport = classDeclaration?.isStimulusDescendant || false
+            const exportDeclaration = new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
 
-            this.exportDeclarations.push(
-              new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
-            )
+            this.exportDeclarations.push(exportDeclaration)
           })
         }
       },
@@ -223,9 +220,9 @@ export class SourceFile {
         const classDeclaration = findClass(localName)
         const isStimulusExport = classDeclaration?.isStimulusDescendant || false
 
-        this.exportDeclarations.push(
-          new ExportDeclaration(this, { localName, isStimulusExport, type, node })
-        )
+        const exportDeclaration = new ExportDeclaration(this, { localName, isStimulusExport, type, node })
+
+        this.exportDeclarations.push(exportDeclaration)
       },
 
       ExportAllDeclaration: node => {
@@ -234,9 +231,10 @@ export class SourceFile {
         const source = ast.extractLiteralAsString(node.source)
         const isStimulusExport = false // TODO: detect namespace Stimulus exports
 
-        this.exportDeclarations.push(
-          new ExportDeclaration(this, { exportedName, source, isStimulusExport, type, node })
-        )
+        const exportDeclaration = new ExportDeclaration(this, { exportedName, source, isStimulusExport, type, node })
+
+        this.exportDeclarations.push(exportDeclaration)
+        this.project.registerReferencedNodeModule(exportDeclaration)
       },
 
     })
@@ -263,7 +261,7 @@ export class SourceFile {
     })
   }
 
-  analyzeStaticPropertiesExpressions() {
+  analyzeStaticPropertiesExpressions(controllerDefinition: ControllerDefinition) {
     simple(this.ast as any, {
       AssignmentExpression: expression => {
         if (expression.left.type !== "MemberExpression") return
@@ -274,11 +272,11 @@ export class SourceFile {
         if (property.type !== "Identifier") return
         if (object.type !== "Identifier") return
 
-        const classDeclaration = this.classDeclarations.find(c => c.className === object.name)
+        // const classDeclaration = this.classDeclarations.find(c => c.className === object.name)
 
-        if (!classDeclaration || !classDeclaration.isStimulusDescendant) return
+        // if (!classDeclaration || !classDeclaration.isStimulusDescendant) return
 
-        properties.parseStaticControllerProperties(classDeclaration.controllerDefinition, property, expression.right)
+        properties.parseStaticControllerProperties(controllerDefinition, property, expression.right)
       },
     })
   }

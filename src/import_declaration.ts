@@ -93,7 +93,11 @@ export class ImportDeclaration {
       const { exportDeclarations } = this.resolvedNodeModule.entrypointSourceFile
 
       if (this.type === "default") {
-        // TODO
+        const exportDeclaration = exportDeclarations.find(declaration => declaration.type === "default")
+
+        if (exportDeclaration) {
+          return exportDeclaration.resolvedPath
+        }
       } else if (this.type === "named") {
         const exportDeclaration = exportDeclarations.find(declaration => declaration.exportedName === this.originalName)
 
@@ -102,6 +106,7 @@ export class ImportDeclaration {
         }
       } else {
         // TODO
+        throw new Error(`throwing to resolve type: ${this.type}`)
       }
     }
 
@@ -117,7 +122,10 @@ export class ImportDeclaration {
   get resolvedExportDeclaration(): ExportDeclaration | undefined {
     if (!this.resolvedSourceFile) return
 
-    return this.resolvedSourceFile.exportDeclarations[0]
+    if (this.type === "default") return this.resolvedSourceFile.exportDeclarations.find(exportDeclaration => exportDeclaration.type === "default")
+    if (this.type === "namespace") throw new Error("Implement namespace imports")
+
+    return this.resolvedSourceFile.exportDeclarations.find(exportDeclaration => exportDeclaration.exportedName === this.originalName)
   }
 
   get resolvedClassDeclaration(): ClassDeclaration | undefined {

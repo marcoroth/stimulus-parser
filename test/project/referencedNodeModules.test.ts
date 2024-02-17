@@ -11,40 +11,40 @@ describe("Project", () => {
 
   describe("referencedNodeModules", () => {
     test("empty by default", () => {
-      expect(project.referencedNodeModules).toEqual([])
+      expect(Array.from(project.referencedNodeModules)).toEqual([])
     })
 
     test("detects default import", () => {
       const sourceFile = new SourceFile(project, "abc.js", `import Something from "somewhere"`)
       project.projectFiles.push(sourceFile)
 
-      expect(project.referencedNodeModules).toEqual([])
+      expect(Array.from(project.referencedNodeModules)).toEqual([])
 
       sourceFile.analyze()
 
-      expect(project.referencedNodeModules).toEqual(["somewhere"])
+      expect(Array.from(project.referencedNodeModules)).toEqual(["somewhere"])
     })
 
     test("detects named import", () => {
       const sourceFile = new SourceFile(project, "abc.js", `import { Something } from "somewhere"`)
       project.projectFiles.push(sourceFile)
 
-      expect(project.referencedNodeModules).toEqual([])
+      expect(Array.from(project.referencedNodeModules)).toEqual([])
 
       sourceFile.analyze()
 
-      expect(project.referencedNodeModules).toEqual(["somewhere"])
+      expect(Array.from(project.referencedNodeModules)).toEqual(["somewhere"])
     })
 
     test("doesn't detect relative import", () => {
       const sourceFile = new SourceFile(project, "abc.js", `import { Something } from "./somewhere"`)
       project.projectFiles.push(sourceFile)
 
-      expect(project.referencedNodeModules).toEqual([])
+      expect(Array.from(project.referencedNodeModules)).toEqual([])
 
       sourceFile.analyze()
 
-      expect(project.referencedNodeModules).toEqual([])
+      expect(Array.from(project.referencedNodeModules)).toEqual([])
     })
   })
 })

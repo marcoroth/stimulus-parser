@@ -28,7 +28,6 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: false,
         superClass: undefined,
         exportDeclaration
       }])
@@ -67,12 +66,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: false,
-        superClass: {
-          className: "SuperClass",
-          isStimulusDescendant: false,
-          importDeclaration
-        },
+        superClass: undefined,
         exportDeclaration
       }])
     })
@@ -110,11 +104,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -153,11 +146,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+            isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -193,11 +185,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -235,11 +226,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -275,11 +265,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -315,11 +304,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: undefined,
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -357,11 +345,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -399,11 +386,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -439,11 +425,10 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         },
         exportDeclaration
       }])
@@ -482,17 +467,15 @@ describe("SourceFile", () => {
 
       const something = {
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
-          importDeclaration
+          importDeclaration,
+          isStimulusClassDeclaration: true,
         }
       }
 
       const anotherThing = {
         className: "AnotherThing",
-        isStimulusDescendant: true,
         superClass: something,
         exportDeclaration
       }

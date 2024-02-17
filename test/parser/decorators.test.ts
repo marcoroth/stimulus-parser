@@ -58,7 +58,7 @@ describe("decorator", () => {
     expect(controller.targetNames).toEqual(['output', 'name', 'one', 'two'])
   })
 
-  test("adds error when decorator is used be controller is not decorated with @TypedController", () => {
+  test("adds error when decorator is used but controller is not decorated with @TypedController", () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target } from "@vytant/stimulus-decorators";

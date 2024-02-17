@@ -21,9 +21,9 @@ describe("ClassDeclaration", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: false
       }])
       expect(sourceFile.controllerDefinitions).toEqual([])
+      expect(sourceFile.errors).toHaveLength(0)
     })
 
     test("imports controller from somewhere", () => {
@@ -42,20 +42,11 @@ describe("ClassDeclaration", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: false,
-        superClass: {
-          className: "Controller",
-          isStimulusDescendant: false,
-          importDeclaration: {
-            localName: "Controller",
-            originalName: "Controller",
-            source: "somewhere",
-            isStimulusImport: false,
-            type: "named",
-          }
-        }
+        superClass: undefined,
       }])
       expect(sourceFile.controllerDefinitions).toEqual([])
+      expect(sourceFile.errors).toHaveLength(1)
+      expect(sourceFile.errors[0].message).toEqual(`Couldn't resolve import "Controller" to a class declaration in "somewhere". Make sure the referenced constant is defining a class.`)
     })
   })
 
@@ -78,10 +69,9 @@ describe("ClassDeclaration", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: true,
         superClass: {
           className: "Controller",
-          isStimulusDescendant: true,
+          isStimulusClassDeclaration: true,
           importDeclaration: {
             localName: "Controller",
             originalName: "Controller",
@@ -91,6 +81,7 @@ describe("ClassDeclaration", () => {
           }
         }
       }])
+      expect(sourceFile.errors).toHaveLength(0)
     })
   })
 })

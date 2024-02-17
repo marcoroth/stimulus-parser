@@ -1,10 +1,12 @@
+import path from "path"
 import dedent from "dedent"
 import { expect, test, describe } from "vitest"
 import { setupProject } from "../helpers/setup"
 
+import { ClassDeclaration, StimulusControllerClassDeclaration } from "../../src/class_declaration"
 import { SourceFile } from "../../src/source_file"
 
-const project = setupProject()
+let project = setupProject("packages/stimulus-dropdown")
 
 describe("@hotwired/stimulus Controller", () => {
   test("parse parent", () => {
@@ -90,44 +92,65 @@ describe("with controller in same file", () => {
 
 describe("with controller from other file", () => {
   test("parse parent", () => {
-    const code = dedent`
+    const applicationCode = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      export default class extends Controller {}
+    `
+
+    const helloCode = dedent`
       import ApplicationController from "./application_controller"
 
       export default class extends ApplicationController {}
     `
 
-    const sourceFile = new SourceFile(project, "parent_controller.js", code)
-    sourceFile.analyze()
+    const applicationFile = new SourceFile(project, path.join(project.projectPath, "application_controller.js"), applicationCode)
+    const helloFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), helloCode)
 
-    const classDeclaration = sourceFile.classDeclarations[0]
+    project.projectFiles.push(applicationFile)
+    project.projectFiles.push(helloFile)
 
-    expect(sourceFile.classDeclarations.length).toEqual(1)
+    applicationFile.analyze()
+    helloFile.analyze()
 
-    // TODO: this should be true at some point if the ApplicationController in other file inherits from the Stimulus controller
-    expect(classDeclaration.isStimulusDescendant).toEqual(false)
+    const applicationController = applicationFile.classDeclarations[0]
+    const helloController = helloFile.classDeclarations[0]
 
-    expect(classDeclaration.className).toEqual(undefined)
-    expect(classDeclaration.superClass.className).toEqual("ApplicationController")
-    expect(classDeclaration.superClass.importDeclaration.localName).toEqual("ApplicationController")
-    expect(classDeclaration.superClass.importDeclaration.originalName).toEqual(undefined)
-    expect(classDeclaration.superClass.importDeclaration.source).toEqual("./application_controller")
-    expect(classDeclaration.superClass.importDeclaration.isStimulusImport).toEqual(false)
+    expect(helloFile.classDeclarations.length).toEqual(1)
 
-    // TODO: This should probably also be populated
-    expect(classDeclaration.superClass.superClass).toEqual(undefined)
+    expect(helloController.isStimulusDescendant).toEqual(true)
+    expect(helloController.superClass.isStimulusDescendant).toEqual(true)
+    expect(applicationController.isStimulusDescendant).toEqual(true)
+
+    expect(helloController.className).toEqual(undefined)
+    expect(applicationController.className).toEqual(undefined)
+
+    expect(helloController.superClass).toEqual(applicationController)
+    expect(project.relativePath(helloController.superClass.sourceFile.path)).toEqual("application_controller.js")
+
+    expect(helloController.superClass).toBeInstanceOf(ClassDeclaration)
+    expect(helloController.superClass).not.toBeInstanceOf(StimulusControllerClassDeclaration)
+    expect(helloController.superClass.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
   })
 })
 
 describe("with controller from stimulus package", () => {
-  test("parse parent with default import", () => {
+  test("parse parent with default import", async () => {
     const code = dedent`
-      import SomeController from "some-package"
+      import SomeController from "stimulus-dropdown"
 
       export default class extends SomeController {}
     `
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
+    project.projectFiles.push(sourceFile)
     sourceFile.analyze()
+
+    await project.analyzeReferencedModules()
+
+    console.log(project.projectFiles.map(path => path.path))
+    console.log(project.allSourceFiles.map(path => path.path))
+
 
     const classDeclaration = sourceFile.classDeclarations[0]
 
@@ -142,18 +165,26 @@ describe("with controller from stimulus package", () => {
     expect(classDeclaration.superClass.superClass).toEqual(undefined)
   })
 
-  test("parse parent with regular import", () => {
-    const code = dedent`
-      import { SomeController } from "some-package"
+  test("parse parent with regular import", async () => {
+    const project = setupProject("packages/tailwindcss-stimulus-components")
 
-      export default class extends SomeController {}
+    const code = dedent`
+      import { Modal } from "tailwindcss-stimulus-components"
+
+      export default class extends Modal {}
     `
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
+
+
+    project.projectFiles.push(sourceFile)
     sourceFile.analyze()
+
+    await project.analyzeReferencedModules()
 
     const classDeclaration = sourceFile.classDeclarations[0]
 
+    expect(sourceFile.errors.length).toEqual(0)
     expect(sourceFile.classDeclarations.length).toEqual(1)
     expect(classDeclaration.isStimulusDescendant).toEqual(false)
     expect(classDeclaration.className).toEqual(undefined)

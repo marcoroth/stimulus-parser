@@ -2,7 +2,7 @@ import dedent from "dedent"
 import path from "path"
 
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile, ClassDeclaration } from "../../src"
+import { Project, SourceFile } from "../../src"
 
 let project = new Project(`${process.cwd()}/test/fixtures/app`)
 
@@ -159,9 +159,11 @@ describe("SourceFile", () => {
 
       project.projectFiles.push(helloControllerFile)
 
-      await project.analyze()
+      await project.detectAvailablePackages()
+      await project.analyzeReferencedModules()
 
-      expect(helloControllerFile.errors).toHaveLength(0)
+      expect(helloControllerFile.errors).toHaveLength(1)
+      expect(helloControllerFile.errors[0].message).toEqual(`Couldn't resolve super class "Controller" for class "ApplicationController". Double check your imports.`)
       expect(helloControllerFile.resolvedControllerDefinitions).toEqual([])
     })
 
@@ -181,14 +183,14 @@ describe("SourceFile", () => {
       project.projectFiles.push(helloControllerFile)
 
       expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
-      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+      expect(Array.from(project.referencedNodeModules)).toEqual(["tailwindcss-stimulus-components"])
 
       await project.detectAvailablePackages()
       await project.analyzeReferencedModules()
 
       expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
       expect(project.detectedNodeModules.map(m => m.name)).toContain("tailwindcss-stimulus-components")
-      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+      expect(Array.from(project.referencedNodeModules)).toEqual(["tailwindcss-stimulus-components"])
 
       expect(helloControllerFile.exportDeclarations).toHaveLength(1)
 
@@ -248,24 +250,28 @@ describe("SourceFile", () => {
       project.projectFiles.push(helloControllerFile)
 
       expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
-      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+      expect(Array.from(project.referencedNodeModules)).toEqual([
+        "tailwindcss-stimulus-components",
+        // "@hotwired/stimulus"
+      ])
 
       await project.detectAvailablePackages()
       await project.analyzeReferencedModules()
 
       expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
       expect(project.detectedNodeModules.map(m => m.name)).toContain("tailwindcss-stimulus-components")
-      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+      expect(Array.from(project.referencedNodeModules)).toEqual([
+        "tailwindcss-stimulus-components",
+        "@hotwired/stimulus"
+      ])
 
       expect(helloControllerFile.exportDeclarations).toHaveLength(1)
 
       const declaration = helloControllerFile.exportDeclarations[0]
       const klass = declaration.exportedClassDeclaration
 
+      expect(klass).toBeDefined()
       expect(klass.ancestors).toHaveLength(4)
-
-      console.log(klass.ancestors.map(klass => klass.node))
-
 
       expect(klass.ancestors.map(klass => project.relativePath(klass.sourceFile.path))).toEqual([
         "app/javascript/hello_controller.js",
@@ -300,7 +306,7 @@ describe("SourceFile", () => {
 
     })
 
-    test.skip("resolve node module package path with node module in detectedNodeModules via second file", async () => {
+    test("resolve node module package path with node module in detectedNodeModules via second file", async () => {
       const applicationControllerCode = dedent`
         import { Autosave } from "tailwindcss-stimulus-components"
 
@@ -328,9 +334,11 @@ describe("SourceFile", () => {
         ["app/javascript/application_controller.js", applicationControllerCode],
         ["app/javascript/hello_controller.js", helloControllerCode],
       ])
-      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+      expect(Array.from(project.referencedNodeModules)).toEqual([
+        "tailwindcss-stimulus-components",
+        // "@hotwired/stimulus"
+      ])
 
-      await project.detectAvailablePackages()
       await project.analyzeReferencedModules()
 
       expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([
@@ -338,7 +346,10 @@ describe("SourceFile", () => {
         ["app/javascript/hello_controller.js", helloControllerCode],
       ])
       expect(project.detectedNodeModules.map(m => m.name)).toContain("tailwindcss-stimulus-components")
-      expect(project.referencedNodeModules).toEqual(["tailwindcss-stimulus-components"])
+      expect(Array.from(project.referencedNodeModules)).toEqual([
+        "tailwindcss-stimulus-components",
+        "@hotwired/stimulus"
+      ])
 
 
       expect(helloControllerFile.exportDeclarations).toHaveLength(1)

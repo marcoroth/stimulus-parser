@@ -7,5 +7,8 @@ export function parseController(code: string, filename: string): ControllerDefin
   const sourceFile = new SourceFile(setupProject(), filename, code)
   sourceFile.analyze()
 
-  return sourceFile.controllerDefinitions[0]
+  const klass = sourceFile.classDeclarations[0]
+  klass.analyze()
+
+  return klass.controllerDefinition
 }

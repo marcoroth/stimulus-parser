@@ -45,7 +45,7 @@ describe("compiled JavaScript", () => {
     expect(Object.keys(controller.valueDefinitions)).toEqual(["class", "threshold", "rootMargin"])
   })
 
-  test.skip("transpiled with duplicate targets", () => {
+  test("transpiled with duplicate targets", () => {
     const code = dedent`
       import { Controller as o } from "@hotwired/stimulus";
 
@@ -62,9 +62,15 @@ describe("compiled JavaScript", () => {
 
     const controller = parseController(code, "minified_controller.js")
 
-    expect(controller.hasErrors).toEqual(false)
+    expect(controller.hasErrors).toEqual(true)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "item"`)
+    expect(controller.errors[0].loc.start.line).toEqual(4)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(4)
+    expect(controller.errors[0].loc.end.column).toEqual(27)
+
     expect(controller.methodNames).toEqual([])
-    expect(controller.targetNames).toEqual(["item"])
+    expect(controller.targetNames).toEqual(["item", "item"])
     expect(controller.classNames).toEqual([])
     expect(Object.keys(controller.valueDefinitions)).toEqual([])
   })

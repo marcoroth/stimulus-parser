@@ -12,6 +12,7 @@ import { ExportDeclaration } from "./export_declaration"
 import { MethodDefinition } from "./controller_property_definition"
 
 import type { TSESTree } from "@typescript-eslint/typescript-estree"
+import type { Project } from "./project"
 import type { ClassDeclarationNode } from "./types"
 
 export class ClassDeclaration {
@@ -30,27 +31,28 @@ export class ClassDeclaration {
     this.className = className
     this.superClass = superClass
     this.sourceFile = sourceFile
-    // this.isStimulusDescendant = superClass?.isStimulusDescendant || false
     this.node = node
-
-    // if (this.shouldParse) {
-      this.controllerDefinition = new ControllerDefinition(this.sourceFile.project, this.sourceFile.path, this)
-    // }
   }
 
   get shouldParse() {
-    return true
+    return this.isStimulusDescendant
     // return this.isStimulusDescendant
   }
 
   get isStimulusDescendant() {
-    return this.ancestors.reverse()[0].importDeclaration?.isStimulusImport
+    return !!this.ancestors.reverse()[0].superClass?.importDeclaration?.isStimulusImport
   }
 
   get isExported(): boolean {
     return !!this.exportDeclaration
   }
 
+  // TODO: implement
+  // get exportDeclaration() {
+  //
+  // }
+
+  // TODO: remove this
   get isStimulusExport(): boolean {
     if (!this.exportDeclaration) return false
 
@@ -97,10 +99,15 @@ export class ClassDeclaration {
   analyze() {
     if (!this.shouldParse) return
 
+
+    this.controllerDefinition = new ControllerDefinition(this.sourceFile.project, this.sourceFile.path, this)
+    this.sourceFile.analyzeStaticPropertiesExpressions(this.controllerDefinition)
+
     this.analyzeClassDecorators()
     this.analyzeMethods()
     this.analyzeDecorators()
     this.analyzeStaticProperties()
+
 
     this.validate()
   }
@@ -185,5 +192,14 @@ export class ClassDeclaration {
         new ParseError("LINT", "Controller was decorated with @TypedController but Controller didn't use any decorators.", this.node?.loc),
       )
     }
+  }
+}
+
+export class StimulusControllerClassDeclaration extends ClassDeclaration {
+  public readonly isStimulusClassDeclaration = true
+
+  constructor(project: Project, importDeclaration: ImportDeclaration) {
+    super(importDeclaration.localName || "Controller", undefined, new SourceFile(project, "stimulus/controller.js"))
+    this.importDeclaration = importDeclaration
   }
 }

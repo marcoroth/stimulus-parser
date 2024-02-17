@@ -20,7 +20,7 @@ export class ExportDeclaration {
     this.exportedName = args.exportedName
     this.localName = args.localName
     this.source = args.source
-    this.isStimulusExport = args.isStimulusExport
+    this.isStimulusExport = args.isStimulusExport // TODO: check if this is still needed
     this.type = args.type
     this.node = args.node
   }
@@ -29,14 +29,14 @@ export class ExportDeclaration {
     return this.sourceFile.project
   }
 
-  get isRelativeImport(): boolean {
+  get isRelativeExport(): boolean {
     if (!this.source) return false
 
     return this.source.startsWith(".")
   }
 
-  get isNodeModuleImport() {
-    return !this.isRelativeImport
+  get isNodeModuleExport() {
+    return !this.isRelativeExport
   }
 
   get exportedClassDeclaration() {
@@ -48,7 +48,7 @@ export class ExportDeclaration {
   }
 
   get resolvedRelativePath(): string | undefined {
-    if (this.isRelativeImport && this.source) {
+    if (this.isRelativeExport && this.source) {
       const thisFolder = path.dirname(this.sourceFile.path)
       const folder = path.dirname(this.source)
       let file = path.basename(this.source)
@@ -101,7 +101,7 @@ export class ExportDeclaration {
   get resolvedExportDeclaration(): ExportDeclaration | undefined {
     if (!this.resolvedSourceFile) return undefined
 
-    if (this.type === "default") {
+    if (this.type === "default" || (this.source && this.type === "named" && this.localName === undefined)) {
       return this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.type === "default")
     } else if (this.type === "named") {
       return this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.type === "named" && declaration.exportedName === this.localName)
@@ -114,9 +114,9 @@ export class ExportDeclaration {
     if (this.exportedClassDeclaration) {
       const ancestor = this.exportedClassDeclaration.highestAncestor
 
-      if (ancestor.importDeclaration) {
-        return ancestor.importDeclaration.resolvedClassDeclaration
-      }
+      // if (ancestor.importDeclaration) {
+      //   return ancestor.importDeclaration.resolvedClassDeclaration
+      // }
     }
 
     if (this.exportedClassDeclaration) {

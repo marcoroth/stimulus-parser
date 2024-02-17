@@ -1,10 +1,13 @@
 import { ValueDefinition } from "../controller_property_definition"
 
 import { SourceFile } from "../source_file"
-import { ClassDeclaration } from "../class_declaration"
+import { ParseError } from "../parse_error"
+import { ClassDeclaration, StimulusControllerClassDeclaration } from "../class_declaration"
 
 import type * as Acorn from "acorn"
 import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType, ClassDeclarationNode } from "../types"
+import type { ImportDeclaration } from "../import_declaration"
+import type { Project } from "../project"
 
 export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
@@ -113,25 +116,41 @@ export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
   }
 }
 
+export function detectSuperClass(project: Project, className: string|undefined, node: ClassDeclarationNode, superClassName: string|undefined, importDeclaration: ImportDeclaration|undefined, errors: ParseError[]) {
+  if (importDeclaration && importDeclaration.isStimulusImport) {
+    return new StimulusControllerClassDeclaration(project, importDeclaration)
+  }
+
+  if (importDeclaration) {
+    const nextClass = importDeclaration.resolveNextClassDeclaration
+
+    if (nextClass) return nextClass
+
+    errors.push(new ParseError("FAIL", `Couldn't resolve import "${importDeclaration.localName}" to a class declaration in "${importDeclaration.source}". Make sure the referenced constant is defining a class.`, node.loc))
+    return
+  }
+
+  if (!superClassName) return
+
+  errors.push(new ParseError("FAIL", `Couldn't resolve super class "${superClassName}" for class "${className}". Double check your imports.`, node.loc))
+}
+
 export function convertClassDeclarationNodeToClassDeclaration(sourceFile: SourceFile, className: string | undefined, node: ClassDeclarationNode) {
+  const errors: ParseError[] = []
   const superClassName = extractIdentifier(node.superClass)
   const importDeclaration = sourceFile.importDeclarations.find(i => i.localName === superClassName)
+
   let superClass = sourceFile.classDeclarations.find(i => i.className === superClassName)
 
-  if (!superClass && superClassName) {
-    superClass = new ClassDeclaration(superClassName, undefined, sourceFile)
-
-    if (importDeclaration) {
-      // superClass.isStimulusDescendant = importDeclaration.isStimulusImport
-      superClass.importDeclaration = importDeclaration
-    }
+  if (!superClass) {
+    superClass = detectSuperClass(sourceFile.project, className, node, superClassName, importDeclaration, errors)
   }
 
   const classDeclaration = new ClassDeclaration(className, superClass, sourceFile, node)
 
+  sourceFile.errors.push(...errors)
   sourceFile.classDeclarations.push(classDeclaration)
 }
-
 
 export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefined {
   if (!node) return undefined

@@ -7,6 +7,8 @@ const project = new Project(process.cwd())
 
 const stimulusControllerSuperClass = {
   className: "Controller",
+  isStimulusClassDeclaration: true,
+  superClass: undefined,
   importDeclaration: {
     isStimulusImport: true,
     localName: "Controller",
@@ -14,8 +16,6 @@ const stimulusControllerSuperClass = {
     source: "@hotwired/stimulus",
     type: "named",
   },
-  isStimulusDescendant: true,
-  superClass: undefined,
 }
 
 describe("SourceFile", () => {
@@ -30,7 +30,6 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
-        isStimulusDescendant: false,
         superClass: undefined,
       }])
     })
@@ -47,12 +46,10 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: "Something",
-          isStimulusDescendant: false,
           superClass: undefined,
         },
         {
           className: "Better",
-          isStimulusDescendant: false,
           superClass: undefined,
         },
       ])
@@ -69,7 +66,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: undefined,
-          isStimulusDescendant: false,
           superClass: undefined,
           exportDeclaration: {
             isStimulusExport: false,
@@ -93,12 +89,10 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: "Something",
-          isStimulusDescendant: false,
           superClass: undefined,
         },
         {
           className: undefined,
-          isStimulusDescendant: false,
           exportDeclaration: {
             exportedName: undefined,
             localName: undefined,
@@ -107,7 +101,6 @@ describe("SourceFile", () => {
           },
           superClass: {
             className: "Something",
-            isStimulusDescendant: false,
             superClass: undefined,
           },
         },
@@ -126,15 +119,12 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: "Better",
-          isStimulusDescendant: false,
           superClass: undefined,
         },
         {
           className: "Something",
-          isStimulusDescendant: false,
           superClass: {
             className: "Better",
-            isStimulusDescendant: false,
             superClass: undefined,
           },
         },
@@ -153,21 +143,11 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: "Something",
-          isStimulusDescendant: false,
-          superClass: {
-            className: "Controller",
-            superClass: undefined,
-            isStimulusDescendant: false,
-            importDeclaration: {
-              originalName: "Controller",
-              localName: "Controller",
-              source: "better",
-              isStimulusImport: false,
-              type: "named",
-            }
-          },
+          superClass: undefined,
         },
       ])
+      expect(sourceFile.errors).toHaveLength(1)
+      expect(sourceFile.errors[0].message).toEqual(`Couldn't resolve import "Controller" to a class declaration in "better". Make sure the referenced constant is defining a class.`)
     })
 
     test("named class with superclass from Stimulus Controller import", () => {
@@ -182,7 +162,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: "Something",
-          isStimulusDescendant: true,
           superClass: stimulusControllerSuperClass,
         },
       ])
@@ -200,7 +179,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
         {
           className: "Something",
-          isStimulusDescendant: true,
           superClass: stimulusControllerSuperClass,
         },
       ])
@@ -219,19 +197,16 @@ describe("SourceFile", () => {
 
       const even = {
         className: "Even",
-        isStimulusDescendant: true,
         superClass: stimulusControllerSuperClass,
       }
 
       const better = {
         className: "Better",
-        isStimulusDescendant: true,
         superClass: even,
       }
 
       const something = {
         className: "Something",
-        isStimulusDescendant: true,
         superClass: better
       }
 
@@ -264,19 +239,16 @@ describe("SourceFile", () => {
 
       const even = {
         className: "Even",
-        isStimulusDescendant: true,
         superClass: superClass,
       }
 
       const better = {
         className: "Better",
-        isStimulusDescendant: true,
         superClass: even,
       }
 
       const something = {
         className: "Something",
-        isStimulusDescendant: true,
         superClass: better
       }
 

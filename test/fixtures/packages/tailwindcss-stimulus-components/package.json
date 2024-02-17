@@ -1,8 +1,6 @@
 {
   "name": "tailwindcss-stimulus-components",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "private": true,
   "dependencies": {
     "tailwindcss-stimulus-components": "^4.0.4"
   }
