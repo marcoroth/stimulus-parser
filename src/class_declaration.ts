@@ -186,8 +186,8 @@ export class ClassDeclaration {
       isStimulusDescendant: this.isStimulusDescendant,
       isExported: this.isExported,
       sourceFile: this.sourceFile?.path,
-      hasCotnrollerDefinition: !!this.controllerDefinition,
-      cotnrollerDefinition: this.controllerDefinition?.identifier
+      hasControllerDefinition: !!this.controllerDefinition,
+      controllerDefinition: this.controllerDefinition?.identifier
     }
   }
 }
