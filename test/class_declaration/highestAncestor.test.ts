@@ -1,18 +1,25 @@
 import dedent from "dedent"
-import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { describe, beforeEach, expect, test } from "vitest"
+import { SourceFile } from "../../src"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("ClassDeclaration", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("highestAncestor", () => {
-    test("regular class", () => {
+    test("regular class", async () => {
       const code = dedent`
         class Child {}
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(1)
 
@@ -22,14 +29,16 @@ describe("ClassDeclaration", () => {
       expect(klass.superClass).toBeUndefined()
     })
 
-    test("with super class", () => {
+    test("with super class", async () => {
       const code = dedent`
         class Parent {}
         class Child extends Parent {}
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(2)
 
@@ -43,7 +52,7 @@ describe("ClassDeclaration", () => {
       expect(parent.highestAncestor).toEqual(parent)
     })
 
-    test("with two super classes", () => {
+    test("with two super classes", async () => {
       const code = dedent`
         class Grandparent {}
         class Parent extends Grandparent {}
@@ -51,7 +60,9 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(3)
 
@@ -68,7 +79,7 @@ describe("ClassDeclaration", () => {
       expect(grandparent.highestAncestor).toEqual(grandparent)
     })
 
-    test("with two super classes and one anonymous class", () => {
+    test("with two super classes and one anonymous class", async () => {
       const code = dedent`
         class Grandparent {}
         class Parent extends Grandparent {}
@@ -78,7 +89,9 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(4)
 
@@ -98,7 +111,7 @@ describe("ClassDeclaration", () => {
       expect(grandparent.highestAncestor).toEqual(grandparent)
     })
 
-    test("with two classes with shared super class", () => {
+    test("with two classes with shared super class", async () => {
       const code = dedent`
         class Parent {}
         class FirstChild extends Parent {}
@@ -106,7 +119,9 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(3)
 

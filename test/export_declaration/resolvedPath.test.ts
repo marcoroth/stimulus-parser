@@ -100,8 +100,6 @@ describe("ExportDeclaration", () => {
       const childFile = new SourceFile(project, path.join(project.projectPath, "src/controllers/child_controller.js"), childCode)
       project.projectFiles.push(childFile)
 
-      childFile.analyze()
-
       await project.analyze()
 
       expect(childFile.exportDeclarations.length).toEqual(1)

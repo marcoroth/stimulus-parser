@@ -1,11 +1,16 @@
 import dedent from "dedent"
-import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { describe, expect, test, beforeEach } from "vitest"
+import { SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("ClassDeclaration", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("non stimulus classes", () => {
     test("regular class", async () => {
       const code = dedent`

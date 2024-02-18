@@ -33,11 +33,13 @@ export class NodeModule {
     this.entrypoint = args.entrypoint
     this.controllerRoots = args.controllerRoots
     this.type = args.type
+
+    // TODO: files should be refreshable resp. the NodeModule class should know how to fetch its files
     this.sourceFiles = args.files.map(path => new SourceFile(this.project, path))
   }
 
   async readFiles() {
-    await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.read()))
+    await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.initialize()))
   }
 
   async analyze() {

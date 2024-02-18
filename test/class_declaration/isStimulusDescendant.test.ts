@@ -1,18 +1,25 @@
 import dedent from "dedent"
-import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { describe, beforeEach, expect, test } from "vitest"
+import { SourceFile } from "../../src"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("ClassDeclaration", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("isStimulusDescendant", () => {
-    test("regular class", () => {
+    test("regular class", async () => {
       const code = dedent`
         class Child {}
       `
 
       const sourceFile = new SourceFile(project, "child.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(1)
 
@@ -21,14 +28,16 @@ describe("ClassDeclaration", () => {
       expect(klass.isStimulusDescendant).toEqual(false)
     })
 
-    test("with super class", () => {
+    test("with super class", async () => {
       const code = dedent`
         class Parent {}
         class Child extends Parent {}
       `
 
       const sourceFile = new SourceFile(project, "child.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(2)
 
@@ -39,14 +48,16 @@ describe("ClassDeclaration", () => {
       expect(parent.isStimulusDescendant).toEqual(false)
     })
 
-    test("with Stimulus Controller super class", () => {
+    test("with Stimulus Controller super class", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
         class Child extends Controller {}
       `
 
       const sourceFile = new SourceFile(project, "child.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(1)
 
@@ -55,7 +66,7 @@ describe("ClassDeclaration", () => {
       expect(child.isStimulusDescendant).toEqual(true)
     })
 
-    test("with Stimulus Controller super class via second class", () => {
+    test("with Stimulus Controller super class via second class", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -64,7 +75,9 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "child.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(2)
 
@@ -75,7 +88,7 @@ describe("ClassDeclaration", () => {
       expect(parent.isStimulusDescendant).toEqual(true)
     })
 
-    test("with super class called Controller", () => {
+    test("with super class called Controller", async () => {
       const code = dedent`
         import { Controller } from "something-else"
 
@@ -84,7 +97,9 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "child.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.classDeclarations.length).toEqual(2)
 

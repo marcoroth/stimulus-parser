@@ -44,8 +44,6 @@ describe("ImportDeclaration", () => {
       const childFile = new SourceFile(project, path.join(project.projectPath, "src/child_controller.js"), childCode)
       project.projectFiles.push(childFile)
 
-      childFile.analyze()
-
       await project.analyze()
 
       const importDeclaration = childFile.importDeclarations[0]

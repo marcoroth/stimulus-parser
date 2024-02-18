@@ -1,20 +1,27 @@
 import dedent from "dedent"
-import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { describe, beforeEach, expect, test } from "vitest"
+import { SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("SourceFile", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("class exports", () => {
-    test("export named class", () => {
+    test("export named class", async () => {
       const code = dedent`
         class Something {}
         export { Something }
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const exportDeclaration = {
         exportedName: "Something",
@@ -34,7 +41,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export named class", () => {
+    test("import and export named class", async () => {
       const code = dedent`
         import { SuperClass } from "./super_class"
 
@@ -44,7 +51,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: false,
@@ -73,7 +82,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export named Controller", () => {
+    test("import and export named Controller", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -83,7 +92,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -116,7 +127,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export named Controller with alias", () => {
+    test("import and export named Controller with alias", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -126,7 +137,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -159,7 +172,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export named class in-line", () => {
+    test("import and export named class in-line", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -167,7 +180,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -199,7 +214,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export default Controller", () => {
+    test("import and export default Controller", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -209,7 +224,10 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -241,7 +259,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export default Controller in single statement", () => {
+    test("import and export default Controller in single statement", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -249,7 +267,10 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -281,7 +302,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and export default anonymous Controller class in single statement", () => {
+    test("import and export default anonymous Controller class in single statement", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -289,7 +310,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -321,7 +344,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and default export anonymous class assinged to const", () => {
+    test("import and default export anonymous class assinged to const", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -331,7 +354,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -363,7 +388,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and name export anonymous class assigned to const", () => {
+    test("import and name export anonymous class assigned to const", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -373,7 +398,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -405,7 +432,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and name export anonymous class assigned to const inline", () => {
+    test("import and name export anonymous class assigned to const inline", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -413,7 +440,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,
@@ -446,7 +475,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("import and name export anonymous class assigned to const via class declaration", () => {
+    test("import and name export anonymous class assigned to const via class declaration", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -457,7 +486,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       const importDeclaration = {
         isStimulusImport: true,

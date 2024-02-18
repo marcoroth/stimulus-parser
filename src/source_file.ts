@@ -19,6 +19,7 @@ import type { ImportDeclarationType } from "./import_declaration"
 
 export class SourceFile {
   public hasSyntaxError: boolean = false
+  public isAnalyzed: boolean = false
   public content?: string
   readonly path: string
   readonly project: Project
@@ -57,77 +58,6 @@ export class SourceFile {
     return path.extname(this.path)
   }
 
-  constructor(project: Project, path: string, content?: string) {
-    this.project = project
-    this.path = path
-    this.content = content
-  }
-
-  parse() {
-    if (this.content === undefined) {
-      this.errors.push(new ParseError("FAIL", "File content hasn't been read yet"))
-      return
-    }
-
-    try {
-      this.ast = this.project.parser.parse(this.content, this.path)
-      this.hasSyntaxError = false
-    } catch(error: any) {
-      this.ast = undefined
-      this.hasSyntaxError = true
-      this.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
-    }
-  }
-
-  async read() {
-    try {
-      this.content = await fs.readFile(this.path)
-    } catch (error: any) {
-      this.content = ""
-      this.errors.push(new ParseError("FAIL", "Error reading file", null, error))
-    }
-  }
-
-  async analyze() {
-    if (!this.hasContent) {
-      await this.read()
-    }
-
-    if (!this.isParsed && !this.hasSyntaxError) {
-      this.parse()
-    }
-
-    this._analyze()
-  }
-
-  async refresh() {
-    this.content = undefined
-    this.ast = undefined
-    this.errors = []
-    this.importDeclarations = []
-    this.exportDeclarations = []
-    this.classDeclarations = []
-
-    await this.analyze()
-  }
-
-  // TODO
-  moduleType() {
-    return ["esm", "cjs"," umd", "ts"]
-  }
-
-  findClass(className: string) {
-    return this.classDeclarations.find(klass => klass.className === className)
-  }
-
-  findImport(localName: string) {
-    return this.importDeclarations.find(declaration => declaration.localName === localName)
-  }
-
-  findExport(localName: string) {
-    return this.exportDeclarations.find(declaration => declaration.localName === localName)
-  }
-
   get defaultExport() {
     return this.exportDeclarations.find(declaration => declaration.type === "default")
   }
@@ -142,21 +72,99 @@ export class SourceFile {
     return this.resolvedClassDeclarations.filter(klass => klass.controllerDefinition)
   }
 
-  _analyze() {
+  findClass(className: string) {
+    return this.classDeclarations.find(klass => klass.className === className)
+  }
+
+  findImport(localName: string) {
+    return this.importDeclarations.find(declaration => declaration.localName === localName)
+  }
+
+  findExport(localName: string) {
+    return this.exportDeclarations.find(declaration => declaration.localName === localName)
+  }
+
+  constructor(project: Project, path: string, content?: string) {
+    this.project = project
+    this.path = path
+    this.content = content
+  }
+
+  async initialize() {
+    if (!this.hasContent) {
+      await this.read()
+    }
+
     if (!this.isParsed && !this.hasSyntaxError) {
       this.parse()
     }
 
-    if (!this.ast) return
+    this.analyzeImportsAndExports()
+  }
 
-    if (!this.isProjectFile) this.analyzeImportDeclarations()
+  async refresh() {
+    this.isAnalyzed = false
+    this.hasSyntaxError = false
+
+    this.content = undefined
+    this.ast = undefined
+
+    this.errors = []
+    this.importDeclarations = []
+    this.exportDeclarations = []
+    this.classDeclarations = []
+
+    await this.read()
+
+    this.parse()
+    this.analyzeImportsAndExports()
+    this.analyze()
+  }
+
+  async read() {
+    this.content = undefined
+    this.ast = undefined
+
+    try {
+      this.content = await fs.readFile(this.path)
+    } catch (error: any) {
+      this.errors.push(new ParseError("FAIL", "Error reading file", null, error))
+    }
+  }
+
+  parse() {
+    if (this.isParsed) return
+
+    if (this.content === undefined) {
+      this.errors.push(new ParseError("FAIL", "File content hasn't been read yet"))
+      return
+    }
+
+    this.ast = undefined
+    this.hasSyntaxError = false
+
+    try {
+      this.ast = this.project.parser.parse(this.content, this.path)
+    } catch(error: any) {
+      this.hasSyntaxError = true
+      this.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
+    }
+  }
+
+  analyze() {
+    if (!this.isParsed) return
+    if (this.isAnalyzed) return
 
     this.analyzeClassDeclarations()
-
-    if (!this.isProjectFile) this.analyzeExportDeclarations()
-
     this.analyzeClassExports()
     this.analyzeControllers()
+
+    this.isAnalyzed = true
+  }
+
+  analyzeImportsAndExports() {
+    this.analyzeImportDeclarations()
+    this.analyzeExportDeclarations()
   }
 
   analyzeControllers() {
@@ -302,6 +310,7 @@ export class SourceFile {
     })
   }
 
+  // TODO: check if we still need this
   analyzeClassExports() {
     this.classDeclarations.forEach(classDeclaration => {
       const exportDeclaration = this.exportDeclarations.find(exportDeclaration => exportDeclaration.localName === classDeclaration.className)

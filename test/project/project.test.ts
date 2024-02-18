@@ -1,15 +1,15 @@
 import { describe, expect, test, beforeEach } from "vitest"
-import { Project } from "../../src"
+import { setupProject } from "../helpers/setup"
 
-let project: Project
-
-beforeEach(() => {
-  project = new Project(process.cwd())
-})
+let project = setupProject("controller-paths")
 
 describe("Project", () => {
+  beforeEach(() => {
+    project = setupProject("controller-paths")
+  })
+
   test("relativePath", () => {
-    expect(project.relativePath(`${process.cwd()}/path/to/some/file.js`)).toEqual(
+    expect(project.relativePath(`${project.projectPath}/path/to/some/file.js`)).toEqual(
       "path/to/some/file.js"
     )
   })
@@ -17,24 +17,22 @@ describe("Project", () => {
   test("relativeControllerPath", () => {
     expect(
       project.relativeControllerPath(
-        `${process.cwd()}/app/javascript/controllers/some_controller.js`
+        `${project.projectPath}/app/javascript/controllers/some_controller.js`
       )
     ).toEqual("some_controller.js")
     expect(
       project.relativeControllerPath(
-        `${process.cwd()}/app/javascript/controllers/nested/some_controller.js`
+        `${project.projectPath}/app/javascript/controllers/nested/some_controller.js`
       )
     ).toEqual("nested/some_controller.js")
     expect(
       project.relativeControllerPath(
-        `${process.cwd()}/app/javascript/controllers/nested/deeply/some_controller.js`
+        `${project.projectPath}/app/javascript/controllers/nested/deeply/some_controller.js`
       )
     ).toEqual("nested/deeply/some_controller.js")
   })
 
   test("controllerRoot and controllerRoots", async () => {
-    const project = new Project("test/fixtures/controller-paths")
-
     expect(project.controllerRootFallback).toEqual("app/javascript/controllers")
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
     expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
@@ -51,7 +49,7 @@ describe("Project", () => {
   })
 
   test("identifier in different controllerRoots", async () => {
-    const project = new Project("test/fixtures/controller-paths")
+    expect(project.controllerDefinitions.map(controller => controller.identifier)).toEqual([])
 
     await project.initialize()
 
@@ -72,8 +70,6 @@ describe("Project", () => {
   })
 
   test("possibleControllerPathsForIdentifier", async () => {
-    project = new Project(`${process.cwd()}/test/fixtures/controller-paths`)
-
     // This is only using the controllerRootFallback because we haven't found/analyzed anything else yet
     expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
       "app/javascript/controllers/rails_controller.cjs",
@@ -113,6 +109,8 @@ describe("Project", () => {
   })
 
   test("findControllerPathForIdentifier", async () => {
+    project = setupProject() // this needs to be the root folder
+
     expect(await project.findControllerPathForIdentifier("rails")).toBeNull()
     expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toBeNull()
     expect(await project.findControllerPathForIdentifier("typescript")).toBeNull()

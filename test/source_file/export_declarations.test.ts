@@ -1,19 +1,26 @@
 import dedent from "dedent"
-import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { describe, expect, test, beforeEach } from "vitest"
+import { SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("SourceFile", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("exportDeclarations", () => {
-    test("export default", () => {
+    test("export default", async () => {
       const code = dedent`
         export default Something
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -22,14 +29,16 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named variable", () => {
+    test("export named variable", async () => {
       const code = dedent`
         const something = "something"
         export { something }
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -38,14 +47,16 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named class", () => {
+    test("export named class", async () => {
       const code = dedent`
         class Something {}
         export { Something }
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
@@ -54,24 +65,28 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export object", () => {
+    test("export object", async () => {
       const code = dedent`
         export {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([])
     })
 
-    test("export function", () => {
+    test("export function", async () => {
       const code = dedent`
         export function something() {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -80,7 +95,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default named function ", () => {
+    test("export default named function ", async () => {
       const code = dedent`
         function something() {}
 
@@ -88,7 +103,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -97,13 +114,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named arrow function ", () => {
+    test("export named arrow function ", async () => {
       const code = dedent`
-        export const something = () => {}
+        export const something = async () => {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -112,15 +131,17 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default named arrow function", () => {
+    test("export default named arrow function", async () => {
       const code = dedent`
-        const something = () => {}
+        const something = async () => {}
 
         export default something
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -129,13 +150,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export const", () => {
+    test("export const", async () => {
       const code = dedent`
         export const something = 0
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -144,13 +167,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export let", () => {
+    test("export let", async () => {
       const code = dedent`
         export let something = 0
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -159,13 +184,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export var", () => {
+    test("export var", async () => {
       const code = dedent`
         export var something = 0
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -174,7 +201,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default const", () => {
+    test("export default const", async () => {
       const code = dedent`
         const something = 0
 
@@ -182,7 +209,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -191,13 +220,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default literal", () => {
+    test("export default literal", async () => {
       const code = dedent`
         export default 0
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -206,13 +237,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default anonymous function ", () => {
+    test("export default anonymous function ", async () => {
       const code = dedent`
         export default function() {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -221,13 +254,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default anonymous arrow function ", () => {
+    test("export default anonymous arrow function ", async () => {
       const code = dedent`
-        export default () => {}
+        export default async () => {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -236,13 +271,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default anonymous array expression", () => {
+    test("export default anonymous array expression", async () => {
       const code = dedent`
         export default []
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -251,13 +288,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default anonymous object expression", () => {
+    test("export default anonymous object expression", async () => {
       const code = dedent`
         export default {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -266,13 +305,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named with rename", () => {
+    test("export named with rename", async () => {
       const code = dedent`
         export { something as somethingElse }
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
@@ -281,13 +322,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named mulitple", () => {
+    test("export named mulitple", async () => {
       const code = dedent`
         export { something, somethingElse }
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([
         {
@@ -298,19 +341,20 @@ describe("SourceFile", () => {
         {
           exportedName: "somethingElse",
           localName: "somethingElse",
-          isStimulusExport: false,
           type: "named"
         }
       ])
     })
 
-    test("export namespace", () => {
+    test("export namespace", async () => {
       const code = dedent`
         export * from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -320,13 +364,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export namespace with rename", () => {
+    test("export namespace with rename", async () => {
       const code = dedent`
         export * as something from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -336,13 +382,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default from namespace", () => {
+    test("export default from namespace", async () => {
       const code = dedent`
         export { default } from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -352,13 +400,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default with rename from namespace", () => {
+    test("export default with rename from namespace", async () => {
       const code = dedent`
         export { default as something } from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -368,7 +418,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named as default", () => {
+    test("export named as default", async () => {
       const code = dedent`
         function something() {}
 
@@ -376,7 +426,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -385,13 +437,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export named with rename from", () => {
+    test("export named with rename from", async () => {
       const code = dedent`
         export { something as somethingElse } from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
@@ -401,13 +455,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export class", () => {
+    test("export class", async () => {
       const code = dedent`
         export class Something {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
@@ -416,7 +472,7 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default class", () => {
+    test("export default class", async () => {
       const code = dedent`
         class Something {}
 
@@ -424,7 +480,9 @@ describe("SourceFile", () => {
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -433,13 +491,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default class inline", () => {
+    test("export default class inline", async () => {
       const code = dedent`
         export default class Something {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -448,13 +508,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default named function inline", () => {
+    test("export default named function inline", async () => {
       const code = dedent`
         export default function something() {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -463,13 +525,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default named arrow function inline", () => {
+    test("export default named arrow function inline", async () => {
       const code = dedent`
-        export default something = () => {}
+        export default something = async () => {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -478,13 +542,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default anonymous class", () => {
+    test("export default anonymous class", async () => {
       const code = dedent`
         export default class {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -493,13 +559,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export default anonymous class with extends", () => {
+    test("export default anonymous class with extends", async () => {
       const code = dedent`
         export default class extends Controller {}
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -508,13 +576,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export type", () => {
+    test("export type", async () => {
       const code = dedent`
         export type { something }
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -523,13 +593,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export type from namespace", () => {
+    test("export type from namespace", async () => {
       const code = dedent`
         export type { something } from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
@@ -539,13 +611,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export type * namespace", () => {
+    test("export type * namespace", async () => {
       const code = dedent`
         export type * from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
@@ -555,13 +629,15 @@ describe("SourceFile", () => {
       }])
     })
 
-    test("export type * with rename from namespace", () => {
+    test("export type * with rename from namespace", async () => {
       const code = dedent`
         export type * as something from "something"
       `
 
       const sourceFile = new SourceFile(project, "abc.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",

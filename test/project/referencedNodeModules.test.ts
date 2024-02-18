@@ -1,12 +1,13 @@
 import { describe, expect, test, beforeEach } from "vitest"
 import { Project } from "../../src/project"
 import { SourceFile } from "../../src/source_file"
+import { setupProject } from "../helpers/setup"
 
 let project: Project
 
 describe("Project", () => {
   beforeEach(() => {
-    project = new Project(process.cwd())
+    project = setupProject()
   })
 
   describe("referencedNodeModules", () => {

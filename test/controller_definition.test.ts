@@ -1,9 +1,14 @@
-import { describe, expect, test } from "vitest"
-import { Project, ControllerDefinition } from "../src"
+import { describe, expect, test, beforeEach } from "vitest"
+import { ControllerDefinition } from "../src"
+import { setupProject } from "./helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("ControllerDefinition", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   test("absolute path", () => {
     const controller = new ControllerDefinition(
       project,

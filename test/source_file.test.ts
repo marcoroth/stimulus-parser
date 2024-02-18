@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../src"
+import { SourceFile } from "../src"
+import { setupProject } from "./helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("SourceFile", () => {
   test("parses with content", () => {
@@ -12,7 +13,7 @@ describe("SourceFile", () => {
     expect(sourceFile.controllerDefinitions).toEqual([])
     expect(sourceFile.ast).toBeUndefined()
 
-    sourceFile.parse()
+    sourceFile.initialize()
 
     expect(sourceFile.hasContent).toEqual(true)
     expect(sourceFile.errors.length).toEqual(0)

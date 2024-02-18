@@ -1,10 +1,15 @@
-import { describe, expect, test } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { describe, beforeEach, expect, test } from "vitest"
+import { SourceFile } from "../../src"
 import { mockFile } from "../helpers/mock"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("SourceFile", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("refresh", () => {
     test("refreshes content", async () => {
       const sourceFile = new SourceFile(project, "file.js", "initial")

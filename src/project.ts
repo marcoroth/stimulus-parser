@@ -100,6 +100,10 @@ export class Project {
       .map(declaration => declaration.source)
   }
 
+  findProjectFile(path: string) {
+    return this.projectFiles.find(file => file.path == path)
+  }
+
   registerReferencedNodeModule(declaration: ImportDeclaration|ExportDeclaration) {
     if (!declaration.source) return
 
@@ -111,55 +115,48 @@ export class Project {
 
   async initialize() {
     await this.searchProjectFiles()
-    await this.readProjectFiles()
+    await this.analyze()
+  }
 
+  async refresh() {
+    await this.searchProjectFiles()
+    await this.refreshProjectFiles()
     await this.analyze()
   }
 
   async analyze() {
-    await this.readRemainingProjectFiles()
-
-    this.parseProjectFiles()
-    this.detectReferencedModulesInProjectFiles()
-
+    await this.initializeProjectFiles()
     await this.analyzeReferencedModules()
     await this.analyzeProjectFiles()
-
-    // TODO: check if need this
-    // this.analyzeControllers()
   }
 
-  async refresh() {
+  async reset() {
     this.projectFiles = []
     this.detectedNodeModules = []
     this.referencedNodeModules = new Set()
 
     await this.initialize()
-    await this.analyze()
-    await this.refreshProjectFiles()
   }
 
-  async readProjectFiles() {
-    await Promise.allSettled(this.projectFiles.map(file => file.read()))
+  async refreshFile(path: string) {
+    const projectFile = this.findProjectFile(path)
+
+    if (!projectFile) return
+
+    await projectFile.refresh()
   }
 
-  async readRemainingProjectFiles() {
-    await Promise.allSettled(this.projectFiles.map(file => !file.hasContent ? file.read() : undefined))
+
+  async initializeProjectFiles() {
+    await Promise.allSettled(this.projectFiles.map(file => file.initialize()))
   }
 
-  parseProjectFiles() {
-    this.projectFiles.forEach(file => file.parse())
+  private async analyzeProjectFiles() {
+    await Promise.allSettled(this.projectFiles.map(file => file.analyze()))
   }
 
-  detectReferencedModulesInProjectFiles() {
-    this.projectFiles.forEach(file => {
-      file.analyzeImportDeclarations()
-      file.analyzeExportDeclarations()
-    })
-  }
-
-  analyzeControllers() {
-    this.projectFiles.forEach(file => file.analyzeControllers())
+  private async refreshProjectFiles() {
+    await Promise.allSettled(this.projectFiles.map(file => file.refresh()))
   }
 
   async analyzeReferencedModules() {
@@ -182,20 +179,13 @@ export class Project {
     await Promise.allSettled(this.detectedNodeModules.map(module => module.analyze()))
   }
 
-  private async analyzeProjectFiles() {
-    await Promise.allSettled(this.projectFiles.map(file => file.analyze()))
-  }
-
-  private async refreshProjectFiles() {
-    await Promise.allSettled(this.projectFiles.map(file => file.refresh()))
-  }
-
   private async searchProjectFiles() {
     const paths = await this.getProjectFilePaths()
-    const sourceFilePaths = this.projectFiles.map(file => file.path)
 
     paths.forEach(path => {
-      if (!sourceFilePaths.includes(path)) {
+      const file = this.findProjectFile(path)
+
+      if (!file) {
         this.projectFiles.push(new SourceFile(this, path))
       }
     })
