@@ -108,8 +108,8 @@ describe("Project", () => {
     ])
   })
 
-  test("findControllerPathForIdentifier", async () => {
-    project = setupProject() // this needs to be the root folder
+  test("findControllerPathForIdentifier for controllers that are not in project", async () => {
+    project = setupProject("app")
 
     expect(await project.findControllerPathForIdentifier("rails")).toBeNull()
     expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toBeNull()
@@ -117,14 +117,30 @@ describe("Project", () => {
     expect(await project.findControllerPathForIdentifier("webpack")).toBeNull()
     expect(await project.findControllerPathForIdentifier("nested--webpack")).toBeNull()
     expect(await project.findControllerPathForIdentifier("doesnt-exist")).toBeNull()
+  })
+
+  test("findControllerPathForIdentifier", async () => {
+    project = setupProject("controller-paths")
+
+    // it can find these before the initialize() call
+    // because they are in the controller root fallback folder
+    expect(await project.findControllerPathForIdentifier("rails")).toEqual("app/javascript/controllers/rails_controller.js")
+    expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toEqual("app/javascript/controllers/nested/twice/rails_controller.js")
+    expect(await project.findControllerPathForIdentifier("typescript")).toEqual("app/javascript/controllers/typescript_controller.ts")
+
+    // but it cannot find these because they are in a non-standard location
+    expect(await project.findControllerPathForIdentifier("webpack")).toBeNull()
+    expect(await project.findControllerPathForIdentifier("nested--webpack")).toBeNull()
+    expect(await project.findControllerPathForIdentifier("doesnt-exist")).toBeNull()
 
     await project.initialize()
 
-    expect(await project.findControllerPathForIdentifier("rails")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js")
-    expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/nested/twice/rails_controller.js")
-    expect(await project.findControllerPathForIdentifier("typescript")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/typescript_controller.ts")
-    expect(await project.findControllerPathForIdentifier("webpack")).toEqual("test/fixtures/controller-paths/app/packs/controllers/webpack_controller.js")
-    expect(await project.findControllerPathForIdentifier("nested--webpack")).toEqual("test/fixtures/controller-paths/app/packs/controllers/nested/webpack_controller.js")
+    // but after initializing the project it knows about all the controller roots and can find them
+    expect(await project.findControllerPathForIdentifier("rails")).toEqual("app/javascript/controllers/rails_controller.js")
+    expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toEqual("app/javascript/controllers/nested/twice/rails_controller.js")
+    expect(await project.findControllerPathForIdentifier("typescript")).toEqual("app/javascript/controllers/typescript_controller.ts")
+    expect(await project.findControllerPathForIdentifier("webpack")).toEqual("app/packs/controllers/webpack_controller.js")
+    expect(await project.findControllerPathForIdentifier("nested--webpack")).toEqual("app/packs/controllers/nested/webpack_controller.js")
     expect(await project.findControllerPathForIdentifier("doesnt-exist")).toBeNull()
   })
 })

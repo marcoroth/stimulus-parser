@@ -194,7 +194,7 @@ export class Project {
   private async getProjectFilePaths(): Promise<string[]> {
     const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions).join(",")
 
-    return await glob(`${this.projectPath}/**/*controller.{${extensions}}`, {
+    return await glob(`${this.projectPath}/**/*.{${extensions}}`, {
       ignore: `${this.projectPath}/**/node_modules/**/*`,
     })
   }
