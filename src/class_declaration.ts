@@ -16,12 +16,11 @@ import type { Project } from "./project"
 import type { ClassDeclarationNode } from "./types"
 
 export class ClassDeclaration {
+  public readonly isStimulusClassDeclaration: boolean = false
   public readonly sourceFile: SourceFile
   public readonly className?: string
   public readonly superClass?: ClassDeclaration
   public readonly node?: ClassDeclarationNode
-
-  // public isStimulusDescendant: boolean = false
 
   public importDeclaration?: ImportDeclaration // TODO: technically a class can be imported more than once
   public exportDeclaration?: ExportDeclaration // TODO: technically a class can be exported more than once
@@ -36,61 +35,43 @@ export class ClassDeclaration {
 
   get shouldParse() {
     return this.isStimulusDescendant
-    // return this.isStimulusDescendant
   }
 
   get isStimulusDescendant() {
-    return !!this.ancestors.reverse()[0].superClass?.importDeclaration?.isStimulusImport
+    return !!this.highestAncestor.superClass?.importDeclaration?.isStimulusImport
   }
 
   get isExported(): boolean {
     return !!this.exportDeclaration
   }
 
-  // TODO: implement
-  // get exportDeclaration() {
-  //
+  // TODO: check if this is right and makes sense
+  // get exportDeclaration(): ExportDeclaration | undefined {
+  //   return this.sourceFile.exportDeclarations.find(exportDeclaration => exportDeclaration.exportedClassDeclaration === this);
   // }
 
-  // TODO: remove this
-  get isStimulusExport(): boolean {
-    if (!this.exportDeclaration) return false
-
-    return this.exportDeclaration.isStimulusExport
-  }
-
   get highestAncestor(): ClassDeclaration {
-    if (this.superClass) {
-      return this.superClass.highestAncestor
-    }
-
-    return this
+    return this.ancestors.reverse()[0]
   }
 
   get ancestors(): ClassDeclaration[] {
-    const ancestors: ClassDeclaration[] = []
-
-    let previous: ClassDeclaration | undefined = this
-
-    while (previous !== undefined) {
-      ancestors.push(previous)
-
-      previous = previous.resolveNextClassDeclaration
+    if (!this.nextResolvedClassDeclaration) {
+      return [this]
     }
 
-    return ancestors.filter(ancestor => ancestor)
+    return [this, ...this.nextResolvedClassDeclaration.ancestors]
   }
 
-  get resolveNextClassDeclaration(): ClassDeclaration | undefined {
+  get nextResolvedClassDeclaration(): ClassDeclaration | undefined {
     if (this.superClass) {
       if (this.superClass.importDeclaration) {
-        return this.superClass.resolveNextClassDeclaration
+        return this.superClass.nextResolvedClassDeclaration
       }
       return this.superClass
     }
 
     if (this.importDeclaration) {
-      return this.importDeclaration.resolveNextClassDeclaration
+      return this.importDeclaration.nextResolvedClassDeclaration
     }
 
     return
@@ -99,17 +80,21 @@ export class ClassDeclaration {
   analyze() {
     if (!this.shouldParse) return
 
-
     this.controllerDefinition = new ControllerDefinition(this.sourceFile.project, this.sourceFile.path, this)
-    this.sourceFile.analyzeStaticPropertiesExpressions(this.controllerDefinition)
 
+    this.analyzeStaticPropertiesExpressions()
     this.analyzeClassDecorators()
     this.analyzeMethods()
     this.analyzeDecorators()
     this.analyzeStaticProperties()
 
-
     this.validate()
+  }
+
+  analyzeStaticPropertiesExpressions() {
+    if (!this.controllerDefinition) return
+
+    this.sourceFile.analyzeStaticPropertiesExpressions(this.controllerDefinition)
   }
 
   analyzeClassDecorators() {
@@ -193,13 +178,33 @@ export class ClassDeclaration {
       )
     }
   }
+
+  get inspect(): object {
+    return {
+      className: this.className,
+      superClass: this.superClass?.inspect,
+      isStimulusDescendant: this.isStimulusDescendant,
+      isExported: this.isExported,
+      sourceFile: this.sourceFile?.path,
+      hasCotnrollerDefinition: !!this.controllerDefinition,
+      cotnrollerDefinition: this.controllerDefinition?.identifier
+    }
+  }
 }
 
 export class StimulusControllerClassDeclaration extends ClassDeclaration {
-  public readonly isStimulusClassDeclaration = true
+  public readonly isStimulusClassDeclaration: boolean = true
 
   constructor(project: Project, importDeclaration: ImportDeclaration) {
     super(importDeclaration.localName || "Controller", undefined, new SourceFile(project, "stimulus/controller.js"))
     this.importDeclaration = importDeclaration
+  }
+
+  get isStimulusDescendant() {
+    return true
+  }
+
+  get nextResolvedClassDeclaration() {
+    return undefined
   }
 }

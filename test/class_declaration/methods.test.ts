@@ -7,7 +7,7 @@ const project = new Project(process.cwd())
 
 describe("ClassDeclaration", () => {
   describe("non stimulus classes", () => {
-    test("regular class", () => {
+    test("regular class", async () => {
       const code = dedent`
         class Something {
           connect() {}
@@ -17,16 +17,19 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
       }])
       expect(sourceFile.controllerDefinitions).toEqual([])
       expect(sourceFile.errors).toHaveLength(0)
     })
 
-    test("imports controller from somewhere", () => {
+    test("imports controller from somewhere", async () => {
       const code = dedent`
         import { Controller } from "somewhere"
 
@@ -38,10 +41,14 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: undefined,
       }])
       expect(sourceFile.controllerDefinitions).toEqual([])
@@ -51,7 +58,7 @@ describe("ClassDeclaration", () => {
   })
 
   describe("extends Stimulus Controller class", () => {
-    test("imports and extends controller from Stimulus", () => {
+    test("imports and extends controller from Stimulus", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -63,12 +70,15 @@ describe("ClassDeclaration", () => {
       `
 
       const sourceFile = new SourceFile(project, "something.js", code)
-      sourceFile.analyze()
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
 
       expect(sourceFile.controllerDefinitions[0].methodNames).toEqual(["connect", "method", "disconnect"])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           isStimulusClassDeclaration: true,

@@ -18,6 +18,7 @@ import type { ParserOptions } from "./types"
 import type { ImportDeclarationType } from "./import_declaration"
 
 export class SourceFile {
+  public hasSyntaxError: boolean = false
   public content?: string
   readonly path: string
   readonly project: Project
@@ -44,6 +45,14 @@ export class SourceFile {
     return this.content !== undefined
   }
 
+  get isParsed() {
+    return !!this.ast
+  }
+
+  get isProjectFile() {
+    return this.project.projectFiles.includes(this)
+  }
+
   get fileExtension() {
     return path.extname(this.path)
   }
@@ -62,8 +71,10 @@ export class SourceFile {
 
     try {
       this.ast = this.project.parser.parse(this.content, this.path)
+      this.hasSyntaxError = false
     } catch(error: any) {
       this.ast = undefined
+      this.hasSyntaxError = true
       this.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
     }
   }
@@ -77,16 +88,27 @@ export class SourceFile {
     }
   }
 
+  async analyze() {
+    if (!this.hasContent) {
+      await this.read()
+    }
+
+    if (!this.isParsed && !this.hasSyntaxError) {
+      this.parse()
+    }
+
+    this._analyze()
+  }
+
   async refresh() {
+    this.content = undefined
+    this.ast = undefined
     this.errors = []
     this.importDeclarations = []
     this.exportDeclarations = []
     this.classDeclarations = []
 
-    await this.read()
-
-    this.parse()
-    this.analyze()
+    await this.analyze()
   }
 
   // TODO
@@ -102,6 +124,14 @@ export class SourceFile {
     return this.importDeclarations.find(declaration => declaration.localName === localName)
   }
 
+  findExport(localName: string) {
+    return this.exportDeclarations.find(declaration => declaration.localName === localName)
+  }
+
+  get defaultExport() {
+    return this.exportDeclarations.find(declaration => declaration.type === "default")
+  }
+
   get resolvedClassDeclarations(): ClassDeclaration[] {
     return this.exportDeclarations
       .flatMap(declaration => declaration.resolvedClassDeclaration)
@@ -112,25 +142,30 @@ export class SourceFile {
     return this.resolvedClassDeclarations.filter(klass => klass.controllerDefinition)
   }
 
-  analyze() {
-    this.parse()
+  _analyze() {
+    if (!this.isParsed && !this.hasSyntaxError) {
+      this.parse()
+    }
 
     if (!this.ast) return
 
-    this.analyzeImportDeclarations()
+    if (!this.isProjectFile) this.analyzeImportDeclarations()
+
     this.analyzeClassDeclarations()
-    this.analyzeExportDeclarations()
+
+    if (!this.isProjectFile) this.analyzeExportDeclarations()
+
     this.analyzeClassExports()
     this.analyzeControllers()
-    // this.analyzeStaticPropertiesExpressions()
   }
 
-  // TODO: this shouldn't be needed anymore
   analyzeControllers() {
     this.classDeclarations.forEach((classDeclaration) => classDeclaration.analyze())
   }
 
   analyzeImportDeclarations() {
+    if (!this.ast) return
+
     simple(this.ast as any, {
       ImportDeclaration: node => {
         node.specifiers.forEach(specifier => {
@@ -157,6 +192,8 @@ export class SourceFile {
   }
 
   analyzeExportDeclarations() {
+    if (!this.ast) return
+
     const findClass = (specifier?: string) => {
       return this.classDeclarations.find(klass => klass.className == specifier)
     }
@@ -183,6 +220,7 @@ export class SourceFile {
           }
 
           this.exportDeclarations.push(exportDeclaration)
+          this.project.registerReferencedNodeModule(exportDeclaration)
         })
 
         if (!declaration) return
@@ -261,6 +299,7 @@ export class SourceFile {
     })
   }
 
+  // this function is called from the ClassDeclaration class
   analyzeStaticPropertiesExpressions(controllerDefinition: ControllerDefinition) {
     simple(this.ast as any, {
       AssignmentExpression: expression => {
@@ -271,10 +310,6 @@ export class SourceFile {
 
         if (property.type !== "Identifier") return
         if (object.type !== "Identifier") return
-
-        // const classDeclaration = this.classDeclarations.find(c => c.className === object.name)
-
-        // if (!classDeclaration || !classDeclaration.isStimulusDescendant) return
 
         properties.parseStaticControllerProperties(controllerDefinition, property, expression.right)
       },
@@ -289,5 +324,17 @@ export class SourceFile {
         classDeclaration.exportDeclaration = exportDeclaration
       }
     })
+  }
+
+  get inspect() {
+    return {
+      path: this.path,
+      hasContent: !!this.content,
+      hasAst: !!this.ast,
+      errors: this.errors.map(e => e.inspect),
+      classes: this.classDeclarations.map(c => c.inspect),
+      imports: this.importDeclarations.map(i => i.inspect),
+      exports: this.exportDeclarations.map(e => e.inspect),
+    }
   }
 }

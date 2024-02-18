@@ -9,7 +9,7 @@ import { SourceFile } from "../../src/source_file"
 let project = setupProject("packages/stimulus-dropdown")
 
 describe("@hotwired/stimulus Controller", () => {
-  test("parse parent", () => {
+  test("parse parent", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -17,7 +17,10 @@ describe("@hotwired/stimulus Controller", () => {
     `
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
-    sourceFile.analyze()
+
+    project.projectFiles.push(sourceFile)
+
+    await project.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
 
@@ -31,7 +34,7 @@ describe("@hotwired/stimulus Controller", () => {
     expect(classDeclaration.superClass.superClass).toEqual(undefined)
   })
 
-  test("parse parent with import alias", () => {
+  test("parse parent with import alias", async () => {
     const code = dedent`
       import { Controller as StimulusController } from "@hotwired/stimulus"
 
@@ -39,7 +42,9 @@ describe("@hotwired/stimulus Controller", () => {
     `
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
-    sourceFile.analyze()
+    project.projectFiles.push(sourceFile)
+
+    await project.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
 
@@ -56,7 +61,7 @@ describe("@hotwired/stimulus Controller", () => {
 })
 
 describe("with controller in same file", () => {
-  test("parse parent", () => {
+  test("parse parent", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -66,7 +71,9 @@ describe("with controller in same file", () => {
     `
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
-    sourceFile.analyze()
+    project.projectFiles.push(sourceFile)
+
+    await project.analyze()
 
     const abstractController = sourceFile.classDeclarations[0]
     const exportController = sourceFile.classDeclarations[1]
@@ -91,7 +98,7 @@ describe("with controller in same file", () => {
 })
 
 describe("with controller from other file", () => {
-  test("parse parent", () => {
+  test("parse parent", async () => {
     const applicationCode = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -110,8 +117,7 @@ describe("with controller from other file", () => {
     project.projectFiles.push(applicationFile)
     project.projectFiles.push(helloFile)
 
-    applicationFile.analyze()
-    helloFile.analyze()
+    await project.analyze()
 
     const applicationController = applicationFile.classDeclarations[0]
     const helloController = helloFile.classDeclarations[0]
@@ -144,25 +150,18 @@ describe("with controller from stimulus package", () => {
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
     project.projectFiles.push(sourceFile)
-    sourceFile.analyze()
 
-    await project.analyzeReferencedModules()
-
-    console.log(project.projectFiles.map(path => path.path))
-    console.log(project.allSourceFiles.map(path => path.path))
-
+    await project.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
 
     expect(sourceFile.classDeclarations.length).toEqual(1)
-    expect(classDeclaration.isStimulusDescendant).toEqual(false)
+    expect(classDeclaration.isStimulusDescendant).toEqual(true)
     expect(classDeclaration.className).toEqual(undefined)
-    expect(classDeclaration.superClass.className).toEqual("SomeController")
-    expect(classDeclaration.superClass.importDeclaration.localName).toEqual("SomeController")
-    expect(classDeclaration.superClass.importDeclaration.originalName).toEqual(undefined)
-    expect(classDeclaration.superClass.importDeclaration.source).toEqual("some-package")
-    expect(classDeclaration.superClass.importDeclaration.isStimulusImport).toEqual(false)
-    expect(classDeclaration.superClass.superClass).toEqual(undefined)
+    expect(classDeclaration.superClass.className).toEqual("i")
+    expect(classDeclaration.superClass.superClass.className).toEqual("e")
+    expect(classDeclaration.superClass.superClass.isStimulusClassDeclaration).toEqual(true)
+    expect(project.relativePath(classDeclaration.superClass.sourceFile.path)).toEqual("node_modules/stimulus-dropdown/dist/stimulus-dropdown.mjs")
   })
 
   test("parse parent with regular import", async () => {
@@ -175,24 +174,18 @@ describe("with controller from stimulus package", () => {
     `
 
     const sourceFile = new SourceFile(project, "parent_controller.js", code)
-
-
     project.projectFiles.push(sourceFile)
-    sourceFile.analyze()
 
-    await project.analyzeReferencedModules()
+    await project.analyze()
 
     const classDeclaration = sourceFile.classDeclarations[0]
+    expect(classDeclaration).toBeDefined()
 
     expect(sourceFile.errors.length).toEqual(0)
     expect(sourceFile.classDeclarations.length).toEqual(1)
-    expect(classDeclaration.isStimulusDescendant).toEqual(false)
+    expect(classDeclaration.isStimulusDescendant).toEqual(true)
     expect(classDeclaration.className).toEqual(undefined)
-    expect(classDeclaration.superClass.className).toEqual("SomeController")
-    expect(classDeclaration.superClass.importDeclaration.localName).toEqual("SomeController")
-    expect(classDeclaration.superClass.importDeclaration.originalName).toEqual("SomeController")
-    expect(classDeclaration.superClass.importDeclaration.source).toEqual("some-package")
-    expect(classDeclaration.superClass.importDeclaration.isStimulusImport).toEqual(false)
-    expect(classDeclaration.superClass.superClass).toEqual(undefined)
+    expect(classDeclaration.superClass.className).toEqual(undefined)
+    expect(classDeclaration.superClass.superClass.isStimulusClassDeclaration).toEqual(true)
   })
 })

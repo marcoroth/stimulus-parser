@@ -7,7 +7,7 @@ import type { ClassDeclaration } from "./class_declaration"
 import type { ExportDeclaration } from "./export_declaration"
 import type { ControllerDefinition} from "./controller_definition"
 
-export type ImportDeclarationType = "default" | "named" | "namespace"
+export type ImportDeclarationType = "default" | "named" | "namespace"
 
 type ImportDeclarationArgs = {
   type: ImportDeclarationType
@@ -55,10 +55,6 @@ export class ImportDeclaration {
     return this.source.startsWith(".")
   }
 
-  get resolveNextClassDeclaration(): ClassDeclaration | undefined {
-    return this.resolvedClassDeclaration
-  }
-
   get resolvedRelativePath(): string | undefined {
     if (this.isRelativeImport) {
       const thisFolder = path.dirname(this.sourceFile.path)
@@ -86,77 +82,67 @@ export class ImportDeclaration {
     return undefined
   }
 
-  get resolvedPath() {
+  get resolvedNodeModuleSourceFile(): SourceFile | undefined {
+    return this.resolvedNodeModule?.resolvedSourceFile
+  }
+
+  get nextResolvedPath() {
     if (this.resolvedRelativePath) return this.resolvedRelativePath
-
-    if (this.resolvedNodeModule && this.resolvedNodeModule.entrypointSourceFile) {
-      const { exportDeclarations } = this.resolvedNodeModule.entrypointSourceFile
-
-      if (this.type === "default") {
-        const exportDeclaration = exportDeclarations.find(declaration => declaration.type === "default")
-
-        if (exportDeclaration) {
-          return exportDeclaration.resolvedPath
-        }
-      } else if (this.type === "named") {
-        const exportDeclaration = exportDeclarations.find(declaration => declaration.exportedName === this.originalName)
-
-        if (exportDeclaration) {
-          return exportDeclaration.resolvedPath
-        }
-      } else {
-        // TODO
-        throw new Error(`throwing to resolve type: ${this.type}`)
-      }
-    }
+    if (this.resolvedNodeModule) return this.resolvedNodeModule.resolvedPath
 
     return undefined
+  }
+
+  get resolvedPath() {
+    return this.resolvedClassDeclaration?.sourceFile.path
   }
 
   get resolvedSourceFile(): SourceFile | undefined {
-    if (!this.resolvedPath) return
+    return this.resolvedClassDeclaration?.sourceFile
+  }
 
-    return this.project.allSourceFiles.find(file => file.path === this.resolvedPath)
+  get nextResolvedSourceFile(): SourceFile | undefined {
+    if (!this.nextResolvedPath) return
+
+    return this.project.allSourceFiles.find(file => file.path === this.nextResolvedPath)
   }
 
   get resolvedExportDeclaration(): ExportDeclaration | undefined {
-    if (!this.resolvedSourceFile) return
+    return this.nextResolvedExportDeclaration?.highestAncestor
+  }
 
-    if (this.type === "default") return this.resolvedSourceFile.exportDeclarations.find(exportDeclaration => exportDeclaration.type === "default")
+  get nextResolvedExportDeclaration(): ExportDeclaration | undefined {
+    const sourceFile = this.nextResolvedSourceFile
+
+    if (!sourceFile) return
+
+    const exports = sourceFile.exportDeclarations
+
+    if (this.type === "default") return sourceFile.defaultExport
     if (this.type === "namespace") throw new Error("Implement namespace imports")
 
-    return this.resolvedSourceFile.exportDeclarations.find(exportDeclaration => exportDeclaration.exportedName === this.originalName)
+    return exports.find(declaration => declaration.exportedName === this.originalName)
   }
 
   get resolvedClassDeclaration(): ClassDeclaration | undefined {
-    if (!this.resolvedExportDeclaration) return
+    return this.nextResolvedClassDeclaration?.highestAncestor
+  }
 
-    // const classDeclaration = this.resolvedSourceFile.findClass(this.originalName)
-    // if (classDeclaration) return classDeclaration
-    //
-    // const importDeclaration = this.resolvedSourceFile.importDeclarations.find(declaration => declaration.originalName === this.originalName)
-    // if (importDeclaration) return importDeclaration.resolvedClassDeclaration
-
-    // const exportDeclaration = this.resolvedSourceFile.exportDeclarations.find(declaration => declaration.exportedName === this.originalName)
-    // if (exportDeclaration) return exportDeclaration.resolvedClassDeclaration
-
-    const classDeclaration = this.resolvedExportDeclaration.exportedClassDeclaration
-
-    if (classDeclaration) return classDeclaration
-
-    return undefined
+  get nextResolvedClassDeclaration(): ClassDeclaration | undefined {
+    return this.nextResolvedExportDeclaration?.exportedClassDeclaration
   }
 
   get resolvedControllerDefinition(): ControllerDefinition | undefined {
-    if (!this.resolvedClassDeclaration) return
-
-    return this.resolvedClassDeclaration.controllerDefinition
+    return this.resolvedClassDeclaration?.controllerDefinition
   }
 
-  get resolvedStimulusControllerDefinition(): ControllerDefinition | undefined {
-    if (!this.resolvedControllerDefinition) return
-    if (!this.resolvedControllerDefinition.isStimulusExport) return
-
-    return this.resolvedControllerDefinition
+  get inspect(): object {
+    return {
+      type: this.type,
+      localName: this.localName,
+      originalName: this.originalName,
+      source: this.source,
+      sourceFile: this.sourceFile?.path,
+    }
   }
 }

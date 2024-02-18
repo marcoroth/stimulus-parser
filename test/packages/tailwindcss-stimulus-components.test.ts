@@ -5,30 +5,32 @@ const project = new Project(`${process.cwd()}/test/fixtures/packages/tailwindcss
 
 describe("packages", () => {
   describe("tailwindcss-stimulus-components", () => {
+
+    // this test is flaky, sometimes we slideover controller is actually present
     test("detects controllers", async () => {
       expect(project.controllerDefinitions.length).toEqual(0)
 
-      await project.analyze()
+      await project.initialize()
 
       expect(project.detectedNodeModules.map(module => module.name)).toEqual(["tailwindcss-stimulus-components"])
       expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
-      expect(project.allControllerRoots).toEqual(["node_modules/tailwindcss-stimulus-components/src"])
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual([])
-
-      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([])
-
-      await project.analyzeAllDetectedModules()
+      expect(project.allControllerRoots).toEqual([
+        "app/javascript/controllers",
+        "node_modules/tailwindcss-stimulus-components/src",
+      ])
+      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
 
       expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
         "alert",
         "autosave",
         "color-preview",
         "dropdown",
+        "hello",
         "modal",
         "popover",
-        // "slideover", // TODO: this isn't supported yet since this uses an inherited class from another file
         "tabs",
         "toggle",
+        // "slideover", // TODO: this isn't supported yet since this uses an inherited class from another file
       ])
 
       const modalController = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
@@ -38,7 +40,7 @@ describe("packages", () => {
       expect(modalController.valueDefinitions.open.type).toEqual("Boolean")
       expect(modalController.valueDefinitions.restoreScroll.type).toEqual("Boolean")
       expect(modalController.classDeclaration.superClass.className).toEqual("Controller")
-      expect(modalController.classDeclaration.superClass.isStimulusDescendant).toEqual(true)
+      expect(modalController.classDeclaration.superClass.isStimulusClassDeclaration).toEqual(true)
       expect(modalController.classDeclaration.superClass.importDeclaration.source).toEqual("@hotwired/stimulus")
       expect(modalController.classDeclaration.superClass.importDeclaration.localName).toEqual("Controller")
       expect(modalController.classDeclaration.superClass.importDeclaration.originalName).toEqual("Controller")

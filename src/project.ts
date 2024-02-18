@@ -11,8 +11,6 @@ import { detectPackages, analyzePackage } from "./packages"
 import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { calculateControllerRoots } from "./util/project"
 
-import type { ClassDeclaration } from "./class_declaration"
-
 export class Project {
   readonly projectPath: string
   readonly controllerRootFallback = "app/javascript/controllers"
@@ -63,13 +61,12 @@ export class Project {
   }
 
   get controllerDefinitions(): ControllerDefinition[] {
-    return this.projectFiles.flatMap(file => file.controllerDefinitions.filter(definition => definition.isStimulusExport)
-    )
+    return this.projectFiles.flatMap(file => file.controllerDefinitions)
   }
 
+  // TODO: this should be coming from the nodeModules
   get allControllerDefinitions(): ControllerDefinition[] {
-    return this.allSourceFiles.flatMap(file => file.controllerDefinitions.filter(definition => definition.isStimulusExport)
-    )
+    return this.allSourceFiles.flatMap(file => file.controllerDefinitions)
   }
 
   get allSourceFiles() {
@@ -112,23 +109,60 @@ export class Project {
     this.referencedNodeModules.add(declaration.source)
   }
 
+  async initialize() {
+    await this.searchProjectFiles()
+    await this.readProjectFiles()
+
+    await this.analyze()
+  }
+
   async analyze() {
+    await this.readRemainingProjectFiles()
+
+    this.parseProjectFiles()
+    this.detectReferencedModulesInProjectFiles()
+
+    await this.analyzeReferencedModules()
+    await this.analyzeProjectFiles()
+
+    // TODO: check if need this
+    // this.analyzeControllers()
+  }
+
+  async refresh() {
     this.projectFiles = []
     this.detectedNodeModules = []
+    this.referencedNodeModules = new Set()
 
-    await this.searchProjectFiles()
-    await this.analyzeProjectFiles()
-    // await this.detectAvailablePackages()
-    await this.analyzeReferencedModules()
+    await this.initialize()
+    await this.analyze()
+    await this.refreshProjectFiles()
+  }
 
-    this.traceControllers()
+  async readProjectFiles() {
+    await Promise.allSettled(this.projectFiles.map(file => file.read()))
+  }
+
+  async readRemainingProjectFiles() {
+    await Promise.allSettled(this.projectFiles.map(file => !file.hasContent ? file.read() : undefined))
+  }
+
+  parseProjectFiles() {
+    this.projectFiles.forEach(file => file.parse())
+  }
+
+  detectReferencedModulesInProjectFiles() {
+    this.projectFiles.forEach(file => {
+      file.analyzeImportDeclarations()
+      file.analyzeExportDeclarations()
+    })
+  }
+
+  analyzeControllers() {
+    this.projectFiles.forEach(file => file.analyzeControllers())
   }
 
   async analyzeReferencedModules() {
-    // const referencesModules = this.detectedNodeModules.filter(module => Array.from(this.referencedNodeModules).includes(module.name))
-    //
-    // await Promise.allSettled(referencesModules.map(module => module.analyze()))
-
     const referencesModules = Array.from(this.referencedNodeModules).map(async packageName => {
       const nodeModule = await analyzePackage(this, packageName)
 
@@ -149,6 +183,10 @@ export class Project {
   }
 
   private async analyzeProjectFiles() {
+    await Promise.allSettled(this.projectFiles.map(file => file.analyze()))
+  }
+
+  private async refreshProjectFiles() {
     await Promise.allSettled(this.projectFiles.map(file => file.refresh()))
   }
 

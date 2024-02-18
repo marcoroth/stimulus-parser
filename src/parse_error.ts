@@ -7,4 +7,11 @@ export class ParseError {
     public readonly loc?: SourceLocation | null,
     public readonly cause?: Error,
   ) {}
+
+  get inspect(): object {
+    return {
+      severity: this.severity,
+      message: this.message,
+    }
+  }
 }

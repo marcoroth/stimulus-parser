@@ -116,13 +116,13 @@ export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
   }
 }
 
-export function detectSuperClass(project: Project, className: string|undefined, node: ClassDeclarationNode, superClassName: string|undefined, importDeclaration: ImportDeclaration|undefined, errors: ParseError[]) {
+export function detectSuperClass(project: Project, className: string|undefined, node: ClassDeclarationNode, superClassName: string|undefined, importDeclaration: ImportDeclaration|undefined, errors: ParseError[]): ClassDeclaration|undefined {
   if (importDeclaration && importDeclaration.isStimulusImport) {
     return new StimulusControllerClassDeclaration(project, importDeclaration)
   }
 
   if (importDeclaration) {
-    const nextClass = importDeclaration.resolveNextClassDeclaration
+    const nextClass = importDeclaration.nextResolvedClassDeclaration
 
     if (nextClass) return nextClass
 

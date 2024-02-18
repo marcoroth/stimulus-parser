@@ -14,35 +14,35 @@ describe("Project", () => {
       expect(Array.from(project.referencedNodeModules)).toEqual([])
     })
 
-    test("detects default import", () => {
+    test("detects default import", async () => {
       const sourceFile = new SourceFile(project, "abc.js", `import Something from "somewhere"`)
       project.projectFiles.push(sourceFile)
 
       expect(Array.from(project.referencedNodeModules)).toEqual([])
 
-      sourceFile.analyze()
+      await project.analyze()
 
       expect(Array.from(project.referencedNodeModules)).toEqual(["somewhere"])
     })
 
-    test("detects named import", () => {
+    test("detects named import", async () => {
       const sourceFile = new SourceFile(project, "abc.js", `import { Something } from "somewhere"`)
       project.projectFiles.push(sourceFile)
 
       expect(Array.from(project.referencedNodeModules)).toEqual([])
 
-      sourceFile.analyze()
+      await project.analyze()
 
       expect(Array.from(project.referencedNodeModules)).toEqual(["somewhere"])
     })
 
-    test("doesn't detect relative import", () => {
+    test("doesn't detect relative import", async () => {
       const sourceFile = new SourceFile(project, "abc.js", `import { Something } from "./somewhere"`)
       project.projectFiles.push(sourceFile)
 
       expect(Array.from(project.referencedNodeModules)).toEqual([])
 
-      sourceFile.analyze()
+      await project.analyze()
 
       expect(Array.from(project.referencedNodeModules)).toEqual([])
     })

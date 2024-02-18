@@ -39,7 +39,7 @@ describe("Project", () => {
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
     expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
 
-    await project.analyze()
+    await project.initialize()
 
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
 
@@ -53,7 +53,7 @@ describe("Project", () => {
   test("identifier in different controllerRoots", async () => {
     const project = new Project("test/fixtures/controller-paths")
 
-    await project.analyze()
+    await project.initialize()
 
     const identifiers = project.controllerDefinitions.map(controller => controller.identifier).sort()
 
@@ -85,7 +85,7 @@ describe("Project", () => {
       "app/javascript/controllers/rails_controller.tsx",
     ])
 
-    await project.analyze()
+    await project.initialize()
 
     expect(project.possibleControllerPathsForIdentifier("rails")).toEqual([
       "app/javascript/controllers/rails_controller.cjs",
@@ -120,7 +120,7 @@ describe("Project", () => {
     expect(await project.findControllerPathForIdentifier("nested--webpack")).toBeNull()
     expect(await project.findControllerPathForIdentifier("doesnt-exist")).toBeNull()
 
-    await project.analyze()
+    await project.initialize()
 
     expect(await project.findControllerPathForIdentifier("rails")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/rails_controller.js")
     expect(await project.findControllerPathForIdentifier("nested--twice--rails")).toEqual("test/fixtures/controller-paths/app/javascript/controllers/nested/twice/rails_controller.js")

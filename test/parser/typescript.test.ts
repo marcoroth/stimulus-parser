@@ -115,15 +115,18 @@ describe("with TS Syntax", () => {
     })
   })
 
-  test("should handle syntax errors", () => {
+  test("should handle syntax errors", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
     `
 
-    const sourceFile = new SourceFile(new Project(process.cwd()), "error_controller.ts", code)
-    sourceFile.analyze()
+    const project = new Project(process.cwd())
+    const sourceFile = new SourceFile(project, "error_controller.js", code)
+    project.projectFiles.push(sourceFile)
+
+    await project.analyze()
 
     // expect(sourceFile.identifier).toEqual("error")
     expect(sourceFile.hasErrors).toBeTruthy()

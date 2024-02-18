@@ -71,9 +71,6 @@ describe("ClassDeclaration", () => {
       const child = sourceFile.findClass("Child")
       const parent = sourceFile.findClass("Parent")
 
-      console.log(child.ancestors.reverse()[0])
-
-
       expect(child.isStimulusDescendant).toEqual(true)
       expect(parent.isStimulusDescendant).toEqual(true)
     })

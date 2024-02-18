@@ -1,6 +1,6 @@
 import { SourceFile } from "./source_file"
 
-import { nodeModuleForPackageName } from "./util/npm"
+import { nodeModuleForPackageName } from "./util/npm"
 
 import type { Project } from "./project"
 
@@ -50,6 +50,10 @@ export class NodeModule {
 
   get entrypointSourceFile(): SourceFile | undefined {
     return this.sourceFiles.find(file => file.path === this.entrypoint)
+  }
+
+  get resolvedSourceFile(): SourceFile | undefined {
+    return this.entrypointSourceFile
   }
 
   get classDeclarations() {

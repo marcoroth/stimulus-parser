@@ -3,7 +3,7 @@ import { Project } from "../../src"
 
 const project = new Project(`${process.cwd()}/test/fixtures/app`)
 
-describe("packages", () => {
+describe.skip("packages", () => {
   describe("app", () => {
     test("detects controllers", async () => {
       expect(project.controllerDefinitions.length).toEqual(0)

@@ -1,6 +1,6 @@
 import path from "path"
 
-import { nestedFolderSort } from "./fs"
+import { nestedFolderSort } from "./fs"
 
 export function calculateControllerRoots(filenames: string[]) {
   let controllerRoots: string[] = [];

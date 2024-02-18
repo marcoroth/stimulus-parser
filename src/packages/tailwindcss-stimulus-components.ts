@@ -6,7 +6,7 @@ export async function analyze(project: Project) {
   const hasPackage = await hasDepedency(project.projectPath, packageName)
   const nodeModule = await nodeModuleForPackageName(project, packageName)
 
-  if (!nodeModule || !hasPackage) return
+  if (!nodeModule || !hasPackage) return
 
   project.detectedNodeModules.push(nodeModule)
 }

@@ -28,6 +28,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: undefined,
         exportDeclaration
       }])
@@ -66,6 +67,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: undefined,
         exportDeclaration
       }])
@@ -104,6 +106,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -146,6 +149,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -185,6 +189,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -226,6 +231,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -265,6 +271,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -304,6 +311,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: undefined,
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -345,6 +353,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -386,6 +395,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -425,6 +435,7 @@ describe("SourceFile", () => {
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -467,6 +478,7 @@ describe("SourceFile", () => {
 
       const something = {
         className: "Something",
+        isStimulusClassDeclaration: false,
         superClass: {
           className: "Controller",
           importDeclaration,
@@ -476,6 +488,7 @@ describe("SourceFile", () => {
 
       const anotherThing = {
         className: "AnotherThing",
+        isStimulusClassDeclaration: false,
         superClass: something,
         exportDeclaration
       }
