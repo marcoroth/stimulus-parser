@@ -175,8 +175,6 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(helloControllerFile.errors).toHaveLength(1)
-      expect(helloControllerFile.errors[0].message).toEqual(`Couldn't resolve super class "Controller" for class "ApplicationController". Double check your imports.`)
       expect(helloControllerFile.resolvedControllerDefinitions).toEqual([])
     })
 

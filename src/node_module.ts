@@ -3,6 +3,7 @@ import { SourceFile } from "./source_file"
 import { nodeModuleForPackageName } from "./util/npm"
 
 import type { Project } from "./project"
+import type { ControllerDefinition } from "./controller_definition"
 
 interface NodeModuleArgs {
   name: string
@@ -62,11 +63,21 @@ export class NodeModule {
     return this.sourceFiles.flatMap(file => file.classDeclarations)
   }
 
-  get controllerDefinitions() {
-    return this.classDeclarations.map(klass => klass.controllerDefinition).filter(controller => controller)
+  get controllerDefinitions(): ControllerDefinition[] {
+    return this.classDeclarations.map(klass => klass.controllerDefinition).filter(controller => controller) as ControllerDefinition[]
   }
 
   get files(): string[] {
     return this.sourceFiles.map(file => file.path)
+  }
+
+  get inspect(): object {
+    return {
+      name: this.name,
+      type: this.type,
+      controllerDefinitions: this.controllerDefinitions.map(c => c?.identifier),
+      entrypoint: this.entrypoint,
+      files: this.files.length
+    }
   }
 }

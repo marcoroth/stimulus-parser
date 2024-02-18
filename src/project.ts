@@ -161,7 +161,10 @@ export class Project {
 
   async analyzeReferencedModules() {
     const referencesModules = Array.from(this.referencedNodeModules).map(async packageName => {
-      const nodeModule = await analyzePackage(this, packageName)
+      const nodeModule = (
+        this.detectedNodeModules.find(module => module.name === packageName) || 
+        await analyzePackage(this, packageName)
+      )
 
       if (nodeModule) {
         await nodeModule.analyze()

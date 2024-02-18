@@ -1,7 +1,6 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 import { SourceFile } from "../../src"
-import { stripSuperClasses } from "../helpers/ast"
 import { setupProject } from "../helpers/setup"
 
 let project = setupProject()
@@ -22,11 +21,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "Something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export named variable", async () => {
@@ -40,11 +38,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export named class", async () => {
@@ -58,11 +55,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "Something",
-        localName: "Something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export object", async () => {
@@ -75,7 +71,7 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([])
+      expect(sourceFile.exportDeclarations.length).toEqual(0)
     })
 
     test("export function", async () => {
@@ -88,11 +84,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export default named function ", async () => {
@@ -107,11 +102,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export named arrow function ", async () => {
@@ -124,11 +118,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export default named arrow function", async () => {
@@ -143,11 +136,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export const", async () => {
@@ -160,11 +152,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export let", async () => {
@@ -177,11 +168,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export var", async () => {
@@ -194,11 +184,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export default const", async () => {
@@ -213,11 +202,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default literal", async () => {
@@ -230,11 +218,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default anonymous function ", async () => {
@@ -247,11 +234,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default anonymous arrow function ", async () => {
@@ -264,11 +250,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default anonymous array expression", async () => {
@@ -281,11 +266,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default anonymous object expression", async () => {
@@ -298,11 +282,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export named with rename", async () => {
@@ -315,11 +298,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "somethingElse",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("somethingElse")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export named mulitple", async () => {
@@ -332,18 +314,13 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([
-        {
-          exportedName: "something",
-          localName: "something",
-          type: "named"
-        },
-        {
-          exportedName: "somethingElse",
-          localName: "somethingElse",
-          type: "named"
-        }
-      ])
+      expect(sourceFile.exportDeclarations.length).toEqual(2)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
+      expect(sourceFile.exportDeclarations[1].exportedName).toEqual("somethingElse")
+      expect(sourceFile.exportDeclarations[1].localName).toEqual("somethingElse")
+      expect(sourceFile.exportDeclarations[1].type).toEqual("named")
     })
 
     test("export namespace", async () => {
@@ -356,12 +333,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "namespace",
-        source: "something"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("namespace")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export namespace with rename", async () => {
@@ -374,12 +350,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: undefined,
-        type: "namespace",
-        source: "something"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("namespace")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export default from namespace", async () => {
@@ -392,12 +367,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default",
-        source: "something"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export default with rename from namespace", async () => {
@@ -410,12 +384,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: undefined,
-        type: "named",
-        source: "something"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export named as default", async () => {
@@ -430,11 +403,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export named with rename from", async () => {
@@ -447,12 +419,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "somethingElse",
-        localName: "something",
-        type: "named",
-        source: "something"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("somethingElse")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export class", async () => {
@@ -465,11 +436,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "Something",
-        localName: "Something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export default class", async () => {
@@ -484,11 +454,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "Something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default class inline", async () => {
@@ -501,11 +470,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "Something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default named function inline", async () => {
@@ -518,11 +486,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default named arrow function inline", async () => {
@@ -535,11 +502,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: "something",
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default anonymous class", async () => {
@@ -552,11 +518,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export default anonymous class with extends", async () => {
@@ -569,11 +534,10 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
     })
 
     test("export type", async () => {
@@ -585,12 +549,10 @@ describe("SourceFile", () => {
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
-
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
     })
 
     test("export type from namespace", async () => {
@@ -603,12 +565,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: "something",
-        source: "something",
-        type: "named"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export type * namespace", async () => {
@@ -621,12 +582,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: undefined,
-        localName: undefined,
-        source: "something",
-        type: "namespace"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("namespace")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
 
     test("export type * with rename from namespace", async () => {
@@ -639,12 +599,11 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
-        exportedName: "something",
-        localName: undefined,
-        source: "something",
-        type: "namespace"
-      }])
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual(undefined)
+      expect(sourceFile.exportDeclarations[0].type).toEqual("namespace")
+      expect(sourceFile.exportDeclarations[0].source).toEqual("something")
     })
   })
 })

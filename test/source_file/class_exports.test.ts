@@ -1,7 +1,6 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 import { SourceFile } from "../../src"
-import { stripSuperClasses } from "../helpers/ast"
 import { setupProject } from "../helpers/setup"
 
 let project = setupProject()
@@ -23,22 +22,16 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const exportDeclaration = {
-        exportedName: "Something",
-        localName: "Something",
-        type: "named",
-        source: undefined,
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeFalsy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([false])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: undefined,
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeUndefined()
     })
 
     test("import and export named class", async () => {
@@ -55,31 +48,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: false,
-        localName: "SuperClass",
-        originalName: "SuperClass",
-        source: "./super_class",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeFalsy()
 
-      const exportDeclaration = {
-        exportedName: "Something",
-        localName: "Something",
-        type: "named",
-        source: undefined,
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeFalsy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([false])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: undefined,
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeUndefined()
+      expect(something.superClassName).toEqual("SuperClass")
     })
 
     test("import and export named Controller", async () => {
@@ -96,35 +78,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: "Something",
-        localName: "Something",
-        type: "named",
-        source: undefined,
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and export named Controller with alias", async () => {
@@ -141,35 +108,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: "SomethingController",
-        localName: "Something",
-        type: "named",
-        source: undefined,
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("SomethingController")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-            isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and export named class in-line", async () => {
@@ -184,34 +136,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: "Something",
-        localName: "Something",
-        type: "named",
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and export default Controller", async () => {
@@ -226,37 +164,22 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
-
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: undefined,
-        localName: "Something",
-        type: "default",
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toBeUndefined()
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and export default Controller in single statement", async () => {
@@ -269,37 +192,22 @@ describe("SourceFile", () => {
       const sourceFile = new SourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
-
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: undefined,
-        localName: "Something",
-        type: "default"
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toBeUndefined()
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and export default anonymous Controller class in single statement", async () => {
@@ -314,34 +222,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: undefined,
-        localName: undefined,
-        type: "default"
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toBeUndefined()
+      expect(sourceFile.exportDeclarations[0].localName).toBeUndefined()
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass(undefined)
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: undefined,
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and default export anonymous class assinged to const", async () => {
@@ -358,34 +252,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: undefined,
-        localName: "Something",
-        type: "default"
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toBeUndefined()
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("default")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and name export anonymous class assigned to const", async () => {
@@ -402,34 +282,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: "Something",
-        localName: "Something",
-        type: "named",
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and name export anonymous class assigned to const inline", async () => {
@@ -444,35 +310,20 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: "Something",
-        localName: "Something",
-        type: "named",
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
-
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        },
-        exportDeclaration
-      }])
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.className).toEqual("Controller")
     })
 
     test("import and name export anonymous class assigned to const via class declaration", async () => {
@@ -490,46 +341,26 @@ describe("SourceFile", () => {
 
       await project.analyze()
 
-      const importDeclaration = {
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named",
-      }
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toBeTruthy()
 
-      const exportDeclaration = {
-        exportedName: "AnotherThing",
-        localName: "AnotherThing",
-        type: "named",
-      }
+      expect(sourceFile.exportDeclarations.length).toEqual(1)
+      expect(sourceFile.exportDeclarations[0].isStimulusExport).toBeTruthy()
+      expect(sourceFile.exportDeclarations[0].exportedName).toEqual("AnotherThing")
+      expect(sourceFile.exportDeclarations[0].localName).toEqual("AnotherThing")
+      expect(sourceFile.exportDeclarations[0].type).toEqual("named")
 
-      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
+      const anotherThing = sourceFile.findClass("AnotherThing")
+      const something = sourceFile.findClass("Something")
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
-      expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
+      expect(anotherThing).toBeDefined()
+      expect(something).toBeDefined()
 
-      const something = {
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          importDeclaration,
-          isStimulusClassDeclaration: true,
-        }
-      }
+      expect(anotherThing.superClass).toBeDefined()
+      expect(something.superClass).toBeDefined()
 
-      const anotherThing = {
-        className: "AnotherThing",
-        isStimulusClassDeclaration: false,
-        superClass: something,
-        exportDeclaration
-      }
-
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([
-        something,
-        anotherThing
-      ])
+      expect(anotherThing.superClass.className).toEqual("Something")
+      expect(something.superClass.className).toEqual("Controller")
     })
   })
 })

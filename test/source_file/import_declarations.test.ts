@@ -1,7 +1,6 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 import { SourceFile } from "../../src"
-import { stripSuperClasses } from "../helpers/ast"
 import { setupProject } from "../helpers/setup"
 
 let project = setupProject()
@@ -22,7 +21,7 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([])
+      expect(sourceFile.importDeclarations).toEqual([])
     })
 
     test("default import", async () => {
@@ -37,13 +36,12 @@ describe("SourceFile", async () => {
 
       expect(sourceFile.findImport("Something").isRenamedImport).toEqual(false)
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: false,
-        localName: "Something",
-        originalName: undefined,
-        source: "something",
-        type: "default"
-      }])
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toEqual(false)
+      expect(sourceFile.importDeclarations[0].localName).toEqual("Something")
+      expect(sourceFile.importDeclarations[0].originalName).toEqual(undefined)
+      expect(sourceFile.importDeclarations[0].source).toEqual("something")
+      expect(sourceFile.importDeclarations[0].type).toEqual("default")
     })
 
     test("named import", async () => {
@@ -56,15 +54,13 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(sourceFile.findImport("something").isRenamedImport).toEqual(false)
-
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: false,
-        localName: "something",
-        originalName: "something",
-        source: "something",
-        type: "named"
-      }])
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isRenamedImport).toEqual(false)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toEqual(false)
+      expect(sourceFile.importDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.importDeclarations[0].originalName).toEqual("something")
+      expect(sourceFile.importDeclarations[0].source).toEqual("something")
+      expect(sourceFile.importDeclarations[0].type).toEqual("named")
     })
 
     test("named import with rename", async () => {
@@ -77,13 +73,13 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: false,
-        localName: "somethingElse",
-        originalName: "something",
-        source: "something",
-        type: "named"
-      }])
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isRenamedImport).toEqual(true)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toEqual(false)
+      expect(sourceFile.importDeclarations[0].localName).toEqual("somethingElse")
+      expect(sourceFile.importDeclarations[0].originalName).toEqual("something")
+      expect(sourceFile.importDeclarations[0].source).toEqual("something")
+      expect(sourceFile.importDeclarations[0].type).toEqual("named")
     })
 
     test("namespace import", async () => {
@@ -98,13 +94,12 @@ describe("SourceFile", async () => {
 
       expect(sourceFile.findImport("something").isRenamedImport).toEqual(false)
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: false,
-        localName: "something",
-        originalName: undefined,
-        source: "something",
-        type: "namespace"
-      }])
+      expect(sourceFile.importDeclarations.length).toEqual(1)
+      expect(sourceFile.importDeclarations[0].isStimulusImport).toEqual(false)
+      expect(sourceFile.importDeclarations[0].localName).toEqual("something")
+      expect(sourceFile.importDeclarations[0].originalName).toEqual(undefined)
+      expect(sourceFile.importDeclarations[0].source).toEqual("something")
+      expect(sourceFile.importDeclarations[0].type).toEqual("namespace")
     })
 
     test("mixed import", async () => {
@@ -117,33 +112,32 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(sourceFile.findImport("anotherthing").isRenamedImport).toEqual(false)
-      expect(sourceFile.findImport("something").isRenamedImport).toEqual(true)
-      expect(sourceFile.findImport("onething").isRenamedImport).toEqual(false)
+      expect(sourceFile.importDeclarations.length).toEqual(3)
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([
-        {
-          isStimulusImport: false,
-          localName: "onething",
-          originalName: undefined,
-          source: "something",
-          type: "default"
-        },
-        {
-          isStimulusImport: false,
-          localName: "anotherthing",
-          originalName: "anotherthing",
-          source: "something",
-          type: "named"
-        },
-        {
-          isStimulusImport: false,
-          localName: "something",
-          originalName: "thirdthing",
-          source: "something",
-          type: "named"
-        }
-      ])
+      const anotherthing = sourceFile.findImport("anotherthing")
+      const something = sourceFile.findImport("something")
+      const onething = sourceFile.findImport("onething")
+
+      expect(onething.isRenamedImport).toEqual(false)
+      expect(onething.isStimulusImport).toEqual(false)
+      expect(onething.localName).toEqual("onething")
+      expect(onething.originalName).toEqual(undefined)
+      expect(onething.source).toEqual("something")
+      expect(onething.type).toEqual("default")
+
+      expect(anotherthing.isRenamedImport).toEqual(false)
+      expect(anotherthing.isStimulusImport).toEqual(false)
+      expect(anotherthing.localName).toEqual("anotherthing")
+      expect(anotherthing.originalName).toEqual("anotherthing")
+      expect(anotherthing.source).toEqual("something")
+      expect(anotherthing.type).toEqual("named")
+
+      expect(something.isRenamedImport).toEqual(true)
+      expect(something.isStimulusImport).toEqual(false)
+      expect(something.localName).toEqual("something")
+      expect(something.originalName).toEqual("thirdthing")
+      expect(something.source).toEqual("something")
+      expect(something.type).toEqual("named")
     })
 
     test("import default as", async () => {
@@ -156,19 +150,16 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
+      const something = sourceFile.findImport("something")
+
       // this is technically a "renamed" import, but it doesn't make a difference
       // this is equivalent to `import something from "something"`
-      expect(sourceFile.findImport("something").isRenamedImport).toEqual(false)
-
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([
-        {
-          isStimulusImport: false,
-          localName: "something",
-          originalName: undefined,
-          source: "something",
-          type: "default"
-        }
-      ])
+      expect(something.isRenamedImport).toEqual(false)
+      expect(something.isStimulusImport).toEqual(false)
+      expect(something.localName).toEqual("something")
+      expect(something.originalName).toEqual(undefined)
+      expect(something.source).toEqual("something")
+      expect(something.type).toEqual("default")
     })
 
     test("type import", async () => {
@@ -181,15 +172,14 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(sourceFile.findImport("something").isRenamedImport).toEqual(false)
+      const something = sourceFile.findImport("something")
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: false,
-        localName: "something",
-        originalName: "something",
-        source: "something",
-        type: "named"
-      }])
+      expect(something.isRenamedImport).toEqual(false)
+      expect(something.isStimulusImport).toEqual(false)
+      expect(something.localName).toEqual("something")
+      expect(something.originalName).toEqual("something")
+      expect(something.source).toEqual("something")
+      expect(something.type).toEqual("named")
     })
 
     test("stimulus controller import", async () => {
@@ -202,15 +192,14 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(sourceFile.findImport("Controller").isRenamedImport).toEqual(false)
+      const controller = sourceFile.findImport("Controller")
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: true,
-        localName: "Controller",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named"
-      }])
+      expect(controller.isRenamedImport).toEqual(false)
+      expect(controller.isStimulusImport).toEqual(true)
+      expect(controller.localName).toEqual("Controller")
+      expect(controller.originalName).toEqual("Controller")
+      expect(controller.source).toEqual("@hotwired/stimulus")
+      expect(controller.type).toEqual("named")
     })
 
     test("stimulus controller import with alias", async () => {
@@ -223,15 +212,14 @@ describe("SourceFile", async () => {
 
       await project.analyze()
 
-      expect(sourceFile.findImport("StimulusController").isRenamedImport).toEqual(true)
+      const controller = sourceFile.findImport("StimulusController")
 
-      expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([{
-        isStimulusImport: true,
-        localName: "StimulusController",
-        originalName: "Controller",
-        source: "@hotwired/stimulus",
-        type: "named"
-      }])
+      expect(controller.isRenamedImport).toEqual(true)
+      expect(controller.isStimulusImport).toEqual(true)
+      expect(controller.localName).toEqual("StimulusController")
+      expect(controller.originalName).toEqual("Controller")
+      expect(controller.source).toEqual("@hotwired/stimulus")
+      expect(controller.type).toEqual("named")
     })
   })
 })

@@ -11,6 +11,7 @@ import { ImportDeclaration } from "./import_declaration"
 import { ExportDeclaration } from "./export_declaration"
 import { MethodDefinition } from "./controller_property_definition"
 
+import type * as Acorn from "acorn"
 import type { TSESTree } from "@typescript-eslint/typescript-estree"
 import type { Project } from "./project"
 import type { ClassDeclarationNode } from "./types"
@@ -19,22 +20,42 @@ export class ClassDeclaration {
   public readonly isStimulusClassDeclaration: boolean = false
   public readonly sourceFile: SourceFile
   public readonly className?: string
-  public readonly superClass?: ClassDeclaration
   public readonly node?: ClassDeclarationNode
 
   public importDeclaration?: ImportDeclaration // TODO: technically a class can be imported more than once
   public exportDeclaration?: ExportDeclaration // TODO: technically a class can be exported more than once
   public controllerDefinition?: ControllerDefinition
 
-  constructor(className: string | undefined, superClass: ClassDeclaration | undefined, sourceFile: SourceFile, node?: ClassDeclarationNode | undefined) {
-    this.className = className
-    this.superClass = superClass
+  constructor(sourceFile: SourceFile, className?: string, node?: ClassDeclarationNode) {
     this.sourceFile = sourceFile
+    this.className = className
     this.node = node
   }
 
   get shouldParse() {
     return this.isStimulusDescendant
+  }
+
+  get superClassNode(): Acorn.Expression | undefined | null {
+    return this.node?.superClass
+  }
+
+  get superClassName(): string | undefined {
+    if (this.superClassNode?.type !== "Identifier") return
+
+    return this.superClassNode.name
+  }
+
+  get superClass(): ClassDeclaration | undefined {
+    if (!this.superClassName) return
+
+    const classDeclaration = this.sourceFile.classDeclarations.find(i => i.className === this.superClassName)
+    const importDeclaration = this.sourceFile.importDeclarations.find(i => i.localName === this.superClassName)
+    const stimulusController = (importDeclaration && importDeclaration?.isStimulusImport) ? new StimulusControllerClassDeclaration(this.sourceFile.project, importDeclaration) : undefined
+
+    return (
+      classDeclaration || importDeclaration?.nextResolvedClassDeclaration || stimulusController
+    )
   }
 
   get isStimulusDescendant() {
@@ -196,7 +217,7 @@ export class StimulusControllerClassDeclaration extends ClassDeclaration {
   public readonly isStimulusClassDeclaration: boolean = true
 
   constructor(project: Project, importDeclaration: ImportDeclaration) {
-    super(importDeclaration.localName || "Controller", undefined, new SourceFile(project, "stimulus/controller.js"))
+    super(new SourceFile(project, "stimulus/controller.js"), importDeclaration.localName || "Controller")
     this.importDeclaration = importDeclaration
   }
 

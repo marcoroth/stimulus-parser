@@ -125,9 +125,6 @@ describe("ClassDeclaration", () => {
       expect(parent).toBeDefined()
       expect(parent.className).toEqual("Parent")
       expect(parent.superClass).toBeUndefined()
-
-      expect(sourceFile.errors).toHaveLength(1)
-      expect(sourceFile.errors[0].message).toEqual(`Couldn't resolve import "Controller" to a class declaration in "something-else". Make sure the referenced constant is defining a class.`)
     })
 
     test("with super class name imported from other file", async () => {
@@ -169,7 +166,7 @@ describe("ClassDeclaration", () => {
       expect(parent.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
     })
 
-    test.skip("with super class name imported from other file independent of file order", async () => {
+    test("with super class name imported from other file independent of file order", async () => {
       const parentCode = dedent`
         import { Controller } from "@hotwired/stimulus"
 
@@ -184,7 +181,6 @@ describe("ClassDeclaration", () => {
       const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
       const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
 
-      // TODO: fix this, this is order dependent
       project.projectFiles.push(childFile)
       project.projectFiles.push(parentFile)
 
@@ -277,9 +273,6 @@ describe("ClassDeclaration", () => {
       expect(child.className).toEqual("ChildController")
       expect(child.superClass).toBeUndefined()
 
-      expect(childFile.errors.length).toEqual(1)
-      expect(childFile.errors[0].message).toEqual(`Couldn't resolve import "ParentController" to a class declaration in "./parent_controller". Make sure the referenced constant is defining a class.`)
-
       expect(parent).toBeDefined()
       expect(parentFile.errors.length).toEqual(0)
       expect(parent.className).toEqual("ParentControllerOops")
@@ -316,11 +309,6 @@ describe("ClassDeclaration", () => {
 
       expect(child.className).toEqual("ChildController")
       expect(child.superClass).toBeUndefined()
-
-      expect(childFile.errors.length).toEqual(1)
-      expect(childFile.errors[0].message).toEqual(`Couldn't resolve super class "ParentController" for class "ChildController". Double check your imports.`)
-
-      expect(parentFile.errors.length).toEqual(0)
 
       expect(parent).toBeDefined()
       expect(parent.className).toEqual("ParentController")

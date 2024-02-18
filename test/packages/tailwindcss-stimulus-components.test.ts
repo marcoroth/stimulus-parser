@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest"
-import { Project } from "../../src"
+import { Project, StimulusControllerClassDeclaration } from "../../src"
 
 const project = new Project(`${process.cwd()}/test/fixtures/packages/tailwindcss-stimulus-components`)
 
@@ -39,7 +39,9 @@ describe("packages", () => {
       expect(Object.keys(modalController.valueDefinitions)).toEqual(["open", "restoreScroll"])
       expect(modalController.valueDefinitions.open.type).toEqual("Boolean")
       expect(modalController.valueDefinitions.restoreScroll.type).toEqual("Boolean")
+      expect(modalController.classDeclaration.superClass).toBeDefined()
       expect(modalController.classDeclaration.superClass.className).toEqual("Controller")
+      expect(modalController.classDeclaration.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
       expect(modalController.classDeclaration.superClass.isStimulusClassDeclaration).toEqual(true)
       expect(modalController.classDeclaration.superClass.importDeclaration.source).toEqual("@hotwired/stimulus")
       expect(modalController.classDeclaration.superClass.importDeclaration.localName).toEqual("Controller")

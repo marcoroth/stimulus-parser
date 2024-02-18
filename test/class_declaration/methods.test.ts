@@ -1,7 +1,6 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 import { SourceFile } from "../../src"
-import { stripSuperClasses } from "../helpers/ast"
 import { setupProject } from "../helpers/setup"
 
 let project = setupProject()
@@ -26,10 +25,9 @@ describe("ClassDeclaration", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-      }])
+      expect(sourceFile.classDeclarations.length).toEqual(1)
+      expect(sourceFile.classDeclarations[0].className).toEqual("Something")
+      expect(sourceFile.classDeclarations[0].isStimulusClassDeclaration).toEqual(false)
       expect(sourceFile.controllerDefinitions).toEqual([])
       expect(sourceFile.errors).toHaveLength(0)
     })
@@ -51,14 +49,13 @@ describe("ClassDeclaration", () => {
 
       await project.analyze()
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: undefined,
-      }])
+      const something = sourceFile.findClass("Something")
+
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeUndefined()
+      expect(something.superClassName).toEqual("Controller")
+      expect(sourceFile.errors).toHaveLength(0)
       expect(sourceFile.controllerDefinitions).toEqual([])
-      expect(sourceFile.errors).toHaveLength(1)
-      expect(sourceFile.errors[0].message).toEqual(`Couldn't resolve import "Controller" to a class declaration in "somewhere". Make sure the referenced constant is defining a class.`)
     })
   })
 
@@ -81,21 +78,11 @@ describe("ClassDeclaration", () => {
 
       expect(sourceFile.controllerDefinitions[0].methodNames).toEqual(["connect", "method", "disconnect"])
 
-      expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
-        className: "Something",
-        isStimulusClassDeclaration: false,
-        superClass: {
-          className: "Controller",
-          isStimulusClassDeclaration: true,
-          importDeclaration: {
-            localName: "Controller",
-            originalName: "Controller",
-            source: "@hotwired/stimulus",
-            isStimulusImport: true,
-            type: "named",
-          }
-        }
-      }])
+      const something = sourceFile.findClass("Something")
+
+      expect(something).toBeDefined()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.isStimulusClassDeclaration).toBeTruthy()
       expect(sourceFile.errors).toHaveLength(0)
     })
   })

@@ -116,42 +116,6 @@ export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
   }
 }
 
-export function detectSuperClass(project: Project, className: string|undefined, node: ClassDeclarationNode, superClassName: string|undefined, importDeclaration: ImportDeclaration|undefined, errors: ParseError[]): ClassDeclaration|undefined {
-  if (importDeclaration && importDeclaration.isStimulusImport) {
-    return new StimulusControllerClassDeclaration(project, importDeclaration)
-  }
-
-  if (importDeclaration) {
-    const nextClass = importDeclaration.nextResolvedClassDeclaration
-
-    if (nextClass) return nextClass
-
-    errors.push(new ParseError("FAIL", `Couldn't resolve import "${importDeclaration.localName}" to a class declaration in "${importDeclaration.source}". Make sure the referenced constant is defining a class.`, node.loc))
-    return
-  }
-
-  if (!superClassName) return
-
-  errors.push(new ParseError("FAIL", `Couldn't resolve super class "${superClassName}" for class "${className}". Double check your imports.`, node.loc))
-}
-
-export function convertClassDeclarationNodeToClassDeclaration(sourceFile: SourceFile, className: string | undefined, node: ClassDeclarationNode) {
-  const errors: ParseError[] = []
-  const superClassName = extractIdentifier(node.superClass)
-  const importDeclaration = sourceFile.importDeclarations.find(i => i.localName === superClassName)
-
-  let superClass = sourceFile.classDeclarations.find(i => i.className === superClassName)
-
-  if (!superClass) {
-    superClass = detectSuperClass(sourceFile.project, className, node, superClassName, importDeclaration, errors)
-  }
-
-  const classDeclaration = new ClassDeclaration(className, superClass, sourceFile, node)
-
-  sourceFile.errors.push(...errors)
-  sourceFile.classDeclarations.push(classDeclaration)
-}
-
 export function extractIdentifier(node?: Acorn.AnyNode | null): string | undefined {
   if (!node) return undefined
   if (!(node.type === "Identifier" || node.type === "PrivateIdentifier")) return undefined

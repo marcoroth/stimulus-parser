@@ -276,7 +276,9 @@ export class SourceFile {
     simple(this.ast as any, {
       ClassDeclaration: node => {
         const className = ast.extractIdentifier(node.id)
-        ast.convertClassDeclarationNodeToClassDeclaration(this, className, node)
+        const classDeclaration = new ClassDeclaration(this, className, node)
+
+        this.classDeclarations.push(classDeclaration)
       },
 
       VariableDeclaration: node => {
@@ -286,8 +288,9 @@ export class SourceFile {
           if (!declaration.init || declaration.init.type !== "ClassExpression") return
 
           const className = ast.extractIdentifier(declaration.id)
+          const classDeclaration = new ClassDeclaration(this, className, declaration.init)
 
-          ast.convertClassDeclarationNodeToClassDeclaration(this, className, declaration.init)
+          this.classDeclarations.push(classDeclaration)
         })
       }
     })
