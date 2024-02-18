@@ -28,9 +28,9 @@ describe("packages", () => {
         "hello",
         "modal",
         "popover",
+        "slideover",
         "tabs",
         "toggle",
-        // "slideover", // TODO: this isn't supported yet since this uses an inherited class from another file
       ])
 
       const modalController = project.allControllerDefinitions.find(controller => controller.identifier === "modal")

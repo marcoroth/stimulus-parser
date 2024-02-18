@@ -39,11 +39,19 @@ export class NodeModule {
     this.sourceFiles = args.files.map(path => new SourceFile(this.project, path))
   }
 
-  async readFiles() {
+  async initialize() {
     await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.initialize()))
   }
 
   async analyze() {
+    const referencedFilePaths = this.sourceFiles.flatMap(s => s.importDeclarations.filter(i => i.isRelativeImport).map(i => i.resolvedRelativePath))
+    const referencedSourceFiles = this.sourceFiles.filter(s => referencedFilePaths.includes(s.path))
+
+    await Promise.allSettled(referencedSourceFiles.map(sourceFile => sourceFile.analyze()))
+    await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.analyze()))
+  }
+
+  async refresh() {
     await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.refresh()))
   }
 

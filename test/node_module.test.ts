@@ -18,16 +18,37 @@ describe("NodeModule", () => {
   test("classDeclarations", async () => {
     const nodeModule = await NodeModule.forProject(project, "tailwindcss-stimulus-components")
 
+    await nodeModule.initialize()
     await nodeModule.analyze()
 
+    expect(nodeModule.sourceFiles).toHaveLength(11)
     expect(nodeModule.classDeclarations).toHaveLength(9)
   })
 
   test("controllerDefinitions", async () => {
     const nodeModule = await NodeModule.forProject(project, "tailwindcss-stimulus-components")
 
+    await nodeModule.initialize()
     await nodeModule.analyze()
 
+    expect(nodeModule.sourceFiles).toHaveLength(11)
+    expect(nodeModule.controllerDefinitions).toHaveLength(8)
+  })
+
+  test("allows to be refreshed", async () => {
+    const nodeModule = await NodeModule.forProject(project, "tailwindcss-stimulus-components")
+
+    await nodeModule.initialize()
+    await nodeModule.analyze()
+
+    expect(nodeModule.sourceFiles).toHaveLength(11)
+    expect(nodeModule.classDeclarations).toHaveLength(9)
+    expect(nodeModule.controllerDefinitions).toHaveLength(8)
+
+    await nodeModule.refresh()
+
+    expect(nodeModule.sourceFiles).toHaveLength(11)
+    expect(nodeModule.classDeclarations).toHaveLength(9)
     expect(nodeModule.controllerDefinitions).toHaveLength(8)
   })
 })

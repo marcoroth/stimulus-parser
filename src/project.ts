@@ -167,11 +167,12 @@ export class Project {
       )
 
       if (nodeModule) {
-        await nodeModule.analyze()
+        await nodeModule.initialize()
       }
     })
 
     await Promise.allSettled(referencesModules)
+    await Promise.allSettled(this.detectedNodeModules.map(nodeModule => nodeModule.analyze()))
   }
 
   async detectAvailablePackages() {
@@ -179,6 +180,7 @@ export class Project {
   }
 
   async analyzeAllDetectedModules() {
+    await Promise.allSettled(this.detectedNodeModules.map(module => module.initialize()))
     await Promise.allSettled(this.detectedNodeModules.map(module => module.analyze()))
   }
 
