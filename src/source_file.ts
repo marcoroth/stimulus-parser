@@ -194,10 +194,6 @@ export class SourceFile {
   analyzeExportDeclarations() {
     if (!this.ast) return
 
-    const findClass = (specifier?: string) => {
-      return this.classDeclarations.find(klass => klass.className == specifier)
-    }
-
     simple(this.ast as any, {
       ExportNamedDeclaration: node => {
         const { specifiers, declaration } = node
@@ -207,16 +203,14 @@ export class SourceFile {
           const exportedName = ast.extractIdentifier(specifier.exported)
           const localName = ast.extractIdentifier(specifier.local)
           const source = ast.extractLiteralAsString(node.source)
-          const classDeclaration = findClass(localName)
-          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
           let exportDeclaration
 
           if (exportedName === "default") {
-            exportDeclaration = new ExportDeclaration(this, { localName: (localName === "default" ? undefined : localName), source, isStimulusExport, type: "default", node })
+            exportDeclaration = new ExportDeclaration(this, { localName: (localName === "default" ? undefined : localName), source, type: "default", node })
           } else if (localName === "default") {
-            exportDeclaration = new ExportDeclaration(this, { exportedName: (exportedName === "default" ? undefined : exportedName), source, isStimulusExport, type: exportedName === "default" ? "default" : "named", node })
+            exportDeclaration = new ExportDeclaration(this, { exportedName: (exportedName === "default" ? undefined : exportedName), source, type: exportedName === "default" ? "default" : "named", node })
           } else {
-            exportDeclaration = new ExportDeclaration(this, { exportedName, localName, source, isStimulusExport, type, node })
+            exportDeclaration = new ExportDeclaration(this, { exportedName, localName, source, type, node })
           }
 
           this.exportDeclarations.push(exportDeclaration)
@@ -228,9 +222,7 @@ export class SourceFile {
         if (declaration.type === "FunctionDeclaration" || declaration.type === "ClassDeclaration") {
           const exportedName = declaration.id.name
           const localName = declaration.id.name
-          const classDeclaration = findClass(localName)
-          const isStimulusExport = classDeclaration?.isStimulusDescendant || false
-          const exportDeclaration = new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
+          const exportDeclaration = new ExportDeclaration(this, { exportedName, localName, type, node })
 
           this.exportDeclarations.push(exportDeclaration)
         }
@@ -239,9 +231,7 @@ export class SourceFile {
           declaration.declarations.forEach(declaration => {
             const exportedName = ast.extractIdentifier(declaration.id)
             const localName = ast.extractIdentifier(declaration.id)
-            const classDeclaration = findClass(localName)
-            const isStimulusExport = classDeclaration?.isStimulusDescendant || false
-            const exportDeclaration = new ExportDeclaration(this, { exportedName, localName, isStimulusExport, type, node })
+            const exportDeclaration = new ExportDeclaration(this, { exportedName, localName, type, node })
 
             this.exportDeclarations.push(exportDeclaration)
           })
@@ -255,10 +245,7 @@ export class SourceFile {
         const nameFromAssignment = ast.extractIdentifier((node.declaration as Acorn.AssignmentExpression).left)
 
         const localName = name || nameFromId || nameFromAssignment
-        const classDeclaration = findClass(localName)
-        const isStimulusExport = classDeclaration?.isStimulusDescendant || false
-
-        const exportDeclaration = new ExportDeclaration(this, { localName, isStimulusExport, type, node })
+        const exportDeclaration = new ExportDeclaration(this, { localName, type, node })
 
         this.exportDeclarations.push(exportDeclaration)
       },
@@ -267,9 +254,8 @@ export class SourceFile {
         const type = "namespace"
         const exportedName = ast.extractIdentifier(node.exported)
         const source = ast.extractLiteralAsString(node.source)
-        const isStimulusExport = false // TODO: detect namespace Stimulus exports
 
-        const exportDeclaration = new ExportDeclaration(this, { exportedName, source, isStimulusExport, type, node })
+        const exportDeclaration = new ExportDeclaration(this, { exportedName, source, type, node })
 
         this.exportDeclarations.push(exportDeclaration)
         this.project.registerReferencedNodeModule(exportDeclaration)

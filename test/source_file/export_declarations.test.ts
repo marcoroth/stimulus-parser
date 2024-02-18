@@ -18,7 +18,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -35,7 +34,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -52,7 +50,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -79,7 +76,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -97,7 +93,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -113,7 +108,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -131,7 +125,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -147,7 +140,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -163,7 +155,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -179,7 +170,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -197,7 +187,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -213,7 +202,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -229,7 +217,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -245,7 +232,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -261,7 +247,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -277,7 +262,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -293,7 +277,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -310,7 +293,6 @@ describe("SourceFile", () => {
         {
           exportedName: "something",
           localName: "something",
-          isStimulusExport: false,
           type: "named"
         },
         {
@@ -333,7 +315,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "namespace",
         source: "something"
       }])
@@ -350,7 +331,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: undefined,
-        isStimulusExport: false,
         type: "namespace",
         source: "something"
       }])
@@ -367,7 +347,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default",
         source: "something"
       }])
@@ -384,7 +363,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: undefined,
-        isStimulusExport: false,
         type: "named",
         source: "something"
       }])
@@ -403,7 +381,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -419,7 +396,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "somethingElse",
         localName: "something",
-        isStimulusExport: false,
         type: "named",
         source: "something"
       }])
@@ -436,7 +412,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -454,7 +429,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -470,7 +444,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "Something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -486,7 +459,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -502,7 +474,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: "something",
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -518,7 +489,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -534,7 +504,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: false,
         type: "default"
       }])
     })
@@ -550,7 +519,6 @@ describe("SourceFile", () => {
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([{
         exportedName: "something",
         localName: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -567,7 +535,6 @@ describe("SourceFile", () => {
         exportedName: "something",
         localName: "something",
         source: "something",
-        isStimulusExport: false,
         type: "named"
       }])
     })
@@ -584,7 +551,6 @@ describe("SourceFile", () => {
         exportedName: undefined,
         localName: undefined,
         source: "something",
-        isStimulusExport: false,
         type: "namespace"
       }])
     })
@@ -601,7 +567,6 @@ describe("SourceFile", () => {
         exportedName: "something",
         localName: undefined,
         source: "something",
-        isStimulusExport: false,
         type: "namespace"
       }])
     })

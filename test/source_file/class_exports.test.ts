@@ -19,11 +19,11 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: false,
         type: "named",
         source: undefined,
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([false])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
       expect(stripSuperClasses(sourceFile.classDeclarations)).toEqual([{
@@ -57,11 +57,11 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: false,
         type: "named",
         source: undefined,
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([false])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -96,11 +96,11 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: true,
         type: "named",
         source: undefined,
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -139,11 +139,11 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "SomethingController",
         localName: "Something",
-        isStimulusExport: true,
         type: "named",
         source: undefined,
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -180,10 +180,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: true,
         type: "named",
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -222,10 +222,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: undefined,
         localName: "Something",
-        isStimulusExport: true,
         type: "default",
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -262,10 +262,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: undefined,
         localName: "Something",
-        isStimulusExport: true,
         type: "default"
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -302,10 +302,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: undefined,
         localName: undefined,
-        isStimulusExport: true,
         type: "default"
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -344,10 +344,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: undefined,
         localName: "Something",
-        isStimulusExport: true,
         type: "default"
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -386,10 +386,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: true,
         type: "named",
       }
 
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
 
@@ -426,9 +426,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "Something",
         localName: "Something",
-        isStimulusExport: true,
         type: "named",
       }
+
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])
@@ -469,9 +470,10 @@ describe("SourceFile", () => {
       const exportDeclaration = {
         exportedName: "AnotherThing",
         localName: "AnotherThing",
-        isStimulusExport: true,
         type: "named",
       }
+
+      expect(sourceFile.exportDeclarations.map(declaration => declaration.isStimulusExport)).toEqual([true])
 
       expect(stripSuperClasses(sourceFile.importDeclarations)).toEqual([importDeclaration])
       expect(stripSuperClasses(sourceFile.exportDeclarations)).toEqual([exportDeclaration])

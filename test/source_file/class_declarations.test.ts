@@ -82,7 +82,6 @@ describe("SourceFile", () => {
           superClass: undefined,
           isStimulusClassDeclaration: false,
           exportDeclaration: {
-            isStimulusExport: false,
             exportedName: undefined,
             localName: undefined,
             type: "default"
@@ -114,7 +113,6 @@ describe("SourceFile", () => {
           exportDeclaration: {
             exportedName: undefined,
             localName: undefined,
-            isStimulusExport: false,
             type: "default"
           },
           superClass: {
