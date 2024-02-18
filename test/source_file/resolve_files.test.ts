@@ -2,9 +2,8 @@ import dedent from "dedent"
 import path from "path"
 
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile } from "../../src"
-
-let project = new Project(`${process.cwd()}/test/fixtures/app`)
+import { SourceFile } from "../../src"
+import { setupProject } from "../helpers/setup"
 
 const emptyController = `
   import { Controller } from "@hotwired/stimulus"
@@ -12,9 +11,11 @@ const emptyController = `
   export default class extends Controller {}
 `
 
+let project = setupProject("app")
+
 describe("SourceFile", () => {
   beforeEach(() => {
-    project = new Project(`${process.cwd()}/test/fixtures/app`)
+    project = setupProject("app")
   })
 
   describe("resolve files", () => {

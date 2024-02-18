@@ -1,10 +1,14 @@
-import { describe, test, expect } from "vitest"
-import { Project } from "../../../src"
+import { describe, beforeEach, test, expect } from "vitest"
 import { hasDepedency } from "../../../src/util/npm"
+import { setupProject } from "../../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("util.npm", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("hasDepedency", () => {
     test("has dependency", async () => {
       expect(await hasDepedency(project.projectPath, "acorn")).toEqual(true)

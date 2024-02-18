@@ -1,5 +1,5 @@
 // import dedent from "dedent"
-import { expect, test, describe } from "vitest"
+import { describe, test, expect } from "vitest"
 // import { parseController } from "../helpers/parse"
 
 describe("inheritance", () => {

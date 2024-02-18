@@ -1,9 +1,14 @@
-import { describe, test, expect } from "vitest"
-import { Project, NodeModule } from "../src"
+import { describe, beforeEach, test, expect } from "vitest"
+import { NodeModule } from "../src"
+import { setupProject } from "./helpers/setup"
 
-const project = new Project(`${process.cwd()}/test/fixtures/packages/tailwindcss-stimulus-components`)
+let project = setupProject("packages/tailwindcss-stimulus-components")
 
 describe("NodeModule", () => {
+  beforeEach(() => {
+    project = setupProject("packages/tailwindcss-stimulus-components")
+  })
+
   test("entrypointSourceFile", async () => {
     const nodeModule = await NodeModule.forProject(project, "tailwindcss-stimulus-components")
 

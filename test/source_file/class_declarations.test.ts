@@ -1,5 +1,5 @@
 import dedent from "dedent"
-import { describe, beforeEach, expect, test } from "vitest"
+import { describe, beforeEach, test, expect } from "vitest"
 import { Project, SourceFile } from "../../src"
 import { stripSuperClasses } from "../helpers/ast"
 

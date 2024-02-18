@@ -1,6 +1,6 @@
-import { describe, expect, test, beforeEach } from "vitest"
-import { ControllerDefinition } from "../src"
-import { setupProject } from "./helpers/setup"
+import { describe, beforeEach, test, expect } from "vitest"
+import { ControllerDefinition } from "../../src"
+import { setupProject } from "../helpers/setup"
 
 let project = setupProject()
 

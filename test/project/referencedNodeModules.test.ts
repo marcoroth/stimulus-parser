@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach } from "vitest"
+import { describe, beforeEach, test, expect } from "vitest"
 import { Project } from "../../src/project"
 import { SourceFile } from "../../src/source_file"
 import { setupProject } from "../helpers/setup"

@@ -1,10 +1,14 @@
-import { describe, expect, test } from "vitest"
-import { SourceFile } from "../src"
-import { setupProject } from "./helpers/setup"
+import { describe, beforeEach, test, expect } from "vitest"
+import { SourceFile } from "../../src"
+import { setupProject } from "../helpers/setup"
 
 let project = setupProject()
 
 describe("SourceFile", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   test("parses with content", () => {
     const sourceFile = new SourceFile(project, "abc.js", "")
 

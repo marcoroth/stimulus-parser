@@ -1,10 +1,14 @@
-import { describe, test, expect } from "vitest"
-import { Project } from "../../../src"
+import { describe, beforeEach, test, expect } from "vitest"
 import { nodeModuleForPackageName } from "../../../src/util/npm"
+import { setupProject } from "../../helpers/setup"
 
-const project = new Project(`${process.cwd()}/test/fixtures/app`)
+let project = setupProject("app")
 
 describe("util.npm", () => {
+  beforeEach(() => {
+    project = setupProject("app")
+  })
+
   describe("nodeModuleForPackageName", () => {
     test("find and analyzes node module", async () => {
       const nodeModule = await nodeModuleForPackageName(project, "tailwindcss-stimulus-components")

@@ -1,6 +1,6 @@
 import path from "path"
 import dedent from "dedent"
-import { expect, test, describe } from "vitest"
+import { describe, test, expect } from "vitest"
 import { setupProject } from "../helpers/setup"
 
 import { ClassDeclaration, StimulusControllerClassDeclaration } from "../../src/class_declaration"

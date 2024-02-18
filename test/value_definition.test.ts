@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest"
+import { describe, test, expect } from "vitest"
 import { ValueDefinition } from "../src/controller_property_definition"
 
 describe("ValueDefinition", () => {

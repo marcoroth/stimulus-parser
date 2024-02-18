@@ -1,10 +1,14 @@
-import { describe, test, expect } from "vitest"
-import { Project } from "../../../src"
+import { describe, beforeEach, test, expect } from "vitest"
 import { findNodeModulesPath } from "../../../src/util/npm"
+import { setupProject } from "../../helpers/setup"
 
-const project = new Project(process.cwd())
+let project = setupProject()
 
 describe("util.npm", () => {
+  beforeEach(() => {
+    project = setupProject()
+  })
+
   describe("findNodeModulesPath", () => {
     test("for root directory", async() => {
       expect(await findNodeModulesPath(project.projectPath)).toEqual(`${project.projectPath}/node_modules`)

@@ -1,6 +1,6 @@
 import dedent from "dedent"
 import path from "path"
-import { describe, beforeEach, expect, test } from "vitest"
+import { describe, beforeEach, test, expect } from "vitest"
 import { Project, SourceFile, ClassDeclaration, StimulusControllerClassDeclaration } from "../../src"
 
 let project = new Project(process.cwd())
