@@ -1,3 +1,4 @@
+export * as builder from "./ast_builder"
 export * from "./ast"
 export * from "./decorators"
 export * from "./fs"

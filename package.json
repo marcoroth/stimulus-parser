@@ -23,8 +23,9 @@
   },
   "dependencies": {
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
-    "@typescript-eslint/typescript-estree": "^6.21.0",
+    "@typescript-eslint/typescript-estree": "^7.0.1",
     "acorn-walk": "^8.3.1",
+    "astring": "^1.8.6",
     "fs": "^0.0.1-security",
     "glob": "^10.3.10"
   },
@@ -35,6 +36,7 @@
     "minimatch": "^9.0.3",
     "path": "^0.12.7",
     "rimraf": "^5.0.5",
+    "source-map": "^0.7.4",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
