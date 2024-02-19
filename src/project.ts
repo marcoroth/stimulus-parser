@@ -9,7 +9,7 @@ import { ExportDeclaration } from "./export_declaration"
 import { ApplicationFile } from "./application_file"
 import { ControllersIndexFile } from "./controllers_index_file"
 
-import { detectPackages, analyzePackage } from "./packages"
+import { analyzeAll, analyzePackage } from "./packages"
 import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { calculateControllerRoots } from "./util/project"
 
@@ -182,7 +182,7 @@ export class Project {
   }
 
   async detectAvailablePackages() {
-    await detectPackages(this)
+    await analyzeAll(this)
   }
 
   async analyzeAllDetectedModules() {

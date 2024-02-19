@@ -1,10 +1,18 @@
 import path from "path"
 import { glob } from "glob"
 
-import { Project } from "../project"
-import { findNodeModulesPath, parsePackageJSON, nodeModuleForPackageJSONPath, hasDepedency } from "../util/npm"
+import { Project } from "./project"
 
-import { helperPackages } from "./index"
+import { findNodeModulesPath, parsePackageJSON, nodeModuleForPackageJSONPath, hasDepedency } from "./util/npm"
+
+export const helperPackages = [
+  "@hotwired/stimulus-loading",
+  "@hotwired/stimulus-webpack-helpers",
+  "bun-stimulus-plugin",
+  "esbuild-plugin-stimulus",
+  "stimulus-vite-helpers",
+  "vite-plugin-stimulus-hmr",
+]
 
 export async function analyzePackage(project: Project, name: string) {
   const nodeModulesPath = await findNodeModulesPath(project.projectPath)
@@ -41,9 +49,9 @@ export async function analyzeAll(project: Project) {
   if (!nodeModulesPath) return
 
   const packages = [
-    ...await glob(`${nodeModulesPath}/*stimulus*/package.json`),   // for libraries like stimulus-in-library
-    ...await glob(`${nodeModulesPath}/*stimulus*/*/package.json`), // for libraries like @stimulus-in-namespace/some-library
-    ...await glob(`${nodeModulesPath}/*/*stimulus*/package.json`), // for libraries like @some-namespace/stimulus-in-library
+    ...await glob(`${nodeModulesPath}/*stimulus*/package.json`),   // for libraries like stimulus-in-library-name
+    ...await glob(`${nodeModulesPath}/*stimulus*/*/package.json`), // for libraries like @stimulus-in-namespace-name/some-library
+    ...await glob(`${nodeModulesPath}/*/*stimulus*/package.json`), // for libraries like @some-namespace/stimulus-in-library-name
   ]
 
   await Promise.allSettled(
