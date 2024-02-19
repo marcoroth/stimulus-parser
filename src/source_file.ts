@@ -351,7 +351,11 @@ export class SourceFile {
     return {
       path: this.path,
       hasContent: !!this.content,
+      hasErrors: this.hasErrors,
+      hasSyntaxError: this.hasSyntaxError,
       hasAst: !!this.ast,
+      isAnalyzed: this.isAnalyzed,
+      isParsed: this.isParsed,
       errors: this.errors.map(e => e.inspect),
       classes: this.classDeclarations.map(c => c.inspect),
       imports: this.importDeclarations.map(i => i.inspect),
