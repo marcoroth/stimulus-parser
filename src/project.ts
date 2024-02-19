@@ -6,6 +6,8 @@ import { SourceFile } from "./source_file"
 import { NodeModule } from "./node_module"
 import { ImportDeclaration } from "./import_declaration"
 import { ExportDeclaration } from "./export_declaration"
+import { ApplicationFile } from "./application_file"
+import { ControllersIndexFile } from "./controllers_index_file"
 
 import { detectPackages, analyzePackage } from "./packages"
 import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
@@ -22,6 +24,8 @@ export class Project {
   public referencedNodeModules: Set<string> = new Set()
   public projectFiles: Array<SourceFile> = []
   public parser: Parser = new Parser(this)
+  public applicationFile?: ApplicationFile
+  public controllersFile?: ControllersIndexFile
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
@@ -128,6 +132,8 @@ export class Project {
     await this.initializeProjectFiles()
     await this.analyzeReferencedModules()
     await this.analyzeProjectFiles()
+    await this.analyzeStimulusApplicationFile()
+    await this.analyzeStimulusControllersIndexFile()
   }
 
   async reset() {
@@ -182,6 +188,26 @@ export class Project {
   async analyzeAllDetectedModules() {
     await Promise.allSettled(this.detectedNodeModules.map(module => module.initialize()))
     await Promise.allSettled(this.detectedNodeModules.map(module => module.analyze()))
+  }
+
+  async analyzeStimulusApplicationFile() {
+    let applicationFile = this.projectFiles.find(file => !!file.stimulusApplicationImport)
+
+    if (applicationFile) {
+      this.applicationFile = new ApplicationFile(this, applicationFile)
+    } else {
+      // TODO: we probably want to add an error to the project
+    }
+  }
+
+  async analyzeStimulusControllersIndexFile() {
+    let controllersFile = this.projectFiles.find(file => file.isStimulusControllersIndex)
+
+    if (controllersFile) {
+      this.controllersFile = new ControllersIndexFile(this, controllersFile)
+    } else {
+      // TODO: we probably want to add an error to the project
+    }
   }
 
   private async searchProjectFiles() {

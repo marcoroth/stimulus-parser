@@ -4,6 +4,8 @@ import { glob } from "glob"
 import { Project } from "../project"
 import { findNodeModulesPath, parsePackageJSON, nodeModuleForPackageJSONPath, hasDepedency } from "../util/npm"
 
+import { helperPackages } from "./index"
+
 export async function analyzePackage(project: Project, name: string) {
   const nodeModulesPath = await findNodeModulesPath(project.projectPath)
 
@@ -20,11 +22,7 @@ export async function anylzePackagePath(project: Project, packagePath: string) {
   const packageName = packageJSON.name
 
   if (packageName === "@hotwired/stimulus") return
-  if (packageName === "@hotwired/stimulus-webpack-helpers") return
-  if (packageName === "stimulus-vite-helpers") return
-  if (packageName === "vite-plugin-stimulus-hmr") return
-  if (packageName === "bun-stimulus-plugin") return
-  if (packageName === "esbuild-plugin-stimulus") return
+  if (helperPackages.includes(packageName)) return
 
   const nodeModule = await nodeModuleForPackageJSONPath(project, packagePath)
 

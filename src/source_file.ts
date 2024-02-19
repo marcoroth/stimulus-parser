@@ -12,6 +12,8 @@ import { ClassDeclaration } from "./class_declaration"
 import { ImportDeclaration } from "./import_declaration"
 import { ExportDeclaration } from "./export_declaration"
 
+import { helperPackages } from "./packages"
+
 import type * as Acorn from "acorn"
 import type { AST } from "@typescript-eslint/typescript-estree"
 import type { ParserOptions } from "./types"
@@ -70,6 +72,27 @@ export class SourceFile {
 
   get resolvedControllerDefinitions() {
     return this.resolvedClassDeclarations.filter(klass => klass.controllerDefinition)
+  }
+
+  get stimulusApplicationImport() {
+    return this.importDeclarations.find(declaration =>
+      declaration.source === "@hotwired/stimulus" && declaration.originalName === "Application"
+    )
+  }
+
+  get hasHelperPackage() {
+    return this.importDeclarations.some(declaration => helperPackages.includes(declaration.source))
+  }
+
+  get hasStimulusApplicationImport() {
+    return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path == declaration.resolvedRelativePath)
+  }
+
+  get isStimulusControllersIndex() {
+    if (this.hasHelperPackage) return true
+    if (this.hasStimulusApplicationImport) return true
+
+    return
   }
 
   findClass(className: string) {

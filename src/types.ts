@@ -26,3 +26,15 @@ export type ParserOptions = {
 }
 
 export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration | Acorn.ClassExpression
+
+export type ApplicationType =
+  "esbuild" |
+  "esbuild-rails" |
+  "vite" |
+  "vite-rails" |
+  "vite-ruby" |
+  "rollup" |
+  "webpack" |
+  "webpacker" |
+  "shakapacker" |
+  "importmap-rails"
