@@ -1,17 +1,19 @@
 import { glob } from "glob"
 
+import { ApplicationFile } from "./application_file"
 import { ControllerDefinition } from "./controller_definition"
+import { ControllersIndexFile } from "./controllers_index_file"
+import { ExportDeclaration } from "./export_declaration"
+import { ImportDeclaration } from "./import_declaration"
 import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
-import { NodeModule } from "./node_module"
-import { ImportDeclaration } from "./import_declaration"
-import { ExportDeclaration } from "./export_declaration"
-import { ApplicationFile } from "./application_file"
-import { ControllersIndexFile } from "./controllers_index_file"
 
 import { analyzeAll, analyzePackage } from "./packages"
 import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { calculateControllerRoots } from "./util/project"
+
+import type { NodeModule } from "./node_module"
+import type { RegisteredController } from "./registered_controller"
 
 export class Project {
   readonly projectPath: string
@@ -95,6 +97,12 @@ export class Project {
     const roots = calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
     return (roots.length > 0) ? roots : [this.controllerRootFallback]
+  }
+
+  get registeredControllers(): RegisteredController[] {
+    if (!this.controllersFile) return []
+
+    return this.controllersFile.registeredControllers
   }
 
   get referencedNodeModulesLazy() {
@@ -205,6 +213,8 @@ export class Project {
 
     if (controllersFile) {
       this.controllersFile = new ControllersIndexFile(this, controllersFile)
+
+      this.controllersFile.analyze()
     } else {
       // TODO: we probably want to add an error to the project
     }

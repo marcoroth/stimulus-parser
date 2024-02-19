@@ -92,7 +92,7 @@ export class SourceFile {
     if (this.hasHelperPackage) return true
     if (this.hasStimulusApplicationImport) return true
 
-    return
+    return false
   }
 
   findClass(className: string) {
