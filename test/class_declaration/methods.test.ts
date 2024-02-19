@@ -76,7 +76,7 @@ describe("ClassDeclaration", () => {
 
       await project.analyze()
 
-      expect(sourceFile.controllerDefinitions[0].methodNames).toEqual(["connect", "method", "disconnect"])
+      expect(sourceFile.controllerDefinitions[0].actionNames).toEqual(["connect", "method", "disconnect"])
 
       const something = sourceFile.findClass("Something")
 

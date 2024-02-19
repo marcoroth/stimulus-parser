@@ -19,10 +19,10 @@ export class ControllerDefinition {
   public anyDecorator: boolean = false
 
   readonly errors: ParseError[] = []
-  readonly methods: Array<MethodDefinition> = []
-  readonly targets: Array<TargetDefinition> = []
-  readonly classes: Array<ClassDefinition> = []
-  readonly values: { [key: string]: ValueDefinition } = {}
+  readonly methodDefinitions: Array<MethodDefinition> = []
+  readonly targetDefinitions: Array<TargetDefinition> = []
+  readonly classDefinitions: Array<ClassDefinition> = []
+  readonly valueDefinitions: { [key: string]: ValueDefinition } = {}
 
   static controllerPathForIdentifier(identifier: string, fileExtension: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
@@ -40,20 +40,76 @@ export class ControllerDefinition {
     return this.errors.length > 0
   }
 
-  get methodNames() {
-    return this.methods.map(method => method.name)
+  // Actions
+
+  get actions(): MethodDefinition[] {
+    return this.classDeclaration.ancestors.flatMap(klass =>
+      klass.controllerDefinition?.methodDefinitions || []
+    )
   }
 
-  get targetNames() {
+  get actionNames(): string[] {
+    return this.actions.map(action => action.name)
+  }
+
+  get localActions(): MethodDefinition[] {
+    return this.methodDefinitions
+  }
+
+  get localActionNames(): string[] {
+    return this.localActions.map(method => method.name)
+  }
+
+  // Targets
+
+  get targets(): TargetDefinition[] {
+    return this.classDeclaration.ancestors.flatMap(klass =>
+      klass.controllerDefinition?.targetDefinitions || []
+    )
+  }
+
+  get targetNames(): string[] {
     return this.targets.map(target => target.name)
   }
 
-  get classNames() {
+  get localTargets(): TargetDefinition[] {
+    return this.targetDefinitions
+  }
+
+  get localTargetNames(): string[] {
+    return this.localTargets.map(target => target.name)
+  }
+
+  // Classes
+
+  get classes(): ClassDefinition[] {
+    return this.classDeclaration.ancestors.flatMap(klass =>
+      klass.controllerDefinition?.classDefinitions || []
+    )
+  }
+
+  get classNames(): string[] {
     return this.classes.map(klass => klass.name)
   }
 
-  get valueDefinitions() {
-    return Object.fromEntries(Object.entries(this.values).map(([key, def]) => [key, def.definition]))
+  get localClasses(): ClassDefinition[] {
+    return this.classDefinitions
+  }
+
+  get localClassNames(): string[] {
+    return this.localClasses.map(klass => klass.name)
+  }
+
+  // Values
+
+  get values() {
+    return Object.fromEntries(this.classDeclaration.ancestors.flatMap(klass =>
+      Object.entries((klass.controllerDefinition?.valueDefinitions || {})).map(([key, def]) => [key, def.definition])
+    ))
+  }
+
+  get localValues() {
+    return Object.fromEntries(Object.entries(this.valueDefinitions).map(([key, def]) => [key, def.definition]))
   }
 
   get controllerRoot(): string {
@@ -116,7 +172,7 @@ export class ControllerDefinition {
       this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus target "${targetDefinition.name}"`, targetDefinition.loc))
     }
 
-    this.targets.push(targetDefinition)
+    this.targetDefinitions.push(targetDefinition)
   }
 
   addClassDefinition(classDefinition: ClassDefinition) {
@@ -124,7 +180,7 @@ export class ControllerDefinition {
       this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus class "${classDefinition.name}"`, classDefinition.loc))
     }
 
-    this.classes.push(classDefinition)
+    this.classDefinitions.push(classDefinition)
   }
 
   addValueDefinition(valueDefinition: ValueDefinition) {
@@ -133,7 +189,7 @@ export class ControllerDefinition {
 
       this.errors.push(error)
     } else {
-      this.values[valueDefinition.name] = valueDefinition
+      this.valueDefinitions[valueDefinition.name] = valueDefinition
     }
   }
 }

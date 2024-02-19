@@ -222,7 +222,7 @@ describe("SourceFile", () => {
       expect(declaration.resolvedControllerDefinition.classNames).toEqual([])
       expect(declaration.resolvedControllerDefinition.targetNames).toEqual(["container", "background"])
       expect(Object.keys(declaration.resolvedControllerDefinition.valueDefinitions)).toEqual(["open", "restoreScroll"])
-      expect(declaration.resolvedControllerDefinition.methodNames).toEqual([
+      expect(declaration.resolvedControllerDefinition.actionNames).toEqual([
         "disconnect",
         "open",
         "close",
@@ -286,7 +286,7 @@ describe("SourceFile", () => {
         undefined,
       ])
 
-      expect(klass.ancestors.map(klass => klass.controllerDefinition?.methodNames)).toEqual([
+      expect(klass.ancestors.map(klass => klass.controllerDefinition?.localActionNames)).toEqual([
         ["first"],
         ["second"],
         ["third"],
@@ -357,7 +357,7 @@ describe("SourceFile", () => {
       expect(declaration.resolvedClassDeclaration.superClass.importDeclaration.source).toEqual("@hotwired/stimulus")
       expect(declaration.resolvedClassDeclaration.superClass.importDeclaration.isStimulusImport).toEqual(true)
 
-      expect(declaration.resolvedControllerDefinition.methodNames).toEqual(["connect", "save", "success", "error", "setStatus"])
+      expect(declaration.resolvedControllerDefinition.actionNames).toEqual(["connect", "save", "success", "error", "setStatus"])
       expect(declaration.resolvedControllerDefinition.classNames).toEqual([])
       expect(declaration.resolvedControllerDefinition.targetNames).toEqual(["form", "status"])
       expect(Object.keys(declaration.resolvedControllerDefinition.valueDefinitions)).toEqual(["submitDuration", "statusDuration", "submittingText", "successText", "errorText"])

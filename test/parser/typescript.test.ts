@@ -75,7 +75,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.ts")
 
-    expect(controller.valueDefinitions).toEqual({
+    expect(controller.values).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
@@ -106,7 +106,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.ts")
 
-    expect(controller.valueDefinitions).toEqual({
+    expect(controller.values).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
@@ -152,7 +152,7 @@ describe("with TS Syntax", () => {
 
     const controller = parseController(code, "controller.ts")
 
-    expect(controller.methodNames).toEqual(["connect", "load"])
+    expect(controller.actionNames).toEqual(["connect", "load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -171,7 +171,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "controller.ts")
 
-    expect(controller.methodNames).toEqual(["load", "unload", "isSomething"])
+    expect(controller.actionNames).toEqual(["load", "unload", "isSomething"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -187,7 +187,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "controller.ts")
 
-    expect(controller.methodNames).toEqual(["#load", "#unload"])
+    expect(controller.actionNames).toEqual(["#load", "#unload"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -205,7 +205,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    expect(controller.valueDefinitions).toEqual({
+    expect(controller.values).toEqual({
       object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
       array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
     })
@@ -242,7 +242,7 @@ describe("with TS Syntax", () => {
 
     const controller = parseController(code, "controller.ts")
 
-    expect(controller.methodNames).toEqual([])
+    expect(controller.actionNames).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
@@ -260,7 +260,7 @@ describe("with TS Syntax", () => {
 
     const controller = parseController(code, "controller.ts")
 
-    expect(controller.methodNames).toEqual([])
+    expect(controller.actionNames).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })

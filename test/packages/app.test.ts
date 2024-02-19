@@ -1,5 +1,4 @@
 import { describe, beforeEach, test, expect } from "vitest"
-import { analyzeAll } from "../../src/packages"
 import { setupProject } from "../helpers/setup"
 
 let project = setupProject("app")
@@ -131,9 +130,9 @@ describe("packages", () => {
 
       const controller = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
-      expect(Object.keys(controller.valueDefinitions)).toEqual(["open", "restoreScroll"])
-      expect(controller.valueDefinitions.open.type).toEqual("Boolean")
-      expect(controller.valueDefinitions.restoreScroll.type).toEqual("Boolean")
+      expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
+      expect(controller.values.open.type).toEqual("Boolean")
+      expect(controller.values.restoreScroll.type).toEqual("Boolean")
 
       const sourceFileCount = project.projectFiles.length
       const allSourceFileCount = project.allSourceFiles.length
@@ -414,9 +413,9 @@ describe("packages", () => {
 
       const controller = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
-      expect(Object.keys(controller.valueDefinitions)).toEqual(["open", "restoreScroll"])
-      expect(controller.valueDefinitions.open.type).toEqual("Boolean")
-      expect(controller.valueDefinitions.restoreScroll.type).toEqual("Boolean")
+      expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
+      expect(controller.values.open.type).toEqual("Boolean")
+      expect(controller.values.restoreScroll.type).toEqual("Boolean")
 
       expect(project.projectFiles.length).toEqual(1)
       expect(project.allSourceFiles.length).toEqual(176)

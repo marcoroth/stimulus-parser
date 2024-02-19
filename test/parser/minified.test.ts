@@ -39,7 +39,7 @@ describe("compiled JavaScript", () => {
     const controller = parseController(code, "minified_controller.js")
 
     expect(controller.hasErrors).toEqual(false)
-    expect(controller.methodNames).toEqual(["initialize", "connect", "disconnect"])
+    expect(controller.actionNames).toEqual(["initialize", "connect", "disconnect"])
     expect(controller.targetNames).toEqual(["item"])
     expect(controller.classNames).toEqual(["active", "inactive"])
     expect(Object.keys(controller.valueDefinitions)).toEqual(["class", "threshold", "rootMargin"])
@@ -69,7 +69,7 @@ describe("compiled JavaScript", () => {
     expect(controller.errors[0].loc.end.line).toEqual(4)
     expect(controller.errors[0].loc.end.column).toEqual(27)
 
-    expect(controller.methodNames).toEqual([])
+    expect(controller.actionNames).toEqual([])
     expect(controller.targetNames).toEqual(["item", "item"])
     expect(controller.classNames).toEqual([])
     expect(Object.keys(controller.valueDefinitions)).toEqual([])
@@ -83,7 +83,7 @@ describe("compiled JavaScript", () => {
     const controller = parseController(code, "minified_controller.js")
 
     expect(controller.hasErrors).toEqual(false)
-    expect(controller.methodNames).toEqual(["initialize", "connect", "disconnect", "intersectionObserverCallback"])
+    expect(controller.actionNames).toEqual(["initialize", "connect", "disconnect", "intersectionObserverCallback"])
     expect(controller.classNames).toEqual([])
     expect(controller.targetNames).toEqual(["item"])
     expect(Object.keys(controller.valueDefinitions)).toEqual(["class", "threshold", "rootMargin"])

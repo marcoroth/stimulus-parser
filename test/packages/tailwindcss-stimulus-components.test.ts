@@ -36,9 +36,9 @@ describe("packages", () => {
       const modalController = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
 
       expect(modalController.targetNames).toEqual(["container", "background"])
-      expect(Object.keys(modalController.valueDefinitions)).toEqual(["open", "restoreScroll"])
-      expect(modalController.valueDefinitions.open.type).toEqual("Boolean")
-      expect(modalController.valueDefinitions.restoreScroll.type).toEqual("Boolean")
+      expect(Object.keys(modalController.values)).toEqual(["open", "restoreScroll"])
+      expect(modalController.values.open.type).toEqual("Boolean")
+      expect(modalController.values.restoreScroll.type).toEqual("Boolean")
       expect(modalController.classDeclaration.superClass).toBeDefined()
       expect(modalController.classDeclaration.superClass.className).toEqual("Controller")
       expect(modalController.classDeclaration.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)

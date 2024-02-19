@@ -34,7 +34,7 @@ const project = new Project("/Users/user/path/to/project")
 const controllers = project.controllerDefinitions
 const controller = controllers[0]
 
-console.log(controller.methodNames)
+console.log(controller.actionNames)
 // => ["connect", "click", "disconnect"]
 
 console.log(controller.targetNames)
@@ -43,7 +43,7 @@ console.log(controller.targetNames)
 console.log(controller.classNames)
 // => ["loading"]
 
-console.log(controller.valueDefinitions)
+console.log(controller.values)
 // => [{ url: { type: "String", default: "" } }]
 ```
 
