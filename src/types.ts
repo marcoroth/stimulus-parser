@@ -38,3 +38,9 @@ export type ApplicationType =
   "webpacker" |
   "shakapacker" |
   "importmap-rails"
+
+export type ControllerLoadMode =
+  "load" |
+  "register" |
+  "stimulus-loading-lazy" | 
+  "stimulus-loading-eager"

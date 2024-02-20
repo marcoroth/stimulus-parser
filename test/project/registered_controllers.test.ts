@@ -11,7 +11,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
     test.todo("finds registered controllers for shakapacker", async () => {
@@ -22,7 +22,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
     test.todo("finds registered controllers for esbuild-rails", async () => {
@@ -33,7 +33,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
     test("finds registered controllers for esbuild", async () => {
@@ -44,7 +44,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
     test.todo("finds registered controllers for vite-rails", async () => {
@@ -55,7 +55,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
     test.todo("finds registered controllers for bun", async () => {
@@ -66,10 +66,10 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
-    test.todo("finds registered controllers for importmap-rails lazy", async () => {
+    test("finds registered controllers for importmap-rails lazy", async () => {
       const project = setupProject("importmap-rails-lazy")
 
       expect(project.registeredControllers.length).toEqual(0)
@@ -77,10 +77,10 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-lazy"]])
     })
 
-    test.todo("finds registered controllers for importmap-rails eager", async () => {
+    test("finds registered controllers for importmap-rails eager", async () => {
       const project = setupProject("importmap-rails-eager")
 
       expect(project.registeredControllers.length).toEqual(0)
@@ -88,7 +88,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-eager"]])
     })
 
     test.todo("finds registered controllers for rollup", async () => {
@@ -99,7 +99,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => controller.identifier)).toEqual(["hello"])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
   })
 })

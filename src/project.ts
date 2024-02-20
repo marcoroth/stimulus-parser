@@ -25,6 +25,7 @@ export class Project {
   public detectedNodeModules: Array<NodeModule> = []
   public referencedNodeModules: Set<string> = new Set()
   public projectFiles: Array<SourceFile> = []
+  public _controllerRoots: Array<string> = []
   public parser: Parser = new Parser(this)
   public applicationFile?: ApplicationFile
   public controllersFile?: ControllersIndexFile
@@ -61,9 +62,9 @@ export class Project {
 
   controllerRootForPath(filePath: string) {
     const relativePath = this.relativePath(filePath)
-    const relativeRoots = this.allControllerRoots.map(root => this.relativePath(root)) // TODO: this should be this.controllerRoots
+    const relativeRoots = this.controllerRoots.map(root => this.relativePath(root))
 
-    return relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
+    return relativeRoots.find(root => relativePath === root) || relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
   }
 
   get controllerDefinitions(): ControllerDefinition[] {
@@ -86,6 +87,10 @@ export class Project {
   }
 
   get controllerRoots() {
+    if (this._controllerRoots.length > 0) {
+      return this._controllerRoots
+    }
+
     const relativePaths = this.projectFiles.map(file => this.relativePath(file.path))
     const roots = calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
@@ -214,7 +219,7 @@ export class Project {
     if (controllersFile) {
       this.controllersFile = new ControllersIndexFile(this, controllersFile)
 
-      this.controllersFile.analyze()
+      await this.controllersFile.analyze()
     } else {
       // TODO: we probably want to add an error to the project
     }
@@ -233,10 +238,12 @@ export class Project {
   }
 
   private async getProjectFilePaths(): Promise<string[]> {
-    const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions).join(",")
-
-    return await glob(`${this.projectPath}/**/*.{${extensions}}`, {
+    return await glob(`${this.projectPath}/**/*.{${this.extensionsGlob}}`, {
       ignore: `${this.projectPath}/**/node_modules/**/*`,
     })
+  }
+
+  get extensionsGlob() {
+    return Project.javascriptExtensions.concat(Project.typescriptExtensions).join(",")
   }
 }
