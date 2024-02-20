@@ -4,6 +4,7 @@ import { RegisteredController } from "./registered_controller"
 
 import { glob } from "glob"
 import { walk } from "./util/walk"
+import { hasDepedency } from "./util/npm"
 
 import type { Project } from "./project"
 import type { SourceFile } from "./source_file"
@@ -36,6 +37,7 @@ export class ControllersIndexFile {
     this.analyzeApplicationRegisterCalls()
     this.analyzeApplicationLoadCalls()
     await this.analyzeStimulusLoadingCalls()
+    await this.analyzeEsbuildRails()
   }
 
   analyzeApplicationRegisterCalls() {
@@ -120,14 +122,39 @@ export class ControllersIndexFile {
       }
     })
 
-    if (controllersGlob) {
-      const controllerFiles = (await glob(controllersGlob)).map(path => this.project.relativePath(path))
-      const sourceFiles = this.project.projectFiles.filter(file => controllerFiles.includes(this.project.relativePath(file.path)))
-      const controllerDefinitions = sourceFiles.flatMap(file => file.controllerDefinitions)
 
-      controllerDefinitions.forEach(controller => {
-        this.registeredControllers.push(new RegisteredController(controller.identifier, controller, type))
-      })
-    }
+    if (!controllersGlob) return
+
+    await this.evaluateControllerGlob(controllersGlob, type)
+  }
+
+
+  async analyzeEsbuildRails() {
+    const hasEsbuildRails = await hasDepedency(this.project.projectPath, "esbuild-rails")
+
+    if (!hasEsbuildRails) return
+
+    const imports = this.sourceFile.importDeclarations.find(declaration => declaration.source.includes("*"))
+
+    if (!imports) return
+
+    const controllersGlob = imports.resolvedRelativePath
+
+    if (!controllersGlob) return
+
+    this.project._controllerRoots.push(this.project.relativePath(this.sourceFile.path))
+
+    await this.evaluateControllerGlob(controllersGlob, "esbuild-rails")
+  }
+
+
+  private async evaluateControllerGlob(controllersGlob: string, type: ControllerLoadMode) {
+    const controllerFiles = (await glob(controllersGlob)).map(path => this.project.relativePath(path))
+    const sourceFiles = this.project.projectFiles.filter(file => controllerFiles.includes(this.project.relativePath(file.path)))
+    const controllerDefinitions = sourceFiles.flatMap(file => file.controllerDefinitions)
+
+    controllerDefinitions.forEach(controller => {
+      this.registeredControllers.push(new RegisteredController(controller.identifier, controller, type))
+    })
   }
 }

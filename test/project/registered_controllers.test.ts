@@ -25,7 +25,7 @@ describe("Project", () => {
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
-    test.todo("finds registered controllers for esbuild-rails", async () => {
+    test("finds registered controllers for esbuild-rails", async () => {
       const project = setupProject("esbuild-rails")
 
       expect(project.registeredControllers.length).toEqual(0)
@@ -33,7 +33,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "esbuild-rails"]])
     })
 
     test("finds registered controllers for esbuild", async () => {
