@@ -47,7 +47,7 @@ describe("Project", () => {
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
     })
 
-    test.todo("finds registered controllers for vite-rails", async () => {
+    test("finds registered controllers for vite-rails", async () => {
       const project = setupProject("vite-rails")
 
       expect(project.registeredControllers.length).toEqual(0)
@@ -55,7 +55,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-vite-helpers"]])
     })
 
     test.todo("finds registered controllers for bun", async () => {

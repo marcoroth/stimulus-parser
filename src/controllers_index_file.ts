@@ -38,6 +38,7 @@ export class ControllersIndexFile {
     this.analyzeApplicationLoadCalls()
     await this.analyzeStimulusLoadingCalls()
     await this.analyzeEsbuildRails()
+    await this.analyzeStimulusViteHelpers()
   }
 
   analyzeApplicationRegisterCalls() {
@@ -128,7 +129,6 @@ export class ControllersIndexFile {
     await this.evaluateControllerGlob(controllersGlob, type)
   }
 
-
   async analyzeEsbuildRails() {
     const hasEsbuildRails = await hasDepedency(this.project.projectPath, "esbuild-rails")
 
@@ -145,6 +145,34 @@ export class ControllersIndexFile {
     this.project._controllerRoots.push(this.project.relativePath(this.sourceFile.path))
 
     await this.evaluateControllerGlob(controllersGlob, "esbuild-rails")
+  }
+
+  async analyzeStimulusViteHelpers() {
+    const hasViteHelpers = await hasDepedency(this.project.projectPath, "stimulus-vite-helpers")
+
+    if (!hasViteHelpers) return
+
+    let controllersGlob
+
+    walk(this.sourceFile.ast, {
+      CallExpression: node => {
+        if (node.callee.type === "MemberExpression" && node.callee.object.type === "MetaProperty" && node.callee.property.type === "Identifier") {
+          const [pathNode] = node.arguments.slice(0, 1)
+          const importGlob = (pathNode.type === "Literal") ? pathNode.value?.toString() : null
+
+          if (!importGlob) return
+
+          const controllerRoot = path.dirname(this.sourceFile.path)
+          this.project._controllerRoots.push(this.project.relativePath(controllerRoot))
+
+          controllersGlob = path.join(controllerRoot, importGlob)
+        }
+      }
+    })
+
+    if (controllersGlob) {
+      await this.evaluateControllerGlob(controllersGlob, "stimulus-vite-helpers")
+    }
   }
 
 

@@ -44,4 +44,5 @@ export type ControllerLoadMode =
   "register" |
   "stimulus-loading-lazy" | 
   "stimulus-loading-eager" |
-  "esbuild-rails"
+  "esbuild-rails" | 
+  "stimulus-vite-helpers"
