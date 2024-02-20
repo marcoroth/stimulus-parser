@@ -1,9 +1,10 @@
-import { simple } from "acorn-walk"
+import { RegisteredController } from "./registered_controller"
+
+import { walk } from "./util/walk"
 
 import type { Project } from "./project"
 import type { SourceFile } from "./source_file"
 import type { ImportDeclaration } from "./import_declaration"
-import { RegisteredController } from "./registered_controller"
 
 export class ControllersIndexFile {
   public readonly project: Project
@@ -28,7 +29,7 @@ export class ControllersIndexFile {
   }
 
   analyze() {
-    simple(this.sourceFile.ast as any, {
+    walk(this.sourceFile.ast, {
       CallExpression: node => {
         const { callee } = node
 

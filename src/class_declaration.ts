@@ -1,8 +1,7 @@
-import { simple } from "acorn-walk"
-
 import * as ast from "./util/ast"
 import * as decorators from "./util/decorators"
 import * as properties from "./util/properties"
+import { walk } from "./util/walk"
 
 import { ParseError } from "./parse_error"
 import { SourceFile } from "./source_file"
@@ -130,7 +129,7 @@ export class ClassDeclaration {
   analyzeMethods() {
     if (!this.node) return
 
-    simple(this.node, {
+    walk(this.node, {
       MethodDefinition: node => {
         if (!this.controllerDefinition) return
         if (node.kind !== "method") return
@@ -157,7 +156,7 @@ export class ClassDeclaration {
   analyzeStaticProperties() {
     if (!this.node) return
 
-    simple(this.node, {
+    walk(this.node, {
       PropertyDefinition: node => {
         if (!node.value) return
         if (!node.static) return
@@ -171,7 +170,7 @@ export class ClassDeclaration {
   analyzeDecorators() {
     if (!this.node) return
 
-    simple(this.node, {
+    walk(this.node, {
       PropertyDefinition: _node => {
         const node = _node as unknown as TSESTree.PropertyDefinition
 

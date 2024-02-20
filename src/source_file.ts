@@ -1,5 +1,4 @@
 import path from "path"
-import { simple } from "acorn-walk"
 
 import * as ast from "./util/ast"
 import * as properties from "./util/properties"
@@ -12,6 +11,7 @@ import { ClassDeclaration } from "./class_declaration"
 import { ImportDeclaration } from "./import_declaration"
 import { ExportDeclaration } from "./export_declaration"
 
+import { walk } from "./util/walk"
 import { helperPackages } from "./packages"
 
 import type * as Acorn from "acorn"
@@ -178,11 +178,15 @@ export class SourceFile {
     if (!this.isParsed) return
     if (this.isAnalyzed) return
 
-    this.analyzeClassDeclarations()
-    this.analyzeClassExports()
-    this.analyzeControllers()
+    try {
+      this.analyzeClassDeclarations()
+      this.analyzeClassExports()
+      this.analyzeControllers()
 
-    this.isAnalyzed = true
+      this.isAnalyzed = true
+    } catch(error: any) {
+      this.errors.push(new ParseError("FAIL", `Error while analyzing file: ${error.message}`, null, error))
+    }
   }
 
   analyzeImportsAndExports() {
@@ -197,7 +201,7 @@ export class SourceFile {
   analyzeImportDeclarations() {
     if (!this.ast) return
 
-    simple(this.ast as any, {
+    walk(this.ast, {
       ImportDeclaration: node => {
         node.specifiers.forEach(specifier => {
           const original = (specifier.type === "ImportSpecifier" && specifier.imported.type === "Identifier") ? specifier.imported.name : undefined
@@ -225,7 +229,7 @@ export class SourceFile {
   analyzeExportDeclarations() {
     if (!this.ast) return
 
-    simple(this.ast as any, {
+    walk(this.ast, {
       ExportNamedDeclaration: node => {
         const { specifiers, declaration } = node
         const type = "named"
@@ -296,7 +300,7 @@ export class SourceFile {
   }
 
   analyzeClassDeclarations() {
-    simple(this.ast as any, {
+    walk(this.ast, {
       ClassDeclaration: node => {
         const className = ast.extractIdentifier(node.id)
         const classDeclaration = new ClassDeclaration(this, className, node)
@@ -321,7 +325,7 @@ export class SourceFile {
 
   // this function is called from the ClassDeclaration class
   analyzeStaticPropertiesExpressions(controllerDefinition: ControllerDefinition) {
-    simple(this.ast as any, {
+    walk(this.ast, {
       AssignmentExpression: expression => {
         if (expression.left.type !== "MemberExpression") return
 
