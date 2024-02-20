@@ -35,13 +35,16 @@ describe("Project", () => {
   test("controllerRoot and controllerRoots", async () => {
     expect(project.controllerRootFallback).toEqual("app/javascript/controllers")
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
-    expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+    expect(project.guessedControllerRoots).toEqual([
+      "app/javascript/controllers",
+    ])
+    expect(project.controllerRoots).toEqual([])
 
     await project.initialize()
 
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
-
-    expect(project.controllerRoots).toEqual([
+    expect(project.controllerRoots).toEqual([])
+    expect(project.guessedControllerRoots).toEqual([
       "app/javascript/controllers",
       "app/packs/controllers",
       "resources/js/controllers",
@@ -49,11 +52,13 @@ describe("Project", () => {
   })
 
   test("identifier in different controllerRoots", async () => {
-    expect(project.controllerDefinitions.map(controller => controller.identifier)).toEqual([])
+    expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier)).toEqual([])
 
     await project.initialize()
 
-    const identifiers = project.controllerDefinitions.map(controller => controller.identifier).sort()
+    project.controllerRoots.push(...["app/packs/controllers", "resources/js/controllers"])
+
+    const identifiers = project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()
 
     expect(identifiers).toEqual([
       "laravel",

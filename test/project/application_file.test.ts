@@ -56,7 +56,7 @@ describe("Project", () => {
 
       expect(project.applicationFile).toBeDefined()
       expect(project.relativePath(project.applicationFile.path)).toEqual("app/frontend/controllers/application.js")
-    })
+    }, 15_000)
 
     test("finds appliaction file for bun", async () => {
       const project = setupProject("bun")

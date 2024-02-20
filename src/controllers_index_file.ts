@@ -71,6 +71,8 @@ export class ControllersIndexFile {
           const controller = classDeclaration.controllerDefinition
           if (!controller) return // TODO: probably should add an error here
 
+          this.project.controllerRoots.push(this.project.relativePath(path.dirname(this.sourceFile.path)))
+
           this.registeredControllers.push(new RegisteredController(identifier, controller, "register"))
         }
       }
@@ -116,7 +118,7 @@ export class ControllersIndexFile {
           const base = this.project.relativePath(path.dirname(path.dirname(this.sourceFile.path)))
           const controllerRoot = path.join(this.project.projectPath, base, controllersPath)
 
-          this.project._controllerRoots.push(this.project.relativePath(controllerRoot))
+          this.project.controllerRoots.push(this.project.relativePath(controllerRoot))
 
           controllersGlob = path.join(controllerRoot, `**/*.{${this.project.extensionsGlob}}`)
         }
@@ -142,7 +144,7 @@ export class ControllersIndexFile {
 
     if (!controllersGlob) return
 
-    this.project._controllerRoots.push(this.project.relativePath(this.sourceFile.path))
+    this.project.controllerRoots.push(this.project.relativePath(path.dirname(this.sourceFile.path)))
 
     await this.evaluateControllerGlob(controllersGlob, "esbuild-rails")
   }
@@ -163,7 +165,7 @@ export class ControllersIndexFile {
           if (!importGlob) return
 
           const controllerRoot = path.dirname(this.sourceFile.path)
-          this.project._controllerRoots.push(this.project.relativePath(controllerRoot))
+          this.project.controllerRoots.push(this.project.relativePath(controllerRoot))
 
           controllersGlob = path.join(controllerRoot, importGlob)
         }
@@ -182,7 +184,7 @@ export class ControllersIndexFile {
     const controllerDefinitions = sourceFiles.flatMap(file => file.controllerDefinitions)
 
     controllerDefinitions.forEach(controller => {
-      this.registeredControllers.push(new RegisteredController(controller.identifier, controller, type))
+      this.registeredControllers.push(new RegisteredController(controller.guessedIdentifier, controller, type))
     })
   }
 }

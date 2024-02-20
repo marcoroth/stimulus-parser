@@ -12,4 +12,26 @@ export class RegisteredController {
     this.controllerDefinition = controllerDefinition
     this.loadMode = loadMode
   }
+
+  get path() {
+    return this.sourceFile.path
+  }
+
+  get sourceFile() {
+    return this.controllerDefinition.sourceFile
+  }
+
+  get classDeclaration() {
+    return this.controllerDefinition.classDeclaration
+  }
+
+  get isNamespaced(): boolean {
+    return this.identifier.includes("--") || false
+  }
+
+  get namespace() {
+    const splits = this.identifier.split("--")
+
+    return splits.slice(0, splits.length - 1).join("--")
+  }
 }

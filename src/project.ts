@@ -25,7 +25,7 @@ export class Project {
   public detectedNodeModules: Array<NodeModule> = []
   public referencedNodeModules: Set<string> = new Set()
   public projectFiles: Array<SourceFile> = []
-  public _controllerRoots: Array<string> = []
+  public controllerRoots: Array<string> = []
   public parser: Parser = new Parser(this)
   public applicationFile?: ApplicationFile
   public controllersFile?: ControllersIndexFile
@@ -44,10 +44,16 @@ export class Project {
     return this.relativePath(path).replace(`${controllerRoot}/`, "")
   }
 
+  guessedRelativeControllerPath(path: string) {
+    const controllerRoot = this.guessedControllerRootForPath(path)
+
+    return this.relativePath(path).replace(`${controllerRoot}/`, "")
+  }
+
   possibleControllerPathsForIdentifier(identifier: string): string[] {
     const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions)
 
-    return this.controllerRoots.flatMap(root => extensions.map(
+    return this.guessedControllerRoots.flatMap(root => extensions.map(
       extension => `${root}/${ControllerDefinition.controllerPathForIdentifier(identifier, extension)}`
     )).sort(nestedFolderSort)
   }
@@ -64,7 +70,14 @@ export class Project {
     const relativePath = this.relativePath(filePath)
     const relativeRoots = this.controllerRoots.map(root => this.relativePath(root))
 
-    return relativeRoots.find(root => relativePath === root) || relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback
+    return this.relativePath(relativeRoots.find(root => relativePath === root) || relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback)
+  }
+
+  guessedControllerRootForPath(filePath: string) {
+    const relativePath = this.relativePath(filePath)
+    const relativeRoots = this.guessedControllerRoots.map(root => this.relativePath(root))
+
+    return this.relativePath(relativeRoots.find(root => relativePath === root) || relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback)
   }
 
   get controllerDefinitions(): ControllerDefinition[] {
@@ -86,19 +99,9 @@ export class Project {
     return this.controllerRoots[0] || this.controllerRootFallback
   }
 
-  get controllerRoots() {
-    if (this._controllerRoots.length > 0) {
-      return this._controllerRoots
-    }
-
-    const relativePaths = this.projectFiles.map(file => this.relativePath(file.path))
-    const roots = calculateControllerRoots(relativePaths).sort(nestedFolderSort)
-
-    return (roots.length > 0) ? roots : [this.controllerRootFallback]
-  }
-
-  get allControllerRoots() {
-    const relativePaths = this.allSourceFiles.map(file => this.relativePath(file.path))
+  get guessedControllerRoots() {
+    const controllerFiles = this.allSourceFiles.filter(file => file.controllerDefinitions.length > 0)
+    const relativePaths = controllerFiles.map(file => this.relativePath(file.path))
     const roots = calculateControllerRoots(relativePaths).sort(nestedFolderSort)
 
     return (roots.length > 0) ? roots : [this.controllerRootFallback]

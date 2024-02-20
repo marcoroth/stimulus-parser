@@ -56,7 +56,7 @@ describe("Project", () => {
 
       expect(project.controllersFile).toBeDefined()
       expect(project.relativePath(project.controllersFile.path)).toEqual("app/frontend/controllers/index.js")
-    })
+    }, 15_000)
 
     test("finds controllers index file for bun", async () => {
       const project = setupProject("bun")

@@ -5,13 +5,13 @@ import { identifierForContextKey } from "@hotwired/stimulus-webpack-helpers"
 import { Project } from "./project"
 import { ClassDeclaration } from "./class_declaration"
 import { ParseError } from "./parse_error"
-
-import { dasherize, uncapitalize } from "./util/string"
-
 import { MethodDefinition, ValueDefinition, ClassDefinition, TargetDefinition } from "./controller_property_definition"
 
+import { dasherize, uncapitalize, camelize } from "./util/string"
+
+import type { RegisteredController } from "./registered_controller"
+
 export class ControllerDefinition {
-  readonly path: string
   readonly project: Project
   readonly classDeclaration: ClassDeclaration
 
@@ -30,14 +30,21 @@ export class ControllerDefinition {
     return `${path}_controller.${fileExtension}`
   }
 
-  constructor(project: Project, path: string, classDeclaration: ClassDeclaration) {
+  constructor(project: Project, classDeclaration: ClassDeclaration) {
     this.project = project
-    this.path = path
     this.classDeclaration = classDeclaration
   }
 
   get hasErrors() {
     return this.errors.length > 0
+  }
+
+  get sourceFile() {
+    return this.classDeclaration.sourceFile
+  }
+
+  get path() {
+    return this.sourceFile.path
   }
 
   // Actions
@@ -120,14 +127,26 @@ export class ControllerDefinition {
     return this.project.relativeControllerPath(this.path)
   }
 
+  get guessedControllerPath() {
+    return this.project.guessedRelativeControllerPath(this.path)
+  }
+
   get isExported(): boolean {
     return this.classDeclaration.isExported
   }
 
-  get identifier() {
+  get registeredControllers(): RegisteredController[] {
+    return this.project.registeredControllers.filter(controller => controller.controllerDefinition === this)
+  }
+
+  get registeredIdentifiers(): string[] {
+    return this.registeredControllers.map(controller => controller.identifier)
+  }
+
+  get guessedIdentifier() {
     const className = this.classDeclaration?.className
     const hasMoreThanOneController = this.classDeclaration?.sourceFile.classDeclarations.filter(klass => klass.isStimulusDescendant).length > 1
-    const isProjectFile = this.classDeclaration?.sourceFile.path.includes("node_modules")
+    const isProjectFile = this.path.includes("node_modules")
 
     if (className && ((isProjectFile && hasMoreThanOneController) || (!isProjectFile))) {
       return dasherize(uncapitalize(className.replace("Controller", "")))
@@ -138,21 +157,35 @@ export class ControllerDefinition {
     const file = path.basename(this.controllerPath)
     const filename = path.basename(this.controllerPath, extension)
 
+    const toControllerIdentifier = (file: string): string => {
+      const identifier = dasherize(camelize(path.basename(path.dirname(file))))
+
+      if (["dist", "src", "index", "out"].includes(identifier)) {
+        return toControllerIdentifier(path.dirname(file))
+      }
+
+      return identifier
+    }
+
     if (file === `controller${extension}`) {
       return identifierForContextKey(`${folder}_${file}${extension}`) || ""
+    } else if (this.path.includes("node_modules")) {
+      const identifier = dasherize(camelize(path.basename(this.path, path.extname(this.path))))
+
+      return (identifier === "index") ? toControllerIdentifier(path.dirname(this.path)) : identifier
     } else if (!filename.endsWith("controller")) {
       return identifierForContextKey(`${folder}/${filename}_controller${extension}`) || ""
     } else {
-      return identifierForContextKey(this.controllerPath) || ""
+      return identifierForContextKey(this.guessedControllerPath) || ""
     }
   }
 
-  get isNamespaced() {
-    return this.identifier.includes("--")
+  get isNamespaced(): boolean {
+    return this.guessedIdentifier.includes("--")
   }
 
   get namespace() {
-    const splits = this.identifier.split("--")
+    const splits = this.guessedIdentifier.split("--")
 
     return splits.slice(0, splits.length - 1).join("--")
   }

@@ -21,6 +21,7 @@ export class ClassDeclaration {
   public readonly className?: string
   public readonly node?: ClassDeclarationNode
 
+  public isAnalyzed: boolean = false
   public importDeclaration?: ImportDeclaration // TODO: technically a class can be imported more than once
   public exportDeclaration?: ExportDeclaration // TODO: technically a class can be exported more than once
   public controllerDefinition?: ControllerDefinition
@@ -99,8 +100,9 @@ export class ClassDeclaration {
 
   analyze() {
     if (!this.shouldParse) return
+    if (this.isAnalyzed) return
 
-    this.controllerDefinition = new ControllerDefinition(this.sourceFile.project, this.sourceFile.path, this)
+    this.controllerDefinition = new ControllerDefinition(this.sourceFile.project, this)
 
     this.analyzeStaticPropertiesExpressions()
     this.analyzeClassDecorators()
@@ -109,6 +111,8 @@ export class ClassDeclaration {
     this.analyzeStaticProperties()
 
     this.validate()
+
+    this.isAnalyzed = true
   }
 
   analyzeStaticPropertiesExpressions() {
@@ -207,7 +211,7 @@ export class ClassDeclaration {
       isExported: this.isExported,
       sourceFile: this.sourceFile?.path,
       hasControllerDefinition: !!this.controllerDefinition,
-      controllerDefinition: this.controllerDefinition?.identifier
+      controllerDefinition: this.controllerDefinition?.guessedIdentifier
     }
   }
 }

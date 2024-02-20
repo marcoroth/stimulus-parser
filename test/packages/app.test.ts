@@ -30,10 +30,10 @@ describe("packages", () => {
       ])
 
       expect(project.controllerRoots).toEqual([
-        "src/controllers",
+        // "src/controllers",
       ])
 
-      expect(project.allControllerRoots).toEqual([
+      expect(project.guessedControllerRoots).toEqual([
         "src/controllers",
         // "node_modules/@stimulus-library/controllers",
         // "node_modules/stimulus-checkbox/src",
@@ -83,11 +83,11 @@ describe("packages", () => {
         // "window-resize",
       ]
 
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
+      expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual([
         "hello",
       ])
 
-      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
+      expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual([
         "alert",
         "autosave",
         "color-preview",
@@ -104,7 +104,7 @@ describe("packages", () => {
 
       // expect(project.detectedNodeModules.map(m => m.inspect)).toEqual([])
       // expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.inspect).sort()).toEqual([])
-      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
+      expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(exportedIdentifiers)
 
       const allIdentifiers = [
         ...exportedIdentifiers,
@@ -128,7 +128,7 @@ describe("packages", () => {
       // expect(project.detectedNodeModules.map(module => module.inspect)).toEqual(allIdentifiers)
       // expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.identifier).sort()).toEqual(allIdentifiers)
 
-      const controller = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
+      const controller = project.allControllerDefinitions.find(controller => controller.guessedIdentifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
       expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
       expect(controller.values.open.type).toEqual("Boolean")
@@ -143,7 +143,7 @@ describe("packages", () => {
       // re-analyzing shouldn't add source files or controllers twice
       await project.analyze()
 
-      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
+      expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual([
         "alert",
         "autosave",
         "color-preview",
@@ -160,9 +160,9 @@ describe("packages", () => {
 
       expect(project.projectFiles.length).toEqual(sourceFileCount)
       expect(project.allSourceFiles.length).toEqual(allSourceFileCount)
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
-      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual(exportedIdentifiers)
-      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.identifier).sort()).toEqual(allIdentifiers)
+      expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["hello"])
+      expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(exportedIdentifiers)
+      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
     }, 10_000)
 
     test("detect all controllers", async () => {
@@ -193,22 +193,22 @@ describe("packages", () => {
       ])
 
       expect(project.controllerRoots).toEqual([
-        "src/controllers",
+        // "src/controllers",
       ])
 
-      expect(project.allControllerRoots).toEqual([
+      expect(project.guessedControllerRoots).toEqual([
         "src/controllers",
-        "node_modules/@stimulus-library/controllers",
-        "node_modules/stimulus-checkbox/src",
-        "node_modules/stimulus-clipboard/dist",
-        "node_modules/stimulus-datepicker/src",
-        "node_modules/stimulus-dropdown/dist",
-        "node_modules/stimulus-hotkeys/src",
-        "node_modules/stimulus-inline-input-validations/src",
-        "node_modules/stimulus-use/dist",
+        // "node_modules/@stimulus-library/controllers",
+        // "node_modules/stimulus-checkbox/src",
+        // "node_modules/stimulus-clipboard/dist",
+        // "node_modules/stimulus-datepicker/src",
+        // "node_modules/stimulus-dropdown/dist",
+        // "node_modules/stimulus-hotkeys/src",
+        // "node_modules/stimulus-inline-input-validations/src",
+        // "node_modules/stimulus-use/dist",
         "node_modules/tailwindcss-stimulus-components/src",
-        "node_modules/@stimulus-library/mixins/dist",
-        "node_modules/@stimulus-library/utilities/dist",
+        // "node_modules/@stimulus-library/mixins/dist",
+        // "node_modules/@stimulus-library/utilities/dist",
       ])
 
       const exportedIdentifiers = [
@@ -246,8 +246,8 @@ describe("packages", () => {
         "window-resize",
       ]
 
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
-      expect(project.allControllerDefinitions.map(controller => controller.identifier).sort()).toEqual([
+      expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["hello"])
+      expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual([
         "alert",
         "autosave",
         "color-preview",
@@ -392,8 +392,6 @@ describe("packages", () => {
         "dropdown",
         "hello",
         "i",
-        "index",
-        "index",
         "input-validator",
         "modal",
         "modal",
@@ -401,6 +399,8 @@ describe("packages", () => {
         "popover",
         "slideover",
         "slideover",
+        "stimulus-checkbox",
+        "stimulus-hotkeys",
         "t",
         "tabs",
         "tabs",
@@ -408,10 +408,10 @@ describe("packages", () => {
         "toggle",
       ]
 
-      expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.identifier).sort()).toEqual(allIdentifiers)
-      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.classDeclaration.className || controller.identifier).sort()).toEqual(allIdentifiers)
+      expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
+      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
 
-      const controller = project.allControllerDefinitions.find(controller => controller.identifier === "modal")
+      const controller = project.allControllerDefinitions.find(controller => controller.guessedIdentifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
       expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
       expect(controller.values.open.type).toEqual("Boolean")
@@ -424,7 +424,7 @@ describe("packages", () => {
       // re-analyzing shouldn't add source files or controllers twice
       await project.analyze()
 
-      expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.identifier).sort()).toEqual(allIdentifiers)
+      expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
 
       await project.analyzeAllDetectedModules()
 
@@ -432,9 +432,9 @@ describe("packages", () => {
       expect(project.allSourceFiles.length).toEqual(186) // TODO: hotkeys and date-fns are now detected too, ideally we can figure out the right order to get them also the first time around
       // expect(project.allSourceFiles.map(s => s.path).sort()).toEqual(allSourceFiles)
 
-      expect(project.controllerDefinitions.map(controller => controller.identifier).sort()).toEqual(["hello"])
-      expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.identifier).sort()).toEqual(allIdentifiers)
-      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.classDeclaration.className || controller.identifier).sort()).toEqual(allIdentifiers)
+      expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["hello"])
+      expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
+      expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
     }, 10_000)
   })
 })

@@ -1,6 +1,6 @@
 import { describe, beforeEach, test, expect } from "vitest"
 import { ControllerDefinition } from "../../src"
-import { setupProject } from "../helpers/setup"
+import { setupProject, classDeclarationFor } from "../helpers/setup"
 
 let project = setupProject()
 
@@ -9,107 +9,107 @@ describe("ControllerDefinition", () => {
     project = project = setupProject()
   })
 
-  describe("identifier", () => {
-    test("top-level", () => {
-      const controller = new ControllerDefinition(project, "some_controller.js", null)
+  describe("guessedIdentifier", () => {
+    test("top-level", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some_controller.js"))
 
-      expect(controller.identifier).toEqual("some")
+      expect(controller.guessedIdentifier).toEqual("some")
     })
 
-    test("top-level underscored", () => {
-      const controller = new ControllerDefinition(project, "some_underscored_controller.js", null)
+    test("top-level underscored", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some_underscored_controller.js"))
 
-      expect(controller.identifier).toEqual("some-underscored")
+      expect(controller.guessedIdentifier).toEqual("some-underscored")
     })
 
-    test("top-level dasherized", () => {
-      const controller = new ControllerDefinition(project, "some-underscored_controller.js", null)
+    test("top-level dasherized", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some-underscored_controller.js"))
 
-      expect(controller.identifier).toEqual("some-underscored")
+      expect(controller.guessedIdentifier).toEqual("some-underscored")
     })
 
-    test("namespaced", () => {
-      const controller = new ControllerDefinition(project, "namespaced/some_controller.js", null)
+    test("namespaced", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/namespaced/some_controller.js"))
 
-      expect(controller.identifier).toEqual("namespaced--some")
+      expect(controller.guessedIdentifier).toEqual("namespaced--some")
     })
 
-    test("deeply nested", () => {
-      const controller = new ControllerDefinition(project, "a/bunch/of/levels/some_controller.js", null)
+    test("deeply nested", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/some_controller.js"))
 
-      expect(controller.identifier).toEqual("a--bunch--of--levels--some")
+      expect(controller.guessedIdentifier).toEqual("a--bunch--of--levels--some")
     })
 
-    test("deeply nested underscored", () => {
-      const controller = new ControllerDefinition(project, "a/bunch/of/levels/some_underscored_controller.js", null)
+    test("deeply nested underscored", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/some_underscored_controller.js"))
 
-      expect(controller.identifier).toEqual("a--bunch--of--levels--some-underscored")
+      expect(controller.guessedIdentifier).toEqual("a--bunch--of--levels--some-underscored")
     })
 
-    test("deeply nested dasherized", () => {
-      const controller = new ControllerDefinition(project, "a/bunch/of/levels/some-underscored_controller.js", null)
+    test("deeply nested dasherized", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/some-underscored_controller.js"))
 
-      expect(controller.identifier).toEqual("a--bunch--of--levels--some-underscored")
+      expect(controller.guessedIdentifier).toEqual("a--bunch--of--levels--some-underscored")
     })
 
-    test("deeply nested all dasherized", () => {
-      const controller = new ControllerDefinition(project, "a/bunch/of/levels/some-underscored-controller.js", null)
+    test("deeply nested all dasherized", async () => {
+      const controller = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/some-underscored-controller.js"))
 
-      expect(controller.identifier).toEqual("a--bunch--of--levels--some-underscored")
+      expect(controller.guessedIdentifier).toEqual("a--bunch--of--levels--some-underscored")
     })
 
     // TODO: update implementation once this gets released
     // https://github.com/hotwired/stimulus-webpack-helpers/pull/3
-    test("nested with only controller", () => {
-      const controller1 = new ControllerDefinition(project, "a/bunch/of/levels/controller.js", null)
-      const controller2 = new ControllerDefinition(project, "a/bunch/of/levels/controller.ts", null)
+    test("nested with only controller", async () => {
+      const controller1 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/controller.js"))
+      const controller2 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/controller.ts"))
 
-      expect(controller1.identifier).toEqual("a--bunch--of--levels")
-      expect(controller2.identifier).toEqual("a--bunch--of--levels")
+      expect(controller1.guessedIdentifier).toEqual("a--bunch--of--levels")
+      expect(controller2.guessedIdentifier).toEqual("a--bunch--of--levels")
     })
 
-    test("without controller suffix", () => {
-      const controller1 = new ControllerDefinition(project, "something.js", null)
-      const controller2 = new ControllerDefinition(project, "something.ts", null)
+    test("without controller suffix", async () => {
+      const controller1 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/something.js"))
+      const controller2 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/something.ts"))
 
-      expect(controller1.identifier).toEqual("something")
-      expect(controller2.identifier).toEqual("something")
+      expect(controller1.guessedIdentifier).toEqual("something")
+      expect(controller2.guessedIdentifier).toEqual("something")
     })
 
-    test("nested without controller suffix", () => {
-      const controller1 = new ControllerDefinition(project, "a/bunch/of/levels/something.js", null)
-      const controller2 = new ControllerDefinition(project, "a/bunch/of/levels/something.ts", null)
+    test("nested without controller suffix", async () => {
+      const controller1 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/something.js"))
+      const controller2 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch/of/levels/something.ts"))
 
-      expect(controller1.identifier).toEqual("a--bunch--of--levels--something")
-      expect(controller2.identifier).toEqual("a--bunch--of--levels--something")
+      expect(controller1.guessedIdentifier).toEqual("a--bunch--of--levels--something")
+      expect(controller2.guessedIdentifier).toEqual("a--bunch--of--levels--something")
     })
 
-    test("controller with dashes and underscores", () => {
-      const controller1 = new ControllerDefinition(project, "some-thing_controller.js", null)
-      const controller2 = new ControllerDefinition(project, "some-thing_controller.ts", null)
-      const controller3 = new ControllerDefinition(project, "some_thing-controller.js", null)
-      const controller4 = new ControllerDefinition(project, "some_thing-controller.ts", null)
+    test("controller with dashes and underscores", async () => {
+      const controller1 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some-thing_controller.js"))
+      const controller2 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some-thing_controller.ts"))
+      const controller3 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some_thing-controller.js"))
+      const controller4 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some_thing-controller.ts"))
 
-      expect(controller1.identifier).toEqual("some-thing")
-      expect(controller2.identifier).toEqual("some-thing")
-      expect(controller3.identifier).toEqual("some-thing")
-      expect(controller4.identifier).toEqual("some-thing")
+      expect(controller1.guessedIdentifier).toEqual("some-thing")
+      expect(controller2.guessedIdentifier).toEqual("some-thing")
+      expect(controller3.guessedIdentifier).toEqual("some-thing")
+      expect(controller4.guessedIdentifier).toEqual("some-thing")
     })
 
-    test("controller with dasherized name", () => {
-      const controller1 = new ControllerDefinition(project, "some-thing-controller.js", null)
-      const controller2 = new ControllerDefinition(project, "some-thing-controller.ts", null)
+    test("controller with dasherized name", async () => {
+      const controller1 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some-thing-controller.js"))
+      const controller2 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/some-thing-controller.ts"))
 
-      expect(controller1.identifier).toEqual("some-thing")
-      expect(controller2.identifier).toEqual("some-thing")
+      expect(controller1.guessedIdentifier).toEqual("some-thing")
+      expect(controller2.guessedIdentifier).toEqual("some-thing")
     })
 
-    test("nested controller with dasherized name", () => {
-      const controller1 = new ControllerDefinition(project, "a/bunch-of/levels/some-thing-controller.js", null)
-      const controller2 = new ControllerDefinition(project, "a/bunch-of/levels/some-thing-controller.ts", null)
+    test("nested controller with dasherized name", async () => {
+      const controller1 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch-of/levels/some-thing-controller.js"))
+      const controller2 = new ControllerDefinition(project, await classDeclarationFor(project, "app/javascript/controllers/a/bunch-of/levels/some-thing-controller.ts"))
 
-      expect(controller1.identifier).toEqual("a--bunch-of--levels--some-thing")
-      expect(controller2.identifier).toEqual("a--bunch-of--levels--some-thing")
+      expect(controller1.guessedIdentifier).toEqual("a--bunch-of--levels--some-thing")
+      expect(controller2.guessedIdentifier).toEqual("a--bunch-of--levels--some-thing")
     })
   })
 })
