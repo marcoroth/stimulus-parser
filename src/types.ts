@@ -45,4 +45,5 @@ export type ControllerLoadMode =
   "stimulus-loading-lazy" | 
   "stimulus-loading-eager" |
   "esbuild-rails" | 
-  "stimulus-vite-helpers"
+  "stimulus-vite-helpers" |
+  "stimulus-webpack-helpers"

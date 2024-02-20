@@ -39,6 +39,7 @@ export class ControllersIndexFile {
     await this.analyzeStimulusLoadingCalls()
     await this.analyzeEsbuildRails()
     await this.analyzeStimulusViteHelpers()
+    await this.analyzeStimulusWebpackHelpers()
   }
 
   analyzeApplicationRegisterCalls() {
@@ -174,6 +175,51 @@ export class ControllersIndexFile {
 
     if (controllersGlob) {
       await this.evaluateControllerGlob(controllersGlob, "stimulus-vite-helpers")
+    }
+  }
+
+  async analyzeStimulusWebpackHelpers() {
+    const hasWebpackHelpers = await hasDepedency(this.project.projectPath, "@hotwired/stimulus-webpack-helpers")
+
+    if (!hasWebpackHelpers) return
+
+    let controllersGlob
+    let definitionsFromContextCalled = false
+
+    walk(this.sourceFile.ast, {
+      CallExpression: node => {
+        if (node.callee.type === "MemberExpression" && node.callee.object.type === "Identifier" && node.callee.property.type === "Identifier") {
+
+          if (node.callee.object.name === "require" && node.callee.property.name === "context") {
+            const [folder, _arg, pattern] = node.arguments.map(m => m.type === "Literal" ? m.value : undefined).filter(c => c).slice(0, 3)
+
+            const controllerRoot = path.join(path.dirname(path.dirname(this.sourceFile.path)), folder?.toString() || "")
+            this.project.controllerRoots.push(this.project.relativePath(controllerRoot))
+
+            if (pattern instanceof RegExp) {
+              controllersGlob = path.join(controllerRoot, `**/*${pattern.source.replace("$", "").replace("\\.", ".")}`)
+            }
+          }
+        }
+      }
+    })
+
+    walk(this.sourceFile.ast, {
+      CallExpression: node => {
+        if (node.callee.type === "Identifier" && ["definitionsFromContext"].includes(node.callee.name)) {
+          const [contextNode] = node.arguments.slice(0, 1)
+          const context = (contextNode.type === "Identifier") ? contextNode.name : null
+
+          if (context) {
+            definitionsFromContextCalled = true
+          }
+        }
+      }
+    })
+
+
+    if (controllersGlob && definitionsFromContextCalled) {
+      await this.evaluateControllerGlob(controllersGlob, "stimulus-webpack-helpers")
     }
   }
 

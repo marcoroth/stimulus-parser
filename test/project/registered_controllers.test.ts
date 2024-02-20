@@ -3,7 +3,7 @@ import { setupProject } from "../helpers/setup"
 
 describe("Project", () => {
   describe("RegisteredController", () => {
-    test.todo("finds registered controllers for webpacker", async () => {
+    test("finds registered controllers for webpacker", async () => {
       const project = setupProject("webpacker")
 
       expect(project.registeredControllers.length).toEqual(0)
@@ -11,11 +11,11 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-webpack-helpers"]])
       expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
     })
 
-    test.todo("finds registered controllers for shakapacker", async () => {
+    test("finds registered controllers for shakapacker", async () => {
       const project = setupProject("shakapacker")
 
       expect(project.registeredControllers.length).toEqual(0)
@@ -23,7 +23,7 @@ describe("Project", () => {
       await project.initialize()
 
       expect(project.registeredControllers.length).toEqual(1)
-      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-webpack-helpers"]])
       expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
     })
 
