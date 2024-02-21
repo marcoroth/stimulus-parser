@@ -154,7 +154,7 @@ describe("with JS Syntax", () => {
 
     expect(sourceFile.hasErrors).toBeTruthy()
     expect(sourceFile.errors).toHaveLength(1)
-    expect(sourceFile.errors[0].message).toEqual("Error parsing controller")
+    expect(sourceFile.errors[0].message).toEqual("Error parsing controller: '}' expected.")
     expect(sourceFile.errors[0].cause.message).toEqual("'}' expected.")
     // expect(sourceFile.errors[0].loc.start.line).toEqual(9)
     // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
