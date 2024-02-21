@@ -175,7 +175,7 @@ export class ExportDeclaration {
       source: this.source,
       localName: this.localName,
       exportedName: this.exportedName,
-      sourceFile: this.sourceFile?.path,
+      exportedFrom: this.sourceFile?.path,
     }
   }
 }

@@ -211,7 +211,7 @@ export class ClassDeclaration {
       isExported: this.isExported,
       sourceFile: this.sourceFile?.path,
       hasControllerDefinition: !!this.controllerDefinition,
-      controllerDefinition: this.controllerDefinition?.guessedIdentifier
+      controllerDefinition: this.controllerDefinition?.inspect
     }
   }
 }
