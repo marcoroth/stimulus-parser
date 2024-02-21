@@ -58,6 +58,17 @@ describe("Project", () => {
       expect(project.relativePath(project.applicationFile.path)).toEqual("app/frontend/controllers/application.js")
     }, 15_000)
 
+    test("finds appliaction file for vite-laravel", async () => {
+      const project = setupProject("vite-laravel")
+
+      expect(project.applicationFile).toBeUndefined()
+
+      await project.initialize()
+
+      expect(project.applicationFile).toBeDefined()
+      expect(project.relativePath(project.applicationFile.path)).toEqual("resources/js/libs/stimulus.js")
+    }, 15_000)
+
     test("finds appliaction file for bun", async () => {
       const project = setupProject("bun")
 
@@ -89,6 +100,28 @@ describe("Project", () => {
 
       expect(project.applicationFile).toBeDefined()
       expect(project.relativePath(project.applicationFile.path)).toEqual("app/javascript/controllers/application.js")
+    })
+
+    test("finds appliaction file for importmap-laravel lazy", async () => {
+      const project = setupProject("importmap-laravel-lazy")
+
+      expect(project.applicationFile).toBeUndefined()
+
+      await project.initialize()
+
+      expect(project.applicationFile).toBeDefined()
+      expect(project.relativePath(project.applicationFile.path)).toEqual("resources/js/libs/stimulus.js")
+    })
+
+    test("finds appliaction file for importmap-laravel eager", async () => {
+      const project = setupProject("importmap-laravel-eager")
+
+      expect(project.applicationFile).toBeUndefined()
+
+      await project.initialize()
+
+      expect(project.applicationFile).toBeDefined()
+      expect(project.relativePath(project.applicationFile.path)).toEqual("resources/js/libs/stimulus.js")
     })
 
     test("finds appliaction file for rollup", async () => {

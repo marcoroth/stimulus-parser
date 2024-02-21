@@ -58,6 +58,17 @@ describe("Project", () => {
       expect(project.relativePath(project.controllersFile.path)).toEqual("app/frontend/controllers/index.js")
     }, 15_000)
 
+    test("finds controllers index file for vite-laravel", async () => {
+      const project = setupProject("vite-laravel")
+
+      expect(project.controllersFile).toBeUndefined()
+
+      await project.initialize()
+
+      expect(project.controllersFile).toBeDefined()
+      expect(project.relativePath(project.controllersFile.path)).toEqual("resources/js/controllers/index.js")
+    }, 15_000)
+
     test("finds controllers index file for bun", async () => {
       const project = setupProject("bun")
 
@@ -89,6 +100,28 @@ describe("Project", () => {
 
       expect(project.controllersFile).toBeDefined()
       expect(project.relativePath(project.controllersFile.path)).toEqual("app/javascript/controllers/index.js")
+    })
+
+    test("finds controllers index file for importmap-laravel lazy", async () => {
+      const project = setupProject("importmap-laravel-lazy")
+
+      expect(project.controllersFile).toBeUndefined()
+
+      await project.initialize()
+
+      expect(project.controllersFile).toBeDefined()
+      expect(project.relativePath(project.controllersFile.path)).toEqual("resources/js/controllers/index.js")
+    })
+
+    test("finds controllers index file for importmap-laravel eager", async () => {
+      const project = setupProject("importmap-laravel-eager")
+
+      expect(project.controllersFile).toBeUndefined()
+
+      await project.initialize()
+
+      expect(project.controllersFile).toBeDefined()
+      expect(project.relativePath(project.controllersFile.path)).toEqual("resources/js/controllers/index.js")
     })
 
     test("finds controllers index file for rollup", async () => {
