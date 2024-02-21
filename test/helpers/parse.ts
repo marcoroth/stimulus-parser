@@ -3,13 +3,16 @@ import { setupProject } from "./setup"
 import { SourceFile } from "../../src/source_file"
 import type { ControllerDefinition } from "../../src/controller_definition"
 
-export function parseController(code: string, filename: string): ControllerDefinition {
+export function parseController(code: string, filename: string, controllerName?: string): ControllerDefinition {
   const sourceFile = new SourceFile(setupProject(), filename, code)
   sourceFile.initialize()
   sourceFile.analyze()
 
-  const klass = sourceFile.classDeclarations[0]
-  klass.analyze()
+  sourceFile.classDeclarations.forEach(klass => klass.analyze())
 
-  return klass.controllerDefinition
+  if (controllerName) {
+    return sourceFile.findClass(controllerName)?.controllerDefinition
+  } else {
+    return sourceFile.classDeclarations[0]?.controllerDefinition
+  }
 }

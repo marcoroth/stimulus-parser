@@ -130,9 +130,9 @@ describe("packages", () => {
 
       const controller = project.allControllerDefinitions.find(controller => controller.guessedIdentifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
-      expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
-      expect(controller.values.open.type).toEqual("Boolean")
-      expect(controller.values.restoreScroll.type).toEqual("Boolean")
+      expect(controller.valueNames).toEqual(["open", "restoreScroll"])
+      expect(controller.valueDefinitionsMap.open.type).toEqual("Boolean")
+      expect(controller.valueDefinitionsMap.restoreScroll.type).toEqual("Boolean")
 
       const sourceFileCount = project.projectFiles.length
       const allSourceFileCount = project.allSourceFiles.length
@@ -413,9 +413,9 @@ describe("packages", () => {
 
       const controller = project.allControllerDefinitions.find(controller => controller.guessedIdentifier === "modal")
       expect(controller.targetNames).toEqual(["container", "background"])
-      expect(Object.keys(controller.values)).toEqual(["open", "restoreScroll"])
-      expect(controller.values.open.type).toEqual("Boolean")
-      expect(controller.values.restoreScroll.type).toEqual("Boolean")
+      expect(controller.valueNames).toEqual(["open", "restoreScroll"])
+      expect(controller.valueDefinitionsMap.open.type).toEqual("Boolean")
+      expect(controller.valueDefinitionsMap.restoreScroll.type).toEqual("Boolean")
 
       expect(project.projectFiles.length).toEqual(1)
       expect(project.allSourceFiles.length).toEqual(176)

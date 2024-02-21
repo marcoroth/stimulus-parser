@@ -32,11 +32,37 @@ describe("parse targets", () => {
     expect(controller.targetNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "one"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
     expect(controller.errors[0].loc.start.column).toEqual(19)
     expect(controller.errors[0].loc.end.line).toEqual(4)
     expect(controller.errors[0].loc.end.column).toEqual(42)
+  })
+
+  test("duplicate static targets frn parent", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class Parent extends Controller {
+        static targets = ["one"]
+      }
+
+      export default class Child extends Parent {
+        static targets = ["one", "three"]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js", "Child")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.targetNames).toEqual(["one", "three", "one"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "one". A parent controller already defines this Target.`)
+    expect(controller.errors[0].loc.start.line).toEqual(8)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.end.column).toEqual(35)
   })
 
   test("other literals are treated a strings in static targets array", () => {
@@ -144,7 +170,7 @@ describe("parse targets", () => {
     expect(controller.targetNames).toEqual(["output", "output"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "output"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "output"`)
     expect(controller.errors[0].loc.start.line).toEqual(7)
     expect(controller.errors[0].loc.start.column).toEqual(2)
     expect(controller.errors[0].loc.end.line).toEqual(7)
@@ -226,7 +252,7 @@ describe("parse targets", () => {
     expect(controller.targetNames).toEqual(["output", "output"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "output"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "output"`)
     expect(controller.errors[0].loc.start.line).toEqual(6)
     expect(controller.errors[0].loc.start.column).toEqual(19)
     expect(controller.errors[0].loc.end.line).toEqual(6)

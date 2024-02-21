@@ -42,7 +42,7 @@ describe("compiled JavaScript", () => {
     expect(controller.actionNames).toEqual(["initialize", "connect", "disconnect"])
     expect(controller.targetNames).toEqual(["item"])
     expect(controller.classNames).toEqual(["active", "inactive"])
-    expect(Object.keys(controller.valueDefinitions)).toEqual(["class", "threshold", "rootMargin"])
+    expect(controller.valueNames).toEqual(["class", "threshold", "rootMargin"])
   })
 
   test("transpiled with duplicate targets", () => {
@@ -63,7 +63,7 @@ describe("compiled JavaScript", () => {
     const controller = parseController(code, "minified_controller.js")
 
     expect(controller.hasErrors).toEqual(true)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus target "item"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "item"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
     expect(controller.errors[0].loc.start.column).toEqual(19)
     expect(controller.errors[0].loc.end.line).toEqual(4)

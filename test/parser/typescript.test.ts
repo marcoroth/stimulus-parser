@@ -75,7 +75,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.ts")
 
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
@@ -106,7 +106,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.ts")
 
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
@@ -205,7 +205,7 @@ describe("with TS Syntax", () => {
     `
     const controller = parseController(code, "value_controller.js")
 
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
       array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
     })

@@ -108,10 +108,10 @@ describe("inheritance", () => {
     expect(parent).toBeDefined()
     expect(child).toBeDefined()
 
-    expect(Object.keys(parent.localValues)).toEqual(["parentValue1", "parentValue2"])
-    expect(Object.keys(parent.values)).toEqual(["parentValue1", "parentValue2"])
-    expect(Object.keys(child.localValues)).toEqual(["childValue1", "childValue2"])
-    expect(Object.keys(child.values)).toEqual(["childValue1", "childValue2", "parentValue1", "parentValue2"])
+    expect(parent.localValueNames).toEqual(["parentValue1", "parentValue2"])
+    expect(parent.valueNames).toEqual(["parentValue1", "parentValue2"])
+    expect(child.localValueNames).toEqual(["childValue1", "childValue2"])
+    expect(child.valueNames).toEqual(["childValue1", "childValue2", "parentValue1", "parentValue2"])
 
     expect(Object.values(parent.localValues).map(v => [v.type, v.default])).toEqual([
       ["Boolean", false],

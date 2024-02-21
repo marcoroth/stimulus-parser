@@ -33,11 +33,37 @@ describe("parse classes", () => {
     expect(controller.classNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus class "one"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
     expect(controller.errors[0].loc.start.column).toEqual(19)
     expect(controller.errors[0].loc.end.line).toEqual(4)
     expect(controller.errors[0].loc.end.column).toEqual(42)
+  })
+
+  test("duplicate static classes from parent", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class Parent extends Controller {
+        static classes = ["one"]
+      }
+
+      export default class Child extends Parent {
+        static classes = ["one", "three"]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js", "Child")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.classNames).toEqual(["one", "three", "one"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one". A parent controller already defines this Class.`)
+    expect(controller.errors[0].loc.start.line).toEqual(8)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.end.column).toEqual(35)
   })
 
   test("single @Class decorator", () => {

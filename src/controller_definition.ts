@@ -22,7 +22,7 @@ export class ControllerDefinition {
   readonly methodDefinitions: Array<MethodDefinition> = []
   readonly targetDefinitions: Array<TargetDefinition> = []
   readonly classDefinitions: Array<ClassDefinition> = []
-  readonly valueDefinitions: { [key: string]: ValueDefinition } = {}
+  readonly valueDefinitions: Array<ValueDefinition> = []
 
   static controllerPathForIdentifier(identifier: string, fileExtension: string = "js"): string {
     const path = identifier.replace(/--/g, "/").replace(/-/g, "_")
@@ -110,13 +110,29 @@ export class ControllerDefinition {
   // Values
 
   get values() {
-    return Object.fromEntries(this.classDeclaration.ancestors.flatMap(klass =>
-      Object.entries((klass.controllerDefinition?.valueDefinitions || {})).map(([key, def]) => [key, def.definition])
-    ))
+    return this.classDeclaration.ancestors.flatMap(klass =>
+      klass.controllerDefinition?.valueDefinitions || []
+    )
+  }
+
+  get valueNames() {
+    return this.values.map(value => value.name)
   }
 
   get localValues() {
-    return Object.fromEntries(Object.entries(this.valueDefinitions).map(([key, def]) => [key, def.definition]))
+    return this.valueDefinitions
+  }
+
+  get localValueNames() {
+    return this.localValues.map(value => value.name)
+  }
+
+  get valueDefinitionsMap() {
+    return Object.fromEntries(this.values.map(definition => [definition.name, definition.definition]))
+  }
+
+  get localValueDefinitionsMap() {
+    return Object.fromEntries(this.localValues.map(definition => [definition.name, definition.definition]))
   }
 
   get controllerRoot(): string {
@@ -201,29 +217,33 @@ export class ControllerDefinition {
   }
 
   addTargetDefinition(targetDefinition: TargetDefinition): void {
-    if (this.targetNames.includes(targetDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus target "${targetDefinition.name}"`, targetDefinition.loc))
+    if (this.localTargetNames.includes(targetDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Target "${targetDefinition.name}"`, targetDefinition.loc))
+    } else if (this.targetNames.includes(targetDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Target "${targetDefinition.name}". A parent controller already defines this Target.`, targetDefinition.loc))
     }
 
     this.targetDefinitions.push(targetDefinition)
   }
 
   addClassDefinition(classDefinition: ClassDefinition) {
-    if (this.classNames.includes(classDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus class "${classDefinition.name}"`, classDefinition.loc))
+    if (this.localClassNames.includes(classDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Class "${classDefinition.name}"`, classDefinition.loc))
+    } else if (this.classNames.includes(classDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Class "${classDefinition.name}". A parent controller already defines this Class.`, classDefinition.loc))
     }
 
     this.classDefinitions.push(classDefinition)
   }
 
   addValueDefinition(valueDefinition: ValueDefinition) {
-    if (this.values[valueDefinition.name]) {
-      const error = new ParseError("LINT", `Duplicate definition of Stimulus value "${valueDefinition.name}"`, valueDefinition.loc)
-
-      this.errors.push(error)
-    } else {
-      this.valueDefinitions[valueDefinition.name] = valueDefinition
+    if (this.localValueNames.includes(valueDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Value "${valueDefinition.name}"`, valueDefinition.loc))
+    } else if (this.valueNames.includes(valueDefinition.name)) {
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Value "${valueDefinition.name}". A parent controller already defines this Value.`, valueDefinition.loc))
     }
+
+    this.valueDefinitions.push(valueDefinition)
   }
 
   get inspect() {

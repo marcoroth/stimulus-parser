@@ -21,7 +21,7 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
@@ -48,7 +48,7 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: { object: "Object" } },
       boolean: { type: "Boolean", default: true },
@@ -73,13 +73,44 @@ describe("parse values", () => {
     const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(Object.keys(controller.values)).toEqual(["one", "three"])
+    expect(controller.valueNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus value "one"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
     expect(controller.errors[0].loc.start.column).toEqual(18)
     expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.end.column).toEqual(3)
+  })
+
+  test("duplicate static values from parent", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class Parent extends Controller {
+        static values = {
+          one: String,
+        }
+      }
+
+      export default class Child extends Parent {
+        static values = {
+          one: { type: "String", default: ""},
+          three: { type: "String", default: ""},
+        }
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js", "Child")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.valueNames).toEqual(["one", "three", "one"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one". A parent controller already defines this Value.`)
+    expect(controller.errors[0].loc.start.line).toEqual(10)
+    expect(controller.errors[0].loc.start.column).toEqual(18)
+    expect(controller.errors[0].loc.end.line).toEqual(13)
     expect(controller.errors[0].loc.end.column).toEqual(3)
   })
 
@@ -101,10 +132,10 @@ describe("parse values", () => {
     const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(Object.keys(controller.values)).toEqual(["one"])
+    expect(controller.valueNames).toEqual(["one", "one"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus value "one"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(8)
     expect(controller.errors[0].loc.start.column).toEqual(18)
     expect(controller.errors[0].loc.end.line).toEqual(10)
@@ -129,10 +160,10 @@ describe("parse values", () => {
     const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(Object.keys(controller.values)).toEqual(["one"])
+    expect(controller.valueNames).toEqual(["one", "one"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus value "one"`)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(6)
     expect(controller.errors[0].loc.start.column).toEqual(18)
     expect(controller.errors[0].loc.end.line).toEqual(8)
@@ -157,7 +188,7 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
@@ -184,7 +215,7 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "string" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
@@ -208,7 +239,7 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       object: {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },
@@ -235,7 +266,7 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.values).toEqual({
+    expect(controller.valueDefinitionsMap).toEqual({
       object: {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },

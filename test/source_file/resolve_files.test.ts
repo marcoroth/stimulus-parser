@@ -221,7 +221,7 @@ describe("SourceFile", () => {
 
       expect(declaration.resolvedControllerDefinition.classNames).toEqual([])
       expect(declaration.resolvedControllerDefinition.targetNames).toEqual(["container", "background"])
-      expect(Object.keys(declaration.resolvedControllerDefinition.valueDefinitions)).toEqual(["open", "restoreScroll"])
+      expect(declaration.resolvedControllerDefinition.valueNames).toEqual(["open", "restoreScroll"])
       expect(declaration.resolvedControllerDefinition.actionNames).toEqual([
         "disconnect",
         "open",
@@ -360,7 +360,7 @@ describe("SourceFile", () => {
       expect(declaration.resolvedControllerDefinition.actionNames).toEqual(["connect", "save", "success", "error", "setStatus"])
       expect(declaration.resolvedControllerDefinition.classNames).toEqual([])
       expect(declaration.resolvedControllerDefinition.targetNames).toEqual(["form", "status"])
-      expect(Object.keys(declaration.resolvedControllerDefinition.valueDefinitions)).toEqual(["submitDuration", "statusDuration", "submittingText", "successText", "errorText"])
+      expect(declaration.resolvedControllerDefinition.valueNames).toEqual(["submitDuration", "statusDuration", "submittingText", "successText", "errorText"])
     })
   })
 })

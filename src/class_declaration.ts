@@ -144,7 +144,7 @@ export class ClassDeclaration {
         const isPrivate = node.key.type === "PrivateIdentifier" || tsNode.accessibility === "private"
         const name = isPrivate ? `#${methodName}` : methodName
 
-        this.controllerDefinition.methodDefinitions.push(new MethodDefinition(name, node.loc, "static"))
+        this.controllerDefinition.methodDefinitions.push(new MethodDefinition(name, node, node.loc, "static"))
       },
 
       PropertyDefinition: node => {
@@ -152,7 +152,7 @@ export class ClassDeclaration {
         if (node.key.type !== "Identifier") return
         if (!node.value || node.value.type !== "ArrowFunctionExpression") return
 
-        this.controllerDefinition.methodDefinitions.push(new MethodDefinition(node.key.name, node.loc, "static"))
+        this.controllerDefinition.methodDefinitions.push(new MethodDefinition(node.key.name, node, node.loc, "static"))
       },
     })
   }
