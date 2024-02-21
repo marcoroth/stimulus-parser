@@ -63,6 +63,18 @@ describe("Project", () => {
       expect(project.controllerRoots).toEqual(["app/frontend/controllers"])
     }, 15_000)
 
+    test("finds registered controllers for vite-laravel", async () => {
+      const project = setupProject("vite-laravel")
+
+      expect(project.registeredControllers.length).toEqual(0)
+
+      await project.initialize()
+
+      expect(project.registeredControllers.length).toEqual(1)
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
+      expect(project.controllerRoots).toEqual(["resources/js/controllers"])
+    }, 15_000)
+
     test.todo("finds registered controllers for bun", async () => {
       const project = setupProject("bun")
 
@@ -97,6 +109,30 @@ describe("Project", () => {
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-eager"]])
       expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+    })
+
+    test("finds registered controllers for importmap-laravel lazy", async () => {
+      const project = setupProject("importmap-laravel-lazy")
+
+      expect(project.registeredControllers.length).toEqual(0)
+
+      await project.initialize()
+
+      expect(project.registeredControllers.length).toEqual(1)
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-lazy"]])
+      expect(project.controllerRoots).toEqual(["resources/js/controllers"])
+    })
+
+    test("finds registered controllers for importmap-laravel eager", async () => {
+      const project = setupProject("importmap-laravel-eager")
+
+      expect(project.registeredControllers.length).toEqual(0)
+
+      await project.initialize()
+
+      expect(project.registeredControllers.length).toEqual(1)
+      expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-eager"]])
+      expect(project.controllerRoots).toEqual(["resources/js/controllers"])
     })
 
     test.todo("finds registered controllers for rollup", async () => {

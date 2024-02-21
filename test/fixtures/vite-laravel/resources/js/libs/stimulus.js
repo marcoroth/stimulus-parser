@@ -1,4 +1,4 @@
-import { Application } from '@hotwired/stimulus'
+import { Application } from "@hotwired/stimulus"
 
 const Stimulus = Application.start()
 
