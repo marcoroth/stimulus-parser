@@ -170,7 +170,7 @@ export class SourceFile {
       this.ast = this.project.parser.parse(this.content, this.path)
     } catch(error: any) {
       this.hasSyntaxError = true
-      this.errors.push(new ParseError("FAIL", "Error parsing controller", null, error))
+      this.errors.push(new ParseError("FAIL", `Error parsing controller: ${error.message}`, null, error))
     }
   }
 
@@ -358,12 +358,13 @@ export class SourceFile {
       hasErrors: this.hasErrors,
       hasSyntaxError: this.hasSyntaxError,
       hasAst: !!this.ast,
-      isAnalyzed: this.isAnalyzed,
       isParsed: this.isParsed,
-      errors: this.errors.map(e => e.inspect),
-      classes: this.classDeclarations.map(c => c.inspect),
+      isAnalyzed: this.isAnalyzed,
       imports: this.importDeclarations.map(i => i.inspect),
       exports: this.exportDeclarations.map(e => e.inspect),
+      classDeclarations: this.classDeclarations.map(c => c.inspect),
+      controllerDefinitions: this.controllerDefinitions.map(c => c.inspect),
+      errors: this.errors.map(e => e.inspect),
     }
   }
 }

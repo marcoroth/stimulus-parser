@@ -142,7 +142,7 @@ export class ImportDeclaration {
       localName: this.localName,
       originalName: this.originalName,
       source: this.source,
-      sourceFile: this.sourceFile?.path,
+      importedFrom: this.sourceFile?.path,
     }
   }
 }

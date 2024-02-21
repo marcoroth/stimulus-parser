@@ -83,9 +83,9 @@ export class NodeModule {
     return {
       name: this.name,
       type: this.type,
-      controllerDefinitions: this.controllerDefinitions.map(c => c?.identifier),
       entrypoint: this.entrypoint,
-      files: this.files.length
+      files: this.files.length,
+      controllerDefinitions: this.controllerDefinitions.map(c => c?.guessedIdentifier),
     }
   }
 }

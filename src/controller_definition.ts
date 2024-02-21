@@ -225,4 +225,14 @@ export class ControllerDefinition {
       this.valueDefinitions[valueDefinition.name] = valueDefinition
     }
   }
+
+  get inspect() {
+    return {
+      guessedIdentifier: this.guessedIdentifier,
+      targets: this.targetNames,
+      values: this.valueDefinitions,
+      classes: this.classNames,
+      actions: this.actionNames,
+    }
+  }
 }
