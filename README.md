@@ -47,6 +47,10 @@ console.log(controller.values)
 // => [{ url: { type: "String", default: "" } }]
 ```
 
+## Playground
+
+You can inspect parse results on the hosted playground at https://stimulus-parser.hotwire.io.
+
 ## Development
 
 To run the tests:
