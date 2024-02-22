@@ -1245,9 +1245,17 @@ statuses@2.0.1:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-2.0.1.tgz#55cb000ccf1d48728bd23c685a063998cf1a1b63"
   integrity sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==
 
-"stimulus-parser@link:..":
-  version "0.0.0"
-  uid ""
+"stimulus-parser@file:./stimulus-parser-v0.0.14.tgz":
+  version "0.0.14"
+  resolved "file:./stimulus-parser-v0.0.14.tgz#a1ddaf2456d0d665cfc66aeba0308d62e17e8f64"
+  dependencies:
+    "@hotwired/stimulus-webpack-helpers" "^1.0.1"
+    "@typescript-eslint/typescript-estree" "^7.0.1"
+    "@typescript-eslint/visitor-keys" "^7.0.2"
+    acorn-walk "^8.3.1"
+    astring "^1.8.6"
+    fs "^0.0.1-security"
+    glob "^10.3.10"
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
   name string-width-cjs

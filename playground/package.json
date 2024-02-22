@@ -12,7 +12,7 @@
     "@alenaksu/json-viewer": "^2.0.1",
     "dedent": "^1.5.1",
     "express": "^4.18.2",
-    "stimulus-parser": "link:../"
+    "stimulus-parser": "file:./stimulus-parser-v0.0.14.tgz"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
