@@ -1,12 +1,18 @@
-import type { SourceLocation, Node } from "acorn"
+import type * as Acorn  from "acorn"
 
 import type { ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "./types"
+
+// TODO: ArrayExpression and ObjectExpression shoudl probably be PropertyDefinition as well
+// AssignmentExpression | PropertyDefinition
+//
+// maybe the ControllerPropertyDefinition superclass should be Acorn.Node, but the subclasses themselves can narrow down the type
+type Node = Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.ObjectExpression
 
 export abstract class ControllerPropertyDefinition {
   constructor(
     public readonly name: string,
     public readonly node: Node,
-    public readonly loc?: SourceLocation | null,
+    public readonly loc?: Acorn.SourceLocation | null,
     public readonly definitionType: "decorator" | "static" = "static",
   ) {}
 }
@@ -16,7 +22,7 @@ export class ValueDefinition extends ControllerPropertyDefinition {
     name: string,
     public readonly definition: ValueDefinitionType,
     node: Node,
-    loc?: SourceLocation | null,
+    loc?: Acorn.SourceLocation | null,
     definitionType: "decorator" | "static" = "static",
   ) {
     super(name, node, loc, definitionType)
@@ -27,7 +33,7 @@ export class ValueDefinition extends ControllerPropertyDefinition {
   }
 
   get default() {
-    return this.definition.default 
+    return this.definition.default
   }
 
   public static defaultValuesForType = {
