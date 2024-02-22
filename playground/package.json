@@ -5,8 +5,8 @@
     "dev": "cross-env NODE_ENV=development node server.dev.mjs",
     "build": "npm run build:client",
     "build:client": "vite build --outDir dist/client",
-    "preview": "cross-env NODE_ENV=production node server.prod.mjs",
-    "serve": "cross-env NODE_ENV=production node server.prod.mjs"
+    "preview": "node server.prod.mjs",
+    "serve": "node server.prod.mjs"
   },
   "dependencies": {
     "@alenaksu/json-viewer": "^2.0.1",
