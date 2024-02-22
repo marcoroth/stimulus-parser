@@ -9,7 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js" integrity="sha512-naukR7I+Nk6gp7p5TMA4ycgfxaZBJ7MO5iC3Fp6ySQyKFHOGfpkSZkYVWV5R7u7cfAicxanwYQ5D1e17EfJcMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
-<body class="bg-white flex flex-col">
+<body class="bg-white flex flex-col" data-controller="playground">
   <script type="module" src="/src/entry-client.ts"></script>
 
   <div class="w-full">
@@ -20,17 +20,17 @@
     </nav>
 
     <div class="px-8 h-screen">
-      <div class="mx-2 grid grid-cols-2 gap-4">
+      <div class="mx-2 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mt-6">
           <div class="flex justify-between">
             <div class="text-gray-900 rounded-md py-1.5 text-sm font-medium">Stimulus Controller</div>
 
-            <button id="example" class="text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-md ml-12 px-3 py-1.5 text-sm font-medium">
+            <button data-action="click->playground#insert click->playground#analyze" id="example" class="text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-md ml-12 px-3 py-1.5 text-sm font-medium">
               Example
             </button>
           </div>
           <div class="mt-2">
-            <textarea id="input" class="p-3 bg-gray-50 font-mono w-full text-black rounded-md border border-gray-300 text-sm" placeholder="Paste Stimulus Controller here" style="height: 90vh"></textarea>
+            <textarea data-playground-target="input" data-action="change->playground#analyze keyup->playground#analyze" id="input" class="p-3 bg-gray-50 font-mono w-full text-black rounded-md border border-gray-300 text-sm h-[30vh] md:h-[90vh]" placeholder="Paste Stimulus Controller here"></textarea>
           </div>
         </div>
 
@@ -38,7 +38,7 @@
           <div class="text-gray-900 rounded-md px-0 py-1.5 text-sm font-medium">Parse Result</div>
 
           <div class="mt-2">
-            <json-viewer class="py-0 px-5 rounded-lg font-mono h-[90vh] overflow-scroll"></json-viewer>
+            <json-viewer data-playground-target="viewer" class="py-0 px-5 rounded-lg font-mono h-[50vh] md:h-[90vh] overflow-scroll"></json-viewer>
           </div>
         </div>
       </div>
