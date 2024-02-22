@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@alenaksu/json-viewer": "^2.0.1",
+    "@hotwired/stimulus": "^3.2.2",
     "dedent": "^1.5.1",
     "express": "^4.18.2",
     "stimulus-parser": "file:./stimulus-parser-v0.0.14.tgz"
