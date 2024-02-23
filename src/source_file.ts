@@ -334,6 +334,7 @@ export class SourceFile {
 
         if (property.type !== "Identifier") return
         if (object.type !== "Identifier") return
+        if (object.name !== controllerDefinition.classDeclaration.className) return
 
         properties.parseStaticControllerProperties(controllerDefinition, property, expression.right)
       },

@@ -39,7 +39,7 @@ describe("parse targets", () => {
     expect(controller.errors[0].loc.end.column).toEqual(42)
   })
 
-  test("duplicate static targets frn parent", () => {
+  test("duplicate static targets from parent", () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -63,6 +63,28 @@ describe("parse targets", () => {
     expect(controller.errors[0].loc.start.column).toEqual(19)
     expect(controller.errors[0].loc.end.line).toEqual(8)
     expect(controller.errors[0].loc.end.column).toEqual(35)
+  })
+
+  test("assigns targets outside of class via member expression", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class One extends Controller {}
+      class Two extends Controller {}
+
+      One.targets = ["one", "two"]
+    `
+
+    const one = parseController(code, "target_controller.js", "One")
+    const two = parseController(code, "target_controller.js", "Two")
+
+    expect(one.isTyped).toBeFalsy()
+    expect(one.targetNames).toEqual(["one", "two"])
+    expect(one.hasErrors).toBeFalsy()
+
+    expect(two.isTyped).toBeFalsy()
+    expect(two.targetNames).toEqual([])
+    expect(two.hasErrors).toBeFalsy()
   })
 
   test("other literals are treated a strings in static targets array", () => {

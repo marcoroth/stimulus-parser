@@ -114,6 +114,31 @@ describe("parse values", () => {
     expect(controller.errors[0].loc.end.column).toEqual(3)
   })
 
+  test("assigns values outside of class via member expression", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class One extends Controller {}
+      class Two extends Controller {}
+
+      One.values = {
+        one: String,
+        two: Boolean
+      }
+    `
+
+    const one = parseController(code, "values_controller.js", "One")
+    const two = parseController(code, "values_controller.js", "Two")
+
+    expect(one.isTyped).toBeFalsy()
+    expect(one.valueNames).toEqual(["one", "two"])
+    expect(one.hasErrors).toBeFalsy()
+
+    expect(two.isTyped).toBeFalsy()
+    expect(two.valueNames).toEqual([])
+    expect(two.hasErrors).toBeFalsy()
+  })
+
   test("duplicate decorator mixed with static values", () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"

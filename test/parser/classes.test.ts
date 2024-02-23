@@ -66,6 +66,28 @@ describe("parse classes", () => {
     expect(controller.errors[0].loc.end.column).toEqual(35)
   })
 
+  test("assigns classes outside of class via member expression", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class One extends Controller {}
+      class Two extends Controller {}
+
+      One.classes = ["one", "two"]
+    `
+
+    const one = parseController(code, "classes_controller.js", "One")
+    const two = parseController(code, "classes_controller.js", "Two")
+
+    expect(one.isTyped).toBeFalsy()
+    expect(one.classNames).toEqual(["one", "two"])
+    expect(one.hasErrors).toBeFalsy()
+
+    expect(two.isTyped).toBeFalsy()
+    expect(two.classNames).toEqual([])
+    expect(two.hasErrors).toBeFalsy()
+  })
+
   test("single @Class decorator", () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
