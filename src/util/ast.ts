@@ -1,13 +1,7 @@
 import { ValueDefinition } from "../controller_property_definition"
 
-import { SourceFile } from "../source_file"
-import { ParseError } from "../parse_error"
-import { ClassDeclaration, StimulusControllerClassDeclaration } from "../class_declaration"
-
 import type * as Acorn from "acorn"
-import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType, ClassDeclarationNode } from "../types"
-import type { ImportDeclaration } from "../import_declaration"
-import type { Project } from "../project"
+import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
 
 export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]

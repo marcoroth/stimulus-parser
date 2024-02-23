@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import path from "path"
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile, ClassDeclaration } from "../../src"
+import { Project, SourceFile } from "../../src"
 
 let project = new Project(process.cwd())
 

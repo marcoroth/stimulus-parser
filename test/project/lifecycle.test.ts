@@ -19,8 +19,8 @@ describe("Project", () => {
 
     await project.initialize()
 
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
   })
 
   test("doesn't re-add files when calling initialize() more than once", async () => {
@@ -28,16 +28,16 @@ describe("Project", () => {
     expect(project.controllerDefinitions.length).toEqual(0)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
   })
 
   test("doesn't re-add files when calling initialize() once and refresh() more than once", async () => {
@@ -45,19 +45,19 @@ describe("Project", () => {
     expect(project.controllerDefinitions.length).toEqual(0)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.refresh()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.refresh()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.refresh()
-    expect(project.projectFiles).toHaveLength(1)
-    expect(project.controllerDefinitions).toHaveLength(1)
+    expect(project.projectFiles).toHaveLength(2)
+    expect(project.controllerDefinitions).toHaveLength(2)
   })
 })

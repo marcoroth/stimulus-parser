@@ -20,10 +20,9 @@ const vite = await createViteServer({
 
 app.use(vite.middlewares)
 
-app.use("*", async (request, response, next) => {
+app.use("*", (request, response, next) => {
   try {
     const template = fs.readFileSync(path.resolve(__dirname, "index.html"), "utf-8")
-
     response.status(200).set({ "Content-Type": "text/html" }).end(template)
   } catch (e) {
     vite.ssrFixStacktrace(e)
