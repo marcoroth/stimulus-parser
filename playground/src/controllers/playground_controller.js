@@ -1,6 +1,8 @@
 import dedent from "dedent"
 import { Controller } from "@hotwired/stimulus"
 
+import lz from "lz-string"
+
 const exampleController = dedent`
   import { Controller } from "@hotwired/stimulus"
 
@@ -17,6 +19,7 @@ export default class extends Controller {
   static targets = ["input", "viewer"]
 
   connect() {
+    this.restoreInput()
     this.analyze()
   }
 
@@ -24,7 +27,20 @@ export default class extends Controller {
     this.inputTarget.value = exampleController
   }
 
+  updateURL() {
+    window.location.hash = this.compressedValue
+    window.history.pushState({}, "", window.location.href)
+  }
+
+  restoreInput() {
+    if (window.location.hash && this.inputTarget.value === "") {
+      this.inputTarget.value = this.decompressedValue
+    }
+  }
+
   async analyze(){
+    this.updateURL()
+
     const response = await fetch("/api/analyze", {
       method: "POST",
       headers: {
@@ -50,5 +66,13 @@ export default class extends Controller {
         this.viewerTarget.expand("sourceFile")
       }
     }
+  }
+
+  get compressedValue() {
+    return lz.compressToEncodedURIComponent(this.inputTarget.value)
+  }
+
+  get decompressedValue() {
+    return lz.decompressFromEncodedURIComponent(window.location.hash.slice(1))
   }
 }
