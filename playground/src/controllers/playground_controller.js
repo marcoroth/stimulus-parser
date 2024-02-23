@@ -1,13 +1,13 @@
-import dedent from "dedent"
-import { Controller } from "@hotwired/stimulus"
-
 import lz from "lz-string"
+import dedent from "dedent"
+
+import { Controller } from "@hotwired/stimulus"
 
 const exampleController = dedent`
   import { Controller } from "@hotwired/stimulus"
 
   export default class extends Controller {
-    static targets = [ "name", "output" ]
+    static targets = ["name", "output"]
 
     greet() {
       this.outputTarget.textContent = \`Hello, \${this.nameTarget.value}!\`
@@ -16,7 +16,7 @@ const exampleController = dedent`
 `
 
 export default class extends Controller {
-  static targets = ["input", "viewer"]
+  static targets = ["input", "simpleViewer", "fullViewer", "viewerButton"]
 
   connect() {
     this.restoreInput()
@@ -34,7 +34,7 @@ export default class extends Controller {
 
     this.inputTarget.value = exampleController
 
-    const button = (event.target instanceof HTMLButtonElement) ? event.target : event.target.closest("button")
+    const button = this.getClosestButton(event.target)
 
     button.querySelector(".fa-file").classList.add("hidden")
     button.querySelector(".fa-circle-check").classList.remove("hidden")
@@ -46,7 +46,7 @@ export default class extends Controller {
   }
 
   async share(event) {
-    const button = (event.target instanceof HTMLButtonElement) ? event.target : event.target.closest("button")
+    const button = this.getClosestButton(event.target)
 
     try {
       await navigator.clipboard.writeText(window.location.href)
@@ -71,33 +71,90 @@ export default class extends Controller {
     }
   }
 
+  getClosestButton(element) {
+    return (element instanceof HTMLButtonElement) ? element : element.closest("button")
+  }
+
+  selectViewer(event) {
+    const button = this.getClosestButton(event.target)
+
+    this.viewerButtonTargets.forEach(button => button.dataset.active = false)
+    button.dataset.active = true
+
+    if (button.dataset.viewer === "simple") {
+      this.simpleViewerTarget.classList.remove("hidden")
+      this.fullViewerTarget.classList.add("hidden")
+    } else {
+      this.simpleViewerTarget.classList.add("hidden")
+      this.fullViewerTarget.classList.remove("hidden")
+    }
+  }
+
   async analyze(){
     this.updateURL()
 
-    const response = await fetch("/api/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        controller: this.inputTarget.value
+    let response
+    let json
+
+    try {
+      response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          controller: this.inputTarget.value
+        })
       })
-    })
+    } catch(error) {
+      this.simpleViewerTarget.data = { error: error, message: error.message }
+      this.fullViewerTarger.data = { error: error, message: error.message }
+    }
 
-    const json = await response.json()
+    if (response.ok) {
+      try {
+        json = await response.json()
 
-    if (this.hasViewerTarget) {
-      this.viewerTarget.data = { sourceFile: json }
+        if (this.hasSimpleViewerTarget) {
+          const isEmpty = !this.simpleViewerTarget.data
 
-      if (json.errors.length > 0) {
-        this.viewerTarget.expand("sourceFile.errors")
-      } else if (json.controllerDefinitions.length > 0) {
-        this.viewerTarget.expand("sourceFile.controllerDefinitions.*")
-      } else if (json.classDeclarations.length > 0) {
-        this.viewerTarget.expand("sourceFile.classDeclarations")
-      } else {
-        this.viewerTarget.expand("sourceFile")
+          this.simpleViewerTarget.data = { sourceFile: json.simple }
+
+          if (isEmpty) {
+            if (json.simple.errors.length > 0) {
+              this.simpleViewerTarget.expand("sourceFile.errors")
+            } else if (json.simple.controllerDefinitions.length > 0) {
+              this.simpleViewerTarget.expand("sourceFile.controllerDefinitions.*")
+            } else if (json.simple.classDeclarations.length > 0) {
+              this.simpleViewerTarget.expand("sourceFile.classDeclarations")
+            } else {
+              this.simpleViewerTarget.expand("sourceFile")
+            }
+          }
+        }
+
+        if (this.hasFullViewerTarget) {
+          const isEmpty = !this.fullViewerTarget.data
+
+          this.fullViewerTarget.data = { sourceFile: json.full }
+
+          if (isEmpty) {
+            if (json.full.errors.length > 0) {
+              this.fullViewerTarget.expand("sourceFile.errors")
+            } else if (json.full.classDeclarations.length > 0) {
+              this.fullViewerTarget.expand("sourceFile.classDeclarations")
+            } else {
+              this.fullViewerTarget.expand("sourceFile")
+            }
+          }
+        }
+      } catch (error) {
+        this.simpleViewerTarget.data = { error: "Server didn't return JSON", response: error.message }
+        this.fullViewerTarget.data = { error: "Server didn't return JSON", response: error.message }
       }
+    } else {
+      this.simpleViewerTarget.data = { error: "Server didn't respond with a 200 response" }
+      this.fullViewerTarget.data = { error: "Server didn't respond with a 200 response" }
     }
   }
 
