@@ -26,9 +26,22 @@
           <div class="flex justify-between">
             <div class="text-gray-900 rounded-md py-1.5 text-sm font-medium">Stimulus Controller</div>
 
-            <button data-action="click->playground#insert click->playground#analyze" id="example" class="text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-md ml-12 px-3 py-1.5 text-sm font-medium">
-              Example
-            </button>
+            <div class="flex gap-3">
+              <button data-action="click->playground#share" id="example" class="text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-md px-3 py-1.5 text-sm font-medium">
+                <i class="fas fa-copy"></i>
+                <i class="fas fa-circle-check text-green-600 hidden ease-in duration-300"></i>
+                <i class="fas fa-circle-xmark text-red-600 hidden ease-in duration-300"></i>
+
+                <span class="ml-1">Copy Share URL</span>
+              </button>
+
+              <button data-action="click->playground#insert click->playground#analyze" id="example" class="text-gray-900 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-md px-3 py-1.5 text-sm font-medium">
+                <i class="fas fa-file w-4"></i>
+                <i class="fas fa-circle-check w-4 text-green-600 hidden ease-in duration-300"></i>
+
+                <span class="ml-1">Example</span>
+              </button>
+            </div>
           </div>
           <div class="mt-2">
             <textarea data-playground-target="input" data-action="change->playground#analyze keyup->playground#analyze" id="input" class="p-3 bg-gray-50 font-mono w-full text-black rounded-md border border-gray-300 text-sm h-[30vh] md:h-[90vh]" placeholder="Paste Stimulus Controller here"></textarea>

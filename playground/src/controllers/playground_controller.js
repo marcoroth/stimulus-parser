@@ -23,13 +23,46 @@ export default class extends Controller {
     this.analyze()
   }
 
-  insert() {
-    this.inputTarget.value = exampleController
-  }
-
   updateURL() {
     window.location.hash = this.compressedValue
-    window.history.pushState({}, "", window.location.href)
+  }
+
+  async insert(event) {
+    if (this.inputTarget.value !== "" && !confirm("Do you want to overwrite the current controller?")) {
+      return
+    }
+
+    this.inputTarget.value = exampleController
+
+    const button = (event.target instanceof HTMLButtonElement) ? event.target : event.target.closest("button")
+
+    button.querySelector(".fa-file").classList.add("hidden")
+    button.querySelector(".fa-circle-check").classList.remove("hidden")
+
+    setTimeout(() => {
+      button.querySelector(".fa-file").classList.remove("hidden")
+      button.querySelector(".fa-circle-check").classList.add("hidden")
+    }, 1000)
+  }
+
+  async share(event) {
+    const button = (event.target instanceof HTMLButtonElement) ? event.target : event.target.closest("button")
+
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+
+      button.querySelector(".fa-circle-check").classList.remove("hidden")
+    } catch (error) {
+      button.querySelector(".fa-circle-xmark").classList.remove("hidden")
+    }
+
+    button.querySelector(".fa-copy").classList.add("hidden")
+
+    setTimeout(() => {
+      button.querySelector(".fa-copy").classList.remove("hidden")
+      button.querySelector(".fa-circle-xmark").classList.add("hidden")
+      button.querySelector(".fa-circle-check").classList.add("hidden")
+    }, 1000)
   }
 
   restoreInput() {

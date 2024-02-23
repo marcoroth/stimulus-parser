@@ -32,5 +32,5 @@ app.use("*", async (request, response, next) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}`)
+  console.log(`Listing on http://localhost:${PORT}`)
 })
