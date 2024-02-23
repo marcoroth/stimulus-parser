@@ -17,9 +17,12 @@
     "clean": "rimraf dist",
     "prerelease": "yarn build",
     "install:fixtures": "node scripts/setupFixtures.mjs",
+    "install:playground": "cd playground && yarn install && cd -",
     "postinstall": "yarn install:fixtures",
+    "postbuild": "cd playground && yarn build && cd -",
     "pretest": "yarn install:fixtures",
-    "test": "vitest"
+    "test": "vitest",
+    "serve": "cd playground && yarn serve"
   },
   "dependencies": {
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
