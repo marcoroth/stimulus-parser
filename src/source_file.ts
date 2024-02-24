@@ -44,6 +44,10 @@ export class SourceFile {
     return this.controllerDefinitions.filter(controllerDefinition => controllerDefinition.classDeclaration.isExported)
   }
 
+  get defaultExportControllerDefinition(): ControllerDefinition | undefined {
+    return this.defaultExport?.exportedClassDeclaration?.controllerDefinition
+  }
+
   get hasErrors() {
     return this.errors.length > 0
   }

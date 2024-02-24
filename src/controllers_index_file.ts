@@ -223,11 +223,10 @@ export class ControllersIndexFile {
     }
   }
 
-
   private async evaluateControllerGlob(controllersGlob: string, type: ControllerLoadMode) {
     const controllerFiles = (await glob(controllersGlob)).map(path => this.project.relativePath(path))
     const sourceFiles = this.project.projectFiles.filter(file => controllerFiles.includes(this.project.relativePath(file.path)))
-    const controllerDefinitions = sourceFiles.flatMap(file => file.controllerDefinitions)
+    const controllerDefinitions = sourceFiles.flatMap(file => file.defaultExportControllerDefinition || [])
 
     controllerDefinitions.forEach(controller => {
       this.registeredControllers.push(new RegisteredController(controller.guessedIdentifier, controller, type))
