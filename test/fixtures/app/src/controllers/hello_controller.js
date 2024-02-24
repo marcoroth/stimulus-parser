@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
-export default class extends Controller {
+class ParentController extends Controller {}
+
+export default class extends ParentController {
   static targets = ["output", "output"];
   static classes = ["active", "active"];
 

@@ -20,7 +20,7 @@ describe("packages", () => {
       ])
 
       expect(project.detectedNodeModules.map(module => module.name).sort()).toEqual(["tailwindcss-stimulus-components"])
-      expect(project.controllerRoots).toEqual([])
+      expect(Array.from(project.controllerRoots)).toEqual(["src/controllers"])
       expect(project.guessedControllerRoots).toEqual([
         "src/controllers",
         "node_modules/tailwindcss-stimulus-components/src",
@@ -34,12 +34,14 @@ describe("packages", () => {
         "dropdown",
         "hello",
         "modal",
+        "parent",
         "popover",
         "slideover",
         "tabs",
         "toggle",
       ]
 
+      expect(project.registeredControllers.map(controller => controller.identifier).sort()).toEqual(["custom-modal", "hello"])
       expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["custom-modal", "hello"])
       expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(exportedIdentifiers)
 
@@ -56,8 +58,8 @@ describe("packages", () => {
       const sourceFileCount = project.projectFiles.length
       const allSourceFileCount = project.allSourceFiles.length
 
-      expect(sourceFileCount).toEqual(2)
-      expect(allSourceFileCount).toEqual(13)
+      expect(sourceFileCount).toEqual(4)
+      expect(allSourceFileCount).toEqual(15)
 
       // re-analyzing shouldn't add source files or controllers twice
       await project.analyze()
@@ -100,7 +102,7 @@ describe("packages", () => {
         "tailwindcss-stimulus-components", // TODO: this shouldn't be duplicate
       ])
 
-      expect(project.controllerRoots).toEqual([])
+      expect(Array.from(project.controllerRoots)).toEqual(["src/controllers"])
 
       expect(project.guessedControllerRoots).toEqual([
         "src/controllers",
@@ -116,6 +118,7 @@ describe("packages", () => {
         "dropdown",
         "hello",
         "modal",
+        "parent",
         "popover",
         "slideover",
         "tabs",
@@ -184,6 +187,7 @@ describe("packages", () => {
         "MutationController",
         "NavigateFormErrorsController",
         "NestedFormController",
+        "ParentController",
         "PasswordConfirmController",
         "PasswordPeekController",
         "PersistedDismissableController",
@@ -280,8 +284,8 @@ describe("packages", () => {
       expect(controller.valueDefinitionsMap.open.type).toEqual("Boolean")
       expect(controller.valueDefinitionsMap.restoreScroll.type).toEqual("Boolean")
 
-      expect(project.projectFiles.length).toEqual(2)
-      expect(project.allSourceFiles.length).toEqual(177)
+      expect(project.projectFiles.length).toEqual(4)
+      expect(project.allSourceFiles.length).toEqual(179)
       // const allSourceFiles = project.allSourceFiles.map(s => s.path).sort()
 
       // re-analyzing shouldn't add source files or controllers twice
@@ -291,8 +295,8 @@ describe("packages", () => {
 
       await project.analyzeAllDetectedModules()
 
-      expect(project.projectFiles.length).toEqual(2)
-      expect(project.allSourceFiles.length).toEqual(187) // TODO: hotkeys and date-fns are now detected too, ideally we can figure out the right order to get them also the first time around
+      expect(project.projectFiles.length).toEqual(4)
+      expect(project.allSourceFiles.length).toEqual(189) // TODO: hotkeys and date-fns are now detected too, ideally we can figure out the right order to get them also the first time around
       // expect(project.allSourceFiles.map(s => s.path).sort()).toEqual(allSourceFiles)
 
       expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["custom-modal", "hello"])

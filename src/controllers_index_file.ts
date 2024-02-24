@@ -72,7 +72,7 @@ export class ControllersIndexFile {
           const controller = classDeclaration.controllerDefinition
           if (!controller) return // TODO: probably should add an error here
 
-          this.project.controllerRoots.push(this.project.relativePath(path.dirname(this.sourceFile.path)))
+          this.project._controllerRoots.add(this.project.relativePath(path.dirname(this.sourceFile.path)))
 
           this.registeredControllers.push(new RegisteredController(identifier, controller, "register"))
         }
@@ -119,7 +119,7 @@ export class ControllersIndexFile {
           const base = this.project.relativePath(path.dirname(path.dirname(this.sourceFile.path)))
           const controllerRoot = path.join(this.project.projectPath, base, controllersPath)
 
-          this.project.controllerRoots.push(this.project.relativePath(controllerRoot))
+          this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
 
           controllersGlob = path.join(controllerRoot, `**/*.{${this.project.extensionsGlob}}`)
         }
@@ -145,7 +145,7 @@ export class ControllersIndexFile {
 
     if (!controllersGlob) return
 
-    this.project.controllerRoots.push(this.project.relativePath(path.dirname(this.sourceFile.path)))
+    this.project._controllerRoots.add(this.project.relativePath(path.dirname(this.sourceFile.path)))
 
     await this.evaluateControllerGlob(controllersGlob, "esbuild-rails")
   }
@@ -166,7 +166,7 @@ export class ControllersIndexFile {
           if (!importGlob) return
 
           const controllerRoot = path.dirname(this.sourceFile.path)
-          this.project.controllerRoots.push(this.project.relativePath(controllerRoot))
+          this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
 
           controllersGlob = path.join(controllerRoot, importGlob)
         }
@@ -194,7 +194,7 @@ export class ControllersIndexFile {
             const [folder, _arg, pattern] = node.arguments.map(m => m.type === "Literal" ? m.value : undefined).filter(c => c).slice(0, 3)
 
             const controllerRoot = path.join(path.dirname(path.dirname(this.sourceFile.path)), folder?.toString() || "")
-            this.project.controllerRoots.push(this.project.relativePath(controllerRoot))
+            this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
 
             if (pattern instanceof RegExp) {
               controllersGlob = path.join(controllerRoot, `**/*${pattern.source.replace("$", "").replace("\\.", ".")}`)

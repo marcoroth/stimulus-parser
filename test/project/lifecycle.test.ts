@@ -19,7 +19,7 @@ describe("Project", () => {
 
     await project.initialize()
 
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
   })
 
@@ -28,15 +28,15 @@ describe("Project", () => {
     expect(project.controllerDefinitions.length).toEqual(0)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
   })
 
@@ -45,19 +45,19 @@ describe("Project", () => {
     expect(project.controllerDefinitions.length).toEqual(0)
 
     await project.initialize()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.refresh()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.refresh()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
 
     await project.refresh()
-    expect(project.projectFiles).toHaveLength(2)
+    expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
   })
 })

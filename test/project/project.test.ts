@@ -38,12 +38,12 @@ describe("Project", () => {
     expect(project.guessedControllerRoots).toEqual([
       "app/javascript/controllers",
     ])
-    expect(project.controllerRoots).toEqual([])
+    expect(Array.from(project.controllerRoots)).toEqual([])
 
     await project.initialize()
 
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
-    expect(project.controllerRoots).toEqual([])
+    expect(Array.from(project.controllerRoots)).toEqual([])
     expect(project.guessedControllerRoots).toEqual([
       "app/javascript/controllers",
       "app/packs/controllers",
@@ -56,7 +56,7 @@ describe("Project", () => {
 
     await project.initialize()
 
-    project.controllerRoots.push(...["app/packs/controllers", "resources/js/controllers"])
+    project._controllerRoots.add(...["app/packs/controllers", "resources/js/controllers"])
 
     const identifiers = project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()
 

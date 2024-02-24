@@ -12,7 +12,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-webpack-helpers"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for shakapacker", async () => {
@@ -24,7 +24,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-webpack-helpers"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for esbuild-rails", async () => {
@@ -36,7 +36,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "esbuild-rails"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for esbuild", async () => {
@@ -48,7 +48,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for vite-rails", async () => {
@@ -60,7 +60,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-vite-helpers"]])
-      expect(project.controllerRoots).toEqual(["app/frontend/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/frontend/controllers"])
     }, 15_000)
 
     test("finds registered controllers for vite-laravel", async () => {
@@ -72,7 +72,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
-      expect(project.controllerRoots).toEqual(["resources/js/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["resources/js/controllers"])
     }, 15_000)
 
     test.todo("finds registered controllers for bun", async () => {
@@ -84,7 +84,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for importmap-rails lazy", async () => {
@@ -96,7 +96,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-lazy"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for importmap-rails eager", async () => {
@@ -108,7 +108,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-eager"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
 
     test("finds registered controllers for importmap-laravel lazy", async () => {
@@ -120,7 +120,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-lazy"]])
-      expect(project.controllerRoots).toEqual(["resources/js/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["resources/js/controllers"])
     })
 
     test("finds registered controllers for importmap-laravel eager", async () => {
@@ -132,7 +132,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-eager"]])
-      expect(project.controllerRoots).toEqual(["resources/js/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["resources/js/controllers"])
     })
 
     test.todo("finds registered controllers for rollup", async () => {
@@ -144,7 +144,7 @@ describe("Project", () => {
 
       expect(project.registeredControllers.length).toEqual(1)
       expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "register"]])
-      expect(project.controllerRoots).toEqual(["app/javascript/controllers"])
+      expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
     })
   })
 })

@@ -25,7 +25,7 @@ export class Project {
   public detectedNodeModules: Array<NodeModule> = []
   public referencedNodeModules: Set<string> = new Set()
   public projectFiles: Array<SourceFile> = []
-  public controllerRoots: Array<string> = []
+  public _controllerRoots: Set<string> = new Set()
   public parser: Parser = new Parser(this)
   public applicationFile?: ApplicationFile
   public controllersFile?: ControllersIndexFile
@@ -68,7 +68,7 @@ export class Project {
 
   controllerRootForPath(filePath: string) {
     const relativePath = this.relativePath(filePath)
-    const relativeRoots = this.controllerRoots.map(root => this.relativePath(root))
+    const relativeRoots = Array.from(this.controllerRoots).map(root => this.relativePath(root))
 
     return this.relativePath(relativeRoots.find(root => relativePath === root) || relativeRoots.find(root => relativePath.startsWith(root)) || this.controllerRootFallback)
   }
@@ -81,6 +81,10 @@ export class Project {
   }
 
   get controllerDefinitions(): ControllerDefinition[] {
+    return this.projectFiles.flatMap(file => file.exportedControllerDefinitions)
+  }
+
+  get allProjectControllerDefinitions(): ControllerDefinition[] {
     return this.projectFiles.flatMap(file => file.controllerDefinitions)
   }
 
@@ -96,7 +100,11 @@ export class Project {
   }
 
   get controllerRoot() {
-    return this.controllerRoots[0] || this.controllerRootFallback
+    return Array.from(this.controllerRoots)[0] || this.controllerRootFallback
+  }
+
+  get controllerRoots() {
+    return Array.from(this._controllerRoots)
   }
 
   get guessedControllerRoots() {

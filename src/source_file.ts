@@ -40,6 +40,10 @@ export class SourceFile {
       .filter(controllerDefinition => controllerDefinition) as ControllerDefinition[]
   }
 
+  get exportedControllerDefinitions(): ControllerDefinition[] {
+    return this.controllerDefinitions.filter(controllerDefinition => controllerDefinition.classDeclaration.isExported)
+  }
+
   get hasErrors() {
     return this.errors.length > 0
   }
