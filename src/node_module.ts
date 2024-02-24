@@ -1,6 +1,7 @@
 import { SourceFile } from "./source_file"
 
 import { nodeModuleForPackageName } from "./util/npm"
+import { shouldIgnore } from "./packages"
 
 import type { Project } from "./project"
 import type { ControllerDefinition } from "./controller_definition"
@@ -40,10 +41,14 @@ export class NodeModule {
   }
 
   async initialize() {
+    if (shouldIgnore(this.name)) return
+
     await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.initialize()))
   }
 
   async analyze() {
+    if (shouldIgnore(this.name)) return
+
     const referencedFilePaths = this.sourceFiles.flatMap(s => s.importDeclarations.filter(i => i.isRelativeImport).map(i => i.resolvedRelativePath))
     const referencedSourceFiles = this.sourceFiles.filter(s => referencedFilePaths.includes(s.path))
 

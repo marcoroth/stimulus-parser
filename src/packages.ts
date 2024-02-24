@@ -14,6 +14,55 @@ export const helperPackages = [
   "vite-plugin-stimulus-hmr",
 ]
 
+export const ignoredPackageNamespaces = [
+  "@angular",
+  "@babel",
+  "@date-fns",
+  "@rollup",
+  "@types",
+]
+
+export const ignoredPackages = [
+  ...helperPackages,
+  "@hotwired/stimulus",
+  "@rails/webpacker",
+  "axios",
+  "babel-core",
+  "boostrap",
+  "tailwindcss",
+  "babel-eslint",
+  "babel-loader",
+  "babel-runtime",
+  "bun",
+  "chai",
+  "compression-webpack-plugin",
+  "core-js",
+  "esbuild-rails",
+  "esbuild",
+  "eslint",
+  "hotkeys-js",
+  "jquery",
+  "laravel-vite-plugin",
+  "lodash",
+  "mitt",
+  "mocha",
+  "moment",
+  "postcss",
+  "react",
+  "rollup",
+  "shakapacker",
+  "terser-webpack-plugin",
+  "typescript",
+  "vite-plugin-rails",
+  "vite-plugin-ruby",
+  "vite",
+  "vue",
+  "webpack-assets-manifest",
+  "webpack-cli",
+  "webpack-merge",
+  "webpack",
+]
+
 export async function analyzePackage(project: Project, name: string) {
   const nodeModulesPath = await findNodeModulesPath(project.projectPath)
 
@@ -25,16 +74,21 @@ export async function analyzePackage(project: Project, name: string) {
   return await anylzePackagePath(project, packagePath)
 }
 
+export function shouldIgnore(name: string): boolean {
+  if (ignoredPackages.includes(name)) return true
+
+  return ignoredPackageNamespaces.some(namespace => name.includes(namespace))
+}
+
 export async function anylzePackagePath(project: Project, packagePath: string) {
   const packageJSON = await parsePackageJSON(packagePath)
   const packageName = packageJSON.name
 
-  if (packageName === "@hotwired/stimulus") return
-  if (helperPackages.includes(packageName)) return
+  if (shouldIgnore(packageName)) return
 
   const nodeModule = await nodeModuleForPackageJSONPath(project, packagePath)
 
-  if (nodeModule) {
+  if (nodeModule && !project.detectedNodeModules.map(nodeModule => nodeModule.name).includes(packageName)) {
     project.detectedNodeModules.push(nodeModule)
 
     return nodeModule

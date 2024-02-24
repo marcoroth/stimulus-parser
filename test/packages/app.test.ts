@@ -99,7 +99,6 @@ describe("packages", () => {
         "stimulus-inline-input-validations",
         "stimulus-use",
         "tailwindcss-stimulus-components",
-        "tailwindcss-stimulus-components", // TODO: this shouldn't be duplicate
       ])
 
       expect(Array.from(project.controllerRoots)).toEqual(["src/controllers"])
@@ -249,29 +248,20 @@ describe("packages", () => {
         "WindowResizeController",
         "WordCountController",
         "alert",
-        "alert",
         "autosave",
-        "autosave",
-        "color-preview",
         "color-preview",
         "custom-modal",
-        "dropdown",
         "dropdown",
         "hello",
         "i",
         "input-validator",
         "modal",
-        "modal",
         "popover",
-        "popover",
-        "slideover",
         "slideover",
         "stimulus-checkbox",
         "stimulus-hotkeys",
         "t",
         "tabs",
-        "tabs",
-        "toggle",
         "toggle",
       ]
 
@@ -285,8 +275,8 @@ describe("packages", () => {
       expect(controller.valueDefinitionsMap.restoreScroll.type).toEqual("Boolean")
 
       expect(project.projectFiles.length).toEqual(4)
-      expect(project.allSourceFiles.length).toEqual(179)
-      // const allSourceFiles = project.allSourceFiles.map(s => s.path).sort()
+      expect(project.allSourceFiles.length).toEqual(168)
+      const allSourceFiles = project.allSourceFiles.map(s => s.path).sort()
 
       // re-analyzing shouldn't add source files or controllers twice
       await project.analyze()
@@ -296,8 +286,8 @@ describe("packages", () => {
       await project.analyzeAllDetectedModules()
 
       expect(project.projectFiles.length).toEqual(4)
-      expect(project.allSourceFiles.length).toEqual(189) // TODO: hotkeys and date-fns are now detected too, ideally we can figure out the right order to get them also the first time around
-      // expect(project.allSourceFiles.map(s => s.path).sort()).toEqual(allSourceFiles)
+      expect(project.allSourceFiles.length).toEqual(168)
+      expect(project.allSourceFiles.map(s => s.path).sort()).toEqual(allSourceFiles)
 
       expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["custom-modal", "hello"])
       expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
