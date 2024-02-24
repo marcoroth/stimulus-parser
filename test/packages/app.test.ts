@@ -73,7 +73,7 @@ describe("packages", () => {
       expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["custom-modal", "hello"])
       expect(project.allControllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(exportedIdentifiers)
       expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.guessedIdentifier).sort()).toEqual(exportedIdentifiers)
-    }, 10_000)
+    })
 
     test("detect all controllers", async () => {
       expect(project.controllerDefinitions.length).toEqual(0)
@@ -292,6 +292,6 @@ describe("packages", () => {
       expect(project.controllerDefinitions.map(controller => controller.guessedIdentifier).sort()).toEqual(["custom-modal", "hello"])
       expect(project.allControllerDefinitions.map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
       expect(project.allSourceFiles.flatMap(sourceFile => sourceFile.controllerDefinitions).map(controller => controller.classDeclaration.className || controller.guessedIdentifier).sort()).toEqual(allIdentifiers)
-    }, 10_000)
+    })
   })
 })
