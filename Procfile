@@ -1,1 +1,1 @@
-web: yarn serve
+web: cd playground && yarn serve
