@@ -1,11 +1,10 @@
-import { describe, expect, test } from "vitest"
-import { setupParser } from "../helpers/setup"
-
-const parser = setupParser()
+import dedent from "dedent"
+import { describe, test, expect } from "vitest"
+import { parseController } from "../helpers/parse"
 
 describe("parse classes", () => {
   test("static", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -13,14 +12,14 @@ describe("parse classes", () => {
       }
     `
 
-    const controller = parser.parseController(code, "class_controller.js")
+    const controller = parseController(code, "class_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.classes).toEqual(["one", "two", "three"])
+    expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
   test("duplicate static classes", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
       export default class extends Controller {
@@ -28,19 +27,69 @@ describe("parse classes", () => {
       }
     `
 
-    const controller = parser.parseController(code, "target_controller.js")
+    const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.classes).toEqual(["one", "one", "three"])
+    expect(controller.classNames).toEqual(["one", "one", "three"])
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
-    expect(controller.errors[0].message).toEqual("Duplicate definition of class:one")
-    expect(controller.errors[0].loc.start.line).toEqual(5)
-    expect(controller.errors[0].loc.end.line).toEqual(5)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one"`)
+    expect(controller.errors[0].loc.start.line).toEqual(4)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(4)
+    expect(controller.errors[0].loc.end.column).toEqual(42)
+  })
+
+  test("duplicate static classes from parent", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class Parent extends Controller {
+        static classes = ["one"]
+      }
+
+      export default class Child extends Parent {
+        static classes = ["one", "three"]
+      }
+    `
+
+    const controller = parseController(code, "target_controller.js", "Child")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.classNames).toEqual(["one", "three", "one"])
+    expect(controller.hasErrors).toBeTruthy()
+    expect(controller.errors).toHaveLength(1)
+    expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one". A parent controller already defines this Class.`)
+    expect(controller.errors[0].loc.start.line).toEqual(8)
+    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.end.line).toEqual(8)
+    expect(controller.errors[0].loc.end.column).toEqual(35)
+  })
+
+  test("assigns classes outside of class via member expression", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus"
+
+      class One extends Controller {}
+      class Two extends Controller {}
+
+      One.classes = ["one", "two"]
+    `
+
+    const one = parseController(code, "classes_controller.js", "One")
+    const two = parseController(code, "classes_controller.js", "Two")
+
+    expect(one.isTyped).toBeFalsy()
+    expect(one.classNames).toEqual(["one", "two"])
+    expect(one.hasErrors).toBeFalsy()
+
+    expect(two.isTyped).toBeFalsy()
+    expect(two.classNames).toEqual([])
+    expect(two.hasErrors).toBeFalsy()
   })
 
   test("single @Class decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Class, TypedController } from "@vytant/stimulus-decorators";
 
@@ -50,14 +99,14 @@ describe("parse classes", () => {
       }
     `
 
-    const controller = parser.parseController(code, "class_controller.js")
+    const controller = parseController(code, "class_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["random"])
+    expect(controller.classNames).toEqual(["random"])
   })
 
   test("single @Classes decorator", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Classes, TypedController } from "@vytant/stimulus-decorators";
 
@@ -67,14 +116,14 @@ describe("parse classes", () => {
       }
     `
 
-    const controller = parser.parseController(code, "target_controller.js")
+    const controller = parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["random"])
+    expect(controller.classNames).toEqual(["random"])
   })
 
   test("parse multiple class definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Class, TypedController } from "@vytant/stimulus-decorators";
 
@@ -85,14 +134,14 @@ describe("parse classes", () => {
       }
     `
 
-    const controller = parser.parseController(code, "decorator_controller.js")
+    const controller = parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["one", "two"])
+    expect(controller.classNames).toEqual(["one", "two"])
   })
 
   test("parse mix decorator and static definitions", () => {
-    const code = `
+    const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Class, Classes, TypedController } from "@vytant/stimulus-decorators";
 
@@ -106,9 +155,9 @@ describe("parse classes", () => {
       }
     `
 
-    const controller = parser.parseController(code, "decorator_controller.js")
+    const controller = parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.classes).toEqual(["output", "name", "item", "one", "two"])
+    expect(controller.classNames).toEqual(["output", "name", "item", "one", "two"])
   })
 })

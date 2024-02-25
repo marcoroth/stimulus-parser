@@ -34,13 +34,13 @@ const project = new Project("/Users/user/path/to/project")
 const controllers = project.controllerDefinitions
 const controller = controllers[0]
 
-console.log(controller.methods)
+console.log(controller.actionNames)
 // => ["connect", "click", "disconnect"]
 
-console.log(controller.targets)
+console.log(controller.targetNames)
 // => ["name", "output"]
 
-console.log(controller.classes)
+console.log(controller.classNames)
 // => ["loading"]
 
 console.log(controller.values)

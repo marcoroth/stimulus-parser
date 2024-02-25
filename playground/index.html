@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stimulus Parser Playground</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" integrity="sha512-GWzVrcGlo0TxTRvz9ttioyYJ+Wwk9Ck0G81D+eO63BaqHaJ3YZX9wuqjwgfcV/MrB2PhaVX9DkYVhbFpStnqpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script defer data-domain="stimulus-parser.hotwire.io" src="https://plausible.io/js/script.js"></script>
+</head>
+
+<body class="bg-white flex flex-col" data-controller="playground">
+  <script type="module" src="/src/entry-client.ts"></script>
+
+  <div class="w-full">
+    <nav class="bg-white border px-8 flex h-16 justify-between">
+      <div class="flex ml-1 flex-1 items-stretch justify-start">
+        <div class="inline-flex items-center px-1 pt-1 text-lg font-medium text-gray-900">Stimulus Parser Playground</div>
+      </div>
+    </nav>
+
+    <div class="px-8 h-screen">
+      <div class="mx-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="mt-6">
+          <div class="flex justify-between">
+            <div class="text-gray-900 rounded-md py-1.5 text-sm font-medium">Stimulus Controller</div>
+
+            <div class="flex gap-3">
+              <button data-action="click->playground#share" id="copy-share-url" class="text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md px-3 py-1.5 text-sm font-medium">
+                <i class="fas fa-copy"></i>
+                <i class="fas fa-circle-check text-green-600 hidden ease-in duration-300"></i>
+                <i class="fas fa-circle-xmark text-red-600 hidden ease-in duration-300"></i>
+
+                <span class="ml-1">Copy Share URL</span>
+              </button>
+
+              <button data-action="click->playground#insert click->playground#analyze" id="example" class="text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md px-3 py-1.5 text-sm font-medium">
+                <i class="fas fa-file w-4"></i>
+                <i class="fas fa-circle-check w-4 text-green-600 hidden ease-in duration-300"></i>
+
+                <span class="ml-1">Example</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <textarea data-playground-target="input" data-action="input->playground#analyze" id="input" class="p-3 bg-gray-50 font-mono w-full text-black rounded-md border border-gray-300 text-sm h-[30vh] md:h-[90vh]" placeholder="Paste Stimulus Controller here"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-6" data-contoller="output">
+          <div class="flex justify-between">
+            <div class="text-gray-900 rounded-md px-0 py-1.5 text-sm font-medium">Parse Result</div>
+
+            <div class="flex gap-3">
+              <button data-playground-target="viewerButton" data-viewer="simple" data-action="click->playground#selectViewer" class="text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md px-3 py-1.5 text-sm font-medium data-[active=true]:bg-blue-600 data-[active=true]:hover:bg-blue-700 data-[active=true]:text-white" data-active="true">
+                <i class="fas fa-list"></i>
+                <span class="ml-1">Simple</span>
+              </button>
+
+              <button data-playground-target="viewerButton" data-viewer="full" data-action="click->playground#selectViewer" class="text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-md px-3 py-1.5 text-sm font-medium data-[active=true]:bg-blue-600 data-[active=true]:hover:bg-blue-700 data-[active=true]:text-white" data-active="false">
+                <i class="fas fa-folder-tree"></i>
+                <span class="ml-1">Full</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <json-viewer data-playground-target="simpleViewer" class="py-0 px-5 rounded-lg font-mono h-[50vh] md:h-[90vh] overflow-scroll"></json-viewer>
+            <json-viewer data-playground-target="fullViewer" class="hidden py-0 px-5 rounded-lg font-mono h-[50vh] md:h-[90vh] overflow-scroll"></json-viewer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="sticky bottom-0 bg-white">
+    <div class="w-full pt-3 pb-3 px-6 border-t border-gray-200">
+      <div class="flex flex-row justify-between items-center px-3 text-left">
+        <div class="flex justify-center text-sm text-black">
+          <span>Stimulus Parser Playground - Built by <a class="font-semibold" href="https://github.com/marcoroth" target="_blank">Marco Roth</a></span>
+        </div>
+        <div class="flex flex-col py-4 flex-row-reserve space-x-4 py-0">
+          <a href="https://github.com/marcoroth/stimulus-parser" target="_blank" class="opacity-50 hover:opacity-100">
+            <i class="h-6 w-6 fa-brands fa-github text-black"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

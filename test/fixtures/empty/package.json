@@ -1,0 +1,7 @@
+{
+  "name": "empty",
+  "private": true,
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2"
+  }
+}

@@ -16,11 +16,15 @@
     "dev": "yarn watch",
     "clean": "rimraf dist",
     "prerelease": "yarn build",
+    "install:fixtures": "node scripts/setupFixtures.mjs",
+    "postinstall": "yarn install:fixtures",
+    "pretest": "yarn install:fixtures",
     "test": "vitest"
   },
   "dependencies": {
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
     "@typescript-eslint/typescript-estree": "^7.0.1",
+    "@typescript-eslint/visitor-keys": "^7.0.2",
     "acorn-walk": "^8.3.1",
     "astring": "^1.8.6",
     "fs": "^0.0.1-security",
@@ -37,6 +41,6 @@
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
-    "vitest": "^1.0.4"
+    "vitest": "^1.2.2"
   }
 }
