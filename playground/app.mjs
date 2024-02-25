@@ -1,5 +1,7 @@
 import express from "express"
-import { Project, SourceFile, ClassDeclaration, ControllerDefinition, ExportDeclaration, ImportDeclaration } from "stimulus-parser"
+import parser from "stimulus-parser"
+
+const { Project, SourceFile, ClassDeclaration, ControllerDefinition, ExportDeclaration, ImportDeclaration } = parser
 
 const headers = { "Content-Type": "application/json" }
 
