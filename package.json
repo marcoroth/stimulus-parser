@@ -17,7 +17,6 @@
     "clean": "rimraf dist",
     "prerelease": "yarn build",
     "install:fixtures": "node scripts/setupFixtures.mjs",
-    "postinstall": "yarn install:fixtures",
     "pretest": "yarn install:fixtures",
     "test": "vitest"
   },
