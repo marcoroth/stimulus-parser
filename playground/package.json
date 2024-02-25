@@ -3,11 +3,11 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node server.dev.mjs",
+    "dev": "node server.dev.mjs",
     "build": "npm run build:client",
     "build:client": "vite build --outDir dist/client",
-    "preview": "cross-env NODE_ENV=production node server.prod.mjs",
-    "serve": "cross-env NODE_ENV=production node server.prod.mjs"
+    "preview": "yarn run serve",
+    "serve": "node server.prod.mjs"
   },
   "dependencies": {
     "@alenaksu/json-viewer": "^2.0.1",
@@ -20,7 +20,6 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.5",
-    "cross-env": "^7.0.3",
     "typescript": "^5.3.3",
     "vite": "^5.0.10"
   }
