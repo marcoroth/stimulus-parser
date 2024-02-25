@@ -5,7 +5,7 @@ import { fileURLToPath } from "url"
 import { createServer as createViteServer } from "vite"
 import { app } from "./app.mjs"
 
-const PORT = 5173
+const PORT = process.env.PORT || 5173
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const vite = await createViteServer({
