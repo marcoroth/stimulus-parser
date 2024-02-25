@@ -23,3 +23,6 @@ yarn-error.log
 /test
 /coverage
 /assets
+/playground
+/scratch
+/scripts
