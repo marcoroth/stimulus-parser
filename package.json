@@ -18,7 +18,7 @@
     "prerelease": "yarn build",
     "install:fixtures": "node scripts/setupFixtures.mjs",
     "install:playground": "cd playground && yarn install && cd -",
-    "postinstall": "yarn install:fixtures",
+    "postinstall": "yarn install:fixtures && yarn install:playground",
     "postbuild": "cd playground && yarn build && cd -",
     "pretest": "yarn install:fixtures",
     "test": "vitest",
