@@ -317,7 +317,10 @@ export class SourceFile {
       },
 
       ClassExpression: node => {
-        this.classDeclarations.push(new ClassDeclaration(this, undefined, node))
+        const className = ast.extractIdentifier(node.id)
+        const classDeclaration = new ClassDeclaration(this, className, node)
+
+        this.classDeclarations.push(classDeclaration)
       },
 
       VariableDeclaration: node => {
