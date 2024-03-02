@@ -178,6 +178,33 @@ describe("SourceFile", () => {
       expect(something.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
     })
 
+    test("anonymous class (ClassExpression) as argument to function call", async () => {
+      const code = dedent`
+        import { Controller } from "@hotwired/stimulus"
+
+        application.register(class extends Controller {
+          connect() {}
+          disconnect() {}
+        })
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      expect(sourceFile.classDeclarations).toHaveLength(1)
+
+      const something = sourceFile.classDeclarations[0]
+
+      expect(something).toBeDefined()
+      expect(something.isStimulusDescendant).toBeTruthy()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.isStimulusDescendant).toBeTruthy()
+      expect(something.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
+      expect(something.controllerDefinition.actionNames).toEqual(["connect", "disconnect"])
+    })
+
     test("named class with superclass from import via second class", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"

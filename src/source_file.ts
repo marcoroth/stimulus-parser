@@ -316,6 +316,10 @@ export class SourceFile {
         this.classDeclarations.push(classDeclaration)
       },
 
+      ClassExpression: node => {
+        this.classDeclarations.push(new ClassDeclaration(this, undefined, node))
+      },
+
       VariableDeclaration: node => {
         node.declarations.forEach(declaration => {
           if (declaration.type !== "VariableDeclarator") return
