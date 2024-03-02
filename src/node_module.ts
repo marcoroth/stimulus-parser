@@ -16,6 +16,8 @@ interface NodeModuleArgs {
 }
 
 export class NodeModule {
+  public isAnalyzed: boolean = false
+
   public readonly project: Project
   public readonly name: string
   public readonly path: string
@@ -42,18 +44,22 @@ export class NodeModule {
 
   async initialize() {
     if (shouldIgnore(this.name)) return
+    if (this.isAnalyzed) return
 
     await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.initialize()))
   }
 
   async analyze() {
     if (shouldIgnore(this.name)) return
+    if (this.isAnalyzed) return
 
     const referencedFilePaths = this.sourceFiles.flatMap(s => s.importDeclarations.filter(i => i.isRelativeImport).map(i => i.resolvedRelativePath))
     const referencedSourceFiles = this.sourceFiles.filter(s => referencedFilePaths.includes(s.path))
 
     await Promise.allSettled(referencedSourceFiles.map(sourceFile => sourceFile.analyze()))
     await Promise.allSettled(this.sourceFiles.map(sourceFile => sourceFile.analyze()))
+
+    this.isAnalyzed = true
   }
 
   async refresh() {
