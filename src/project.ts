@@ -174,6 +174,8 @@ export class Project {
     if (!projectFile) return
 
     await projectFile.refresh()
+
+    return projectFile
   }
 
 
@@ -196,7 +198,7 @@ export class Project {
         await analyzePackage(this, packageName)
       )
 
-      if (nodeModule) {
+      if (nodeModule && !nodeModule.isAnalyzed) {
         await nodeModule.initialize()
       }
     })
@@ -210,8 +212,16 @@ export class Project {
   }
 
   async analyzeAllDetectedModules() {
-    await Promise.allSettled(this.detectedNodeModules.map(module => module.initialize()))
-    await Promise.allSettled(this.detectedNodeModules.map(module => module.analyze()))
+    const notAnalyzed = this.detectedNodeModules.filter(module => !module.isAnalyzed)
+
+    await Promise.allSettled(notAnalyzed.map(module => module.initialize()))
+    await Promise.allSettled(notAnalyzed.map(module => module.analyze()))
+  }
+
+  async refreshAllDetectedModules() {
+    const analyzed = this.detectedNodeModules.filter(module => module.isAnalyzed)
+
+    await Promise.allSettled(analyzed.map(module => module.refresh()))
   }
 
   async analyzeStimulusApplicationFile() {
