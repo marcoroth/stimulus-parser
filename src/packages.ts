@@ -71,7 +71,7 @@ export async function analyzePackage(project: Project, name: string) {
 
   const packagePath = path.join(nodeModulesPath, name, "package.json")
 
-  return await anylzePackagePath(project, packagePath)
+  return await analyzePackagePath(project, packagePath)
 }
 
 export function shouldIgnore(name: string): boolean {
@@ -80,7 +80,7 @@ export function shouldIgnore(name: string): boolean {
   return ignoredPackageNamespaces.some(namespace => name.includes(namespace))
 }
 
-export async function anylzePackagePath(project: Project, packagePath: string) {
+export async function analyzePackagePath(project: Project, packagePath: string) {
   const packageJSON = await parsePackageJSON(packagePath)
   const packageName = packageJSON.name
 
@@ -109,6 +109,6 @@ export async function analyzeAll(project: Project) {
   ]
 
   await Promise.allSettled(
-    packages.map(packagePath => anylzePackagePath(project, packagePath))
+    packages.map(packagePath => analyzePackagePath(project, packagePath))
   )
 }
