@@ -316,6 +316,13 @@ export class SourceFile {
         this.classDeclarations.push(classDeclaration)
       },
 
+      ClassExpression: node => {
+        const className = ast.extractIdentifier(node.id)
+        const classDeclaration = new ClassDeclaration(this, className, node)
+
+        this.classDeclarations.push(classDeclaration)
+      },
+
       VariableDeclaration: node => {
         node.declarations.forEach(declaration => {
           if (declaration.type !== "VariableDeclarator") return
