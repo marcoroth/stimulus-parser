@@ -164,8 +164,12 @@ export class ControllerDefinition {
     const hasMoreThanOneController = this.classDeclaration?.sourceFile.classDeclarations.filter(klass => klass.isStimulusDescendant).length > 1
     const isProjectFile = this.path.includes("node_modules")
 
+    const strip = (identifier: string): string => {
+      return identifier.replace(/^stimulus-/, "").replace(/-controller$/, "")
+    }
+
     if (className && ((isProjectFile && hasMoreThanOneController) || (!isProjectFile))) {
-      return dasherize(uncapitalize(className.replace("Controller", "")))
+      return strip(dasherize(uncapitalize(className.replace("Controller", ""))))
     }
 
     const folder = path.dirname(this.controllerPath)
@@ -184,15 +188,16 @@ export class ControllerDefinition {
     }
 
     if (file === `controller${extension}`) {
-      return identifierForContextKey(`${folder}_${file}${extension}`) || ""
+      return strip(identifierForContextKey(`${folder}_${file}${extension}`) || "")
     } else if (this.path.includes("node_modules")) {
       const identifier = dasherize(camelize(path.basename(this.path, path.extname(this.path))))
 
-      return (identifier === "index") ? toControllerIdentifier(path.dirname(this.path)) : identifier
+      return (identifier === "index") ? strip(toControllerIdentifier(path.dirname(this.path))) : strip(identifier)
     } else if (!filename.endsWith("controller")) {
-      return identifierForContextKey(`${folder}/${filename}_controller${extension}`) || ""
+
+      return strip(identifierForContextKey(`${folder}/${filename}_controller${extension}`) || "")
     } else {
-      return identifierForContextKey(this.guessedControllerPath) || ""
+      return strip(identifierForContextKey(this.guessedControllerPath) || "")
     }
   }
 
