@@ -470,4 +470,76 @@ describe("parse values", () => {
       },
     })
   })
+
+  test("implicit version", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus";
+
+      export default class extends Controller {
+        static values = {
+          string: "Number"
+        }
+      }
+    `
+
+    const controller = parseController(code, "value_controller.ts")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.valueDefinitionsMap).toEqual({
+      string: {
+        type: "String",
+        default: "Number",
+        kind: "inferred",
+      },
+    })
+  })
+
+  test("shorthand-version", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus";
+
+      export default class extends Controller {
+        static values = {
+          name: String,
+        }
+      }
+    `
+
+    const controller = parseController(code, "value_controller.ts")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.valueDefinitionsMap).toEqual({
+      name: {
+        type: "String",
+        default: "Number",
+        kind: "short",
+      },
+    })
+  })
+
+  test("explicit-version", () => {
+    const code = dedent`
+      import { Controller } from "@hotwired/stimulus";
+
+      export default class extends Controller {
+        static values = {
+          name: {
+            type: String,
+            default: "Stimulus"
+          }
+        }
+      }
+    `
+
+    const controller = parseController(code, "value_controller.ts")
+
+    expect(controller.isTyped).toBeFalsy()
+    expect(controller.valueDefinitionsMap).toEqual({
+      name: {
+        type: "String",
+        default: "Number",
+        kind: "explicit",
+      },
+    })
+  })
 })
