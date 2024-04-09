@@ -11,6 +11,7 @@ export type ValueDefinitionValue = string | number | bigint | boolean | object |
 export type ValueDefinition = {
   type: string
   default: ValueDefinitionValue
+  loc?: any
 }
 
 export type ValueDefinitionObject = { [key: string]: ValueDefinition }

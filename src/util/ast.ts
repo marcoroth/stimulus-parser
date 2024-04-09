@@ -62,6 +62,7 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
   const defaultProperty = findPropertyInProperties(objectExpression.properties, "default")
 
   let type = undefined
+  let loc = undefined
 
   switch (typeProperty?.value?.type) {
     case "Identifier":
@@ -73,13 +74,18 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
       break
   }
 
-  if (!type) return
+  if (!type) {
+    return
+  } else {
+    loc = typeProperty?.value.loc
+  }
 
   let defaultValue = getDefaultValueFromNode(defaultProperty?.value)
 
   return {
     type,
     default: defaultValue,
+    loc: loc
   }
 }
 

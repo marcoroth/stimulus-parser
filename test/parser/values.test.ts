@@ -49,11 +49,11 @@ describe("parse values", () => {
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "string" },
-      object: { type: "Object", default: { object: "Object" } },
-      boolean: { type: "Boolean", default: true },
-      array: { type: "Array", default: ["Array"] },
-      number: { type: "Number", default: 1 },
+      string: { type: "String", default: "string", loc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } } },
+      object: { type: "Object", default: { object: "Object" }, loc: { end: { column: 26, line: 6 }, start: { column: 20, line: 6 } } },
+      boolean: { type: "Boolean", default: true, loc: { end: { column: 28, line: 7 }, start: { column: 21, line: 7 } } },
+      array: { type: "Array", default: ["Array"], loc: { end: { column: 24, line: 8 }, start: { column: 19, line: 8 } } },
+      number: { type: "Number", default: 1, loc: { end: { column: 26, line: 9 }, start: { column: 20, line: 9 } } },
     })
   })
 
@@ -268,10 +268,13 @@ describe("parse values", () => {
       object: {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },
+        loc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } }
       },
       array: {
         type: "Array",
         default: [["Array", "with", ["nested", ["values"]]]],
+
+        loc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } }
       },
     })
   })
