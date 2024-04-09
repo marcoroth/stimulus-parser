@@ -1,5 +1,5 @@
 import { describe, beforeEach, test, expect } from "vitest"
-import { setupProject } from "../helpers/setup"
+import { setupProject } from "../helpers/setup"
 
 let project = setupProject("controller-paths")
 

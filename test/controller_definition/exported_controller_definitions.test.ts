@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 
-import { SourceFile } from "../../src"
+import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
 
 let project = setupProject("empty")

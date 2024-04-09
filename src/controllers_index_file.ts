@@ -61,7 +61,7 @@ export class ControllersIndexFile {
           const identifier = (identifierNode.type === "Literal") ? identifierNode.value?.toString() : null
           const controllerName = (controllerNode.type === "Identifier") ? controllerNode.name : null
 
-          if (!identifier || !controllerName) return // TODO: probably should add an error here
+          if (!identifier || !controllerName) return // TODO: probably should add an error here
 
           const importDeclaration = this.sourceFile.findImport(controllerName)
           if (!importDeclaration) return // TODO: probably should add an error here
@@ -193,7 +193,7 @@ export class ControllersIndexFile {
           if (node.callee.object.name === "require" && node.callee.property.name === "context") {
             const [folder, _arg, pattern] = node.arguments.map(m => m.type === "Literal" ? m.value : undefined).filter(c => c).slice(0, 3)
 
-            const controllerRoot = path.join(path.dirname(path.dirname(this.sourceFile.path)), folder?.toString() || "")
+            const controllerRoot = path.join(path.dirname(path.dirname(this.sourceFile.path)), folder?.toString() || "")
             this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
 
             if (pattern instanceof RegExp) {
@@ -226,7 +226,7 @@ export class ControllersIndexFile {
   private async evaluateControllerGlob(controllersGlob: string, type: ControllerLoadMode) {
     const controllerFiles = (await glob(controllersGlob)).map(path => this.project.relativePath(path))
     const sourceFiles = this.project.projectFiles.filter(file => controllerFiles.includes(this.project.relativePath(file.path)))
-    const controllerDefinitions = sourceFiles.flatMap(file => file.defaultExportControllerDefinition || [])
+    const controllerDefinitions = sourceFiles.flatMap(file => file.defaultExportControllerDefinition || [])
 
     controllerDefinitions.forEach(controller => {
       this.registeredControllers.push(new RegisteredController(controller.guessedIdentifier, controller, type))

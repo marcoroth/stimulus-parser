@@ -42,8 +42,8 @@ export type ApplicationType =
 export type ControllerLoadMode =
   "load" |
   "register" |
-  "stimulus-loading-lazy" | 
+  "stimulus-loading-lazy" |
   "stimulus-loading-eager" |
-  "esbuild-rails" | 
+  "esbuild-rails" |
   "stimulus-vite-helpers" |
   "stimulus-webpack-helpers"

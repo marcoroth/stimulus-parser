@@ -28,7 +28,7 @@ export class ExportDeclaration {
   }
 
   get isStimulusExport(): boolean {
-    return this.exportedClassDeclaration?.isStimulusDescendant || false
+    return this.exportedClassDeclaration?.isStimulusDescendant || false
   }
 
   get highestAncestor() {

@@ -51,7 +51,7 @@ export class ControllerDefinition {
 
   get actions(): MethodDefinition[] {
     return this.classDeclaration.ancestors.flatMap(klass =>
-      klass.controllerDefinition?.methodDefinitions || []
+      klass.controllerDefinition?.methodDefinitions || []
     )
   }
 
@@ -71,7 +71,7 @@ export class ControllerDefinition {
 
   get targets(): TargetDefinition[] {
     return this.classDeclaration.ancestors.flatMap(klass =>
-      klass.controllerDefinition?.targetDefinitions || []
+      klass.controllerDefinition?.targetDefinitions || []
     )
   }
 
@@ -91,7 +91,7 @@ export class ControllerDefinition {
 
   get classes(): ClassDefinition[] {
     return this.classDeclaration.ancestors.flatMap(klass =>
-      klass.controllerDefinition?.classDefinitions || []
+      klass.controllerDefinition?.classDefinitions || []
     )
   }
 

@@ -6,7 +6,7 @@ import type { ValueDefinitionValue, ValueDefinition as ValueDefinitionType } fro
 // AssignmentExpression | PropertyDefinition
 //
 // maybe the ControllerPropertyDefinition superclass should be Acorn.Node, but the subclasses themselves can narrow down the type
-type Node = Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.ObjectExpression
+type Node = Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.ObjectExpression
 
 export abstract class ControllerPropertyDefinition {
   constructor(

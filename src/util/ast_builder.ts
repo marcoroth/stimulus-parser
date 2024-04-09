@@ -37,7 +37,7 @@ export function ClassBody(body: (Acorn.MethodDefinition | Acorn.PropertyDefiniti
   }
 }
 
-export function ClassDeclaration(id: Acorn.Identifier | null, superClass?: Acorn.Identifier, body?: (Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.StaticBlock)[]): Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration {
+export function ClassDeclaration(id: Acorn.Identifier | null, superClass?: Acorn.Identifier, body?: (Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.StaticBlock)[]): Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration {
   return {
     ...node,
     type: "ClassDeclaration",
@@ -51,7 +51,7 @@ export function ImportSpecifier(imported: Acorn.Identifier, local?: Acorn.Identi
   return {
     ...node,
     type: "ImportSpecifier",
-    local: local || imported,
+    local: local || imported,
     imported,
   }
 }

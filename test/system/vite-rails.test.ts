@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest"
-import { setupProject } from "../helpers/setup"
+import { setupProject } from "../helpers/setup"
 
 const project = setupProject("vite-rails")
 
