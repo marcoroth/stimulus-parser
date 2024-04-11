@@ -243,9 +243,9 @@ export class ControllerDefinition {
 
   addValueDefinition(valueDefinition: ValueDefinition) {
     if (this.localValueNames.includes(valueDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Value "${valueDefinition.name}"`, valueDefinition.loc))
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Value "${valueDefinition.name}"`, valueDefinition.definition.keyLoc))
     } else if (this.valueNames.includes(valueDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Value "${valueDefinition.name}". A parent controller already defines this Value.`, valueDefinition.loc))
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Value "${valueDefinition.name}". A parent controller already defines this Value.`, valueDefinition.definition.keyLoc))
     }
 
     this.valueDefinitions.push(valueDefinition)
