@@ -97,6 +97,7 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
   return {
     type,
     default: defaultValue,
+    kind: "expanded",
     keyLoc,
     valueLoc,
   }
@@ -108,6 +109,7 @@ export function convertPropertyToValueDefinition(property: Acorn.Property): Valu
       return {
         type: property.value.name,
         default: ValueDefinition.defaultValuesForType[property.value.name],
+        kind: "shorthand",
         keyLoc: property.key.loc,
         valueLoc: property.value.loc
       }

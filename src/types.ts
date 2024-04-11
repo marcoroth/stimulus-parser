@@ -7,12 +7,14 @@ export type NestedObject<T> = {
 }
 
 export type ValueDefinitionValue = string | number | bigint | boolean | object | null | undefined
+export type ValueDefinitionKind = "expanded" | "inferred" | "shorthand" | "decorator"
 
 export type ValueDefinition = {
   type: string
   default: ValueDefinitionValue
   keyLoc: Acorn.SourceLocation | undefined | null
   valueLoc: Acorn.SourceLocation | undefined | null
+  kind: ValueDefinitionKind
 }
 
 export type ValueDefinitionObject = { [key: string]: ValueDefinition }
