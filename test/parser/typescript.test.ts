@@ -79,6 +79,7 @@ describe("with TS Syntax", () => {
       array: {
         type: "Array",
         default: [],
+        kind: "shorthand",
         keyLoc: {
           end: { column: 9, line: 8 },
           start: { column: 4, line: 8 },
@@ -91,6 +92,7 @@ describe("with TS Syntax", () => {
       boolean: {
         type: "Boolean",
         default: false,
+        kind: "shorthand",
         keyLoc: {
           end: { column: 11, line: 7 },
           start: { column: 4, line: 7 },
@@ -103,6 +105,7 @@ describe("with TS Syntax", () => {
       number: {
         type: "Number",
         default: 0,
+        kind: "shorthand",
         keyLoc: {
           end: { column: 10, line: 9 },
           start: { column: 4, line: 9 },
@@ -115,6 +118,7 @@ describe("with TS Syntax", () => {
       object: {
         type: "Object",
         default: {},
+        kind: "shorthand",
         keyLoc: {
           end: { column: 10, line: 6 },
           start: { column: 4, line: 6 },
@@ -127,6 +131,7 @@ describe("with TS Syntax", () => {
       string: {
         type: "String",
         default: "",
+        kind: "shorthand",
         keyLoc: {
           end: { column: 10, line: 5 },
           start: { column: 4, line: 5 },
@@ -162,11 +167,40 @@ describe("with TS Syntax", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "string", valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } }, keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } } },
-      object: { type: "Object", default: { object: "Object" }, valueLoc: { end: { column: 26, line: 6 }, start: { column: 20, line: 6 } }, keyLoc: { end: { column: 18, line: 6 }, start: { column: 14, line: 6 } } },
-      boolean: { type: "Boolean", default: true, valueLoc: { end: { column: 28, line: 7 }, start: { column: 21, line: 7 } }, keyLoc: { end: { column: 19, line: 7 }, start: { column: 15, line: 7 } } },
-      array: { type: "Array", default: ["Array"], valueLoc: { end: { column: 24, line: 8 }, start: { column: 19, line: 8 } }, keyLoc: { end: { column: 17, line: 8 }, start: { column: 13, line: 8 } } },
-      number: { type: "Number", default: 1, valueLoc: { end: { column: 26, line: 9 }, start: { column: 20, line: 9 } }, keyLoc: { end: { column: 18, line: 9 }, start: { column: 14, line: 9 } } },
+      string: {
+        type: "String",
+        default: "string",
+        kind: "explicit",
+        valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } },
+        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } }
+      },
+      object: {
+        type: "Object",
+        default: { object: "Object" },
+        kind: "explicit",
+        valueLoc: { end: { column: 26, line: 6 }, start: { column: 20, line: 6 } },
+        keyLoc: { end: { column: 18, line: 6 }, start: { column: 14, line: 6 } } },
+      boolean: {
+        type: "Boolean",
+        default: true,
+        kind: "explicit",
+        valueLoc: { end: { column: 28, line: 7 }, start: { column: 21, line: 7 } },
+        keyLoc: { end: { column: 19, line: 7 }, start: { column: 15, line: 7 } }
+      },
+      array: {
+        type: "Array",
+        default: ["Array"],
+        kind: "explicit",
+        valueLoc: { end: { column: 24, line: 8 }, start: { column: 19, line: 8 } },
+        keyLoc: { end: { column: 17, line: 8 }, start: { column: 13, line: 8 } }
+      },
+      number: {
+        type: "Number",
+        default: 1,
+        kind: "explicit",
+        valueLoc: { end: { column: 26, line: 9 }, start: { column: 20, line: 9 } },
+        keyLoc: { end: { column: 18, line: 9 }, start: { column: 14, line: 9 } }
+      },
     })
   })
 
@@ -264,12 +298,14 @@ describe("with TS Syntax", () => {
       object: {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },
+        kind: "explicit",
         valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } },
         keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } }
       },
       array: {
         type: "Array",
         default: [["Array", "with", ["nested", ["values"]]]],
+        kind: "explicit",
         valueLoc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } },
         keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } }
       },
