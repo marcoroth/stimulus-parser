@@ -76,11 +76,66 @@ describe("with TS Syntax", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "" },
-      object: { type: "Object", default: {} },
-      boolean: { type: "Boolean", default: false },
-      array: { type: "Array", default: [] },
-      number: { type: "Number", default: 0 },
+      array: {
+        type: "Array",
+        default: [],
+        keyLoc: {
+          end: { column: 9, line: 8 },
+          start: { column: 4, line: 8 },
+        },
+        valueLoc: {
+          end: { column: 16, line: 8 },
+          start: { column: 11, line: 8 },
+        },
+      },
+      boolean: {
+        type: "Boolean",
+        default: false,
+        keyLoc: {
+          end: { column: 11, line: 7 },
+          start: { column: 4, line: 7 },
+        },
+        valueLoc: {
+          end: { column: 20, line: 7 },
+          start: { column: 13, line: 7 },
+        },
+      },
+      number: {
+        type: "Number",
+        default: 0,
+        keyLoc: {
+          end: { column: 10, line: 9 },
+          start: { column: 4, line: 9 },
+        },
+        valueLoc: {
+          end: { column: 18, line: 9 },
+          start: { column: 12, line: 9 },
+        },
+      },
+      object: {
+        type: "Object",
+        default: {},
+        keyLoc: {
+          end: { column: 10, line: 6 },
+          start: { column: 4, line: 6 },
+        },
+        valueLoc: {
+          end: { column: 18, line: 6 },
+          start: { column: 12, line: 6 },
+        },
+      },
+      string: {
+        type: "String",
+        default: "",
+        keyLoc: {
+          end: { column: 10, line: 5 },
+          start: { column: 4, line: 5 },
+        },
+        valueLoc: {
+          end: { column: 18, line: 5 },
+          start: { column: 12, line: 5 },
+        },
+      },
     })
   })
 
@@ -206,17 +261,17 @@ describe("with TS Syntax", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.valueDefinitionsMap).toEqual({
-      object: { 
-        type: "Object", 
-        default: { object: { some: { more: { levels: {} } } } }, 
+      object: {
+        type: "Object",
+        default: { object: { some: { more: { levels: {} } } } },
         valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } },
-        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } } 
+        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } }
       },
-      array: { 
-        type: "Array", 
-        default: [["Array", "with", ["nested", ["values"]]]], 
+      array: {
+        type: "Array",
+        default: [["Array", "with", ["nested", ["values"]]]],
         valueLoc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } },
-        keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } } 
+        keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } }
       },
     })
   })

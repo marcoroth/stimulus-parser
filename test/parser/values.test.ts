@@ -22,11 +22,66 @@ describe("parse values", () => {
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "" },
-      object: { type: "Object", default: {} },
-      boolean: { type: "Boolean", default: false },
-      array: { type: "Array", default: [] },
-      number: { type: "Number", default: 0 },
+      array: {
+        type: "Array",
+        default: [],
+        keyLoc: {
+          end: { column: 9, line: 8 },
+          start: { column: 4, line: 8 },
+        },
+        valueLoc: {
+          end: { column: 16, line: 8 },
+          start: { column: 11, line: 8 },
+        },
+      },
+      boolean: {
+        type: "Boolean",
+        default: false,
+        keyLoc: {
+          end: { column: 11, line: 7 },
+          start: { column: 4, line: 7 },
+        },
+        valueLoc: {
+          end: { column: 20, line: 7 },
+          start: { column: 13, line: 7 },
+        },
+      },
+      number: {
+        type: "Number",
+        default: 0,
+        keyLoc: {
+          end: { column: 10, line: 9 },
+          start: { column: 4, line: 9 },
+        },
+        valueLoc: {
+          end: { column: 18, line: 9 },
+          start: { column: 12, line: 9 },
+        },
+      },
+      object: {
+        type: "Object",
+        default: {},
+        keyLoc: {
+          end: { column: 10, line: 6 },
+          start: { column: 4, line: 6 },
+        },
+        valueLoc: {
+          end: { column: 18, line: 6 },
+          start: { column: 12, line: 6 },
+        },
+      },
+      string: {
+        type: "String",
+        default: "",
+        keyLoc: {
+          end: { column: 10, line: 5 },
+          start: { column: 4, line: 5 },
+        },
+        valueLoc: {
+          end: { column: 18, line: 5 },
+          start: { column: 12, line: 5 },
+        },
+      },
     })
   })
 
@@ -230,7 +285,7 @@ describe("parse values", () => {
       @TypedController
       export default class extends Controller {
         static values = {
-          one: { type: "String", default: ""}
+          one: { type: "String", default: "" }
         }
 
         @Value(String) oneValue!: string;
@@ -269,11 +324,36 @@ describe("parse values", () => {
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "" },
-      object: { type: "Object", default: {} },
-      boolean: { type: "Boolean", default: false },
-      array: { type: "Array", default: [] },
-      number: { type: "Number", default: 0 },
+      array: {
+        type: "Array",
+        default: [],
+        keyLoc: { end: { column: 15, line: 9 }, start: { column: 2, line: 9 } },
+        valueLoc: { end: { column: 32, line: 9 }, start: { column: 2, line: 9 } },
+      },
+      boolean: {
+        type: "Boolean",
+        default: false,
+        keyLoc: { end: { column: 17, line: 8 }, start: { column: 2, line: 8 } },
+        valueLoc: { end: { column: 41, line: 8 }, start: { column: 2, line: 8 } },
+      },
+      number: {
+        type: "Number",
+        default: 0,
+        keyLoc: { end: { column: 16, line: 10 }, start: { column: 2, line: 10 } },
+        valueLoc: { end: { column: 38, line: 10 }, start: { column: 2, line: 10 } },
+      },
+      object: {
+        type: "Object",
+        default: {},
+        keyLoc: { end: { column: 16, line: 7 }, start: { column: 2, line: 7 } },
+        valueLoc: { end: { column: 34, line: 7 }, start: { column: 2, line: 7 } },
+      },
+      string: {
+        type: "String",
+        default: "",
+        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
+        valueLoc: { end: { column: 38, line: 6 }, start: { column: 2, line: 6 } },
+      },
     })
   })
 
@@ -285,8 +365,8 @@ describe("parse values", () => {
       @TypedController
       export default class extends Controller {
         @Value(String) stringValue! = "string"
-        @Value(Object) objectValue! = {}
-        @Value(Boolean) booleanValue! = false
+        @Value(Object) objectValue! = { hello: "world" }
+        @Value(Boolean) booleanValue! = true
         @Value(Array) arrayValue! = [1, 2, 3]
         @Value(Number) numberValue! = 10
       }
@@ -296,13 +376,35 @@ describe("parse values", () => {
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "string" },
-      object: { type: "Object", default: {} },
-      boolean: { type: "Boolean", default: false },
-      number: { type: "Number", default: 10 },
       array: {
         type: "Array",
         default: [1, 2, 3],
+        keyLoc: { end: { column: 15, line: 9 }, start: { column: 2, line: 9 } },
+        valueLoc: { end: { column: 39, line: 9 }, start: { column: 2, line: 9 } },
+      },
+      boolean: {
+        type: "Boolean",
+        default: true,
+        keyLoc: { end: { column: 17, line: 8 }, start: { column: 2, line: 8 } },
+        valueLoc: { end: { column: 38, line: 8 }, start: { column: 2, line: 8 } },
+      },
+      number: {
+        type: "Number",
+        default: 10,
+        keyLoc: { end: { column: 16, line: 10 }, start: { column: 2, line: 10 } },
+        valueLoc: { end: { column: 34, line: 10 }, start: { column: 2, line: 10 } },
+      },
+      object: {
+        type: "Object",
+        default: { hello: "world" },
+        keyLoc: { end: { column: 16, line: 7 }, start: { column: 2, line: 7 } },
+        valueLoc: { end: { column: 50, line: 7 }, start: { column: 2, line: 7 } },
+      },
+      string: {
+        type: "String",
+        default: "string",
+        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
+        valueLoc: { end: { column: 40, line: 6 }, start: { column: 2, line: 6 } },
       },
     })
   })
@@ -354,13 +456,17 @@ describe("parse values", () => {
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.valueDefinitionsMap).toEqual({
-      object: {
-        type: "Object",
-        default: { object: { some: { more: { levels: {} } } } },
-      },
       array: {
         type: "Array",
         default: [["Array", "with", ["nested", ["values"]]]],
+        keyLoc: { end: { column: 15, line: 7 }, start: { column: 2, line: 7 } },
+        valueLoc: { end: { column: 73, line: 7 }, start: { column: 2, line: 7 } },
+      },
+      object: {
+        type: "Object",
+        default: { object: { some: { more: { levels: {} } } } },
+        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
+        valueLoc: { end: { column: 78, line: 6 }, start: { column: 2, line: 6 } },
       },
     })
   })
