@@ -73,13 +73,18 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
       break
   }
 
-  if (!type) return
+  if (!type)  return 
+  const valueLoc = typeProperty?.value.loc
+  const keyLoc = typeProperty?.key.loc
 
   let defaultValue = getDefaultValueFromNode(defaultProperty?.value)
 
   return {
     type,
     default: defaultValue,
+    keyLoc: keyLoc,
+    valueLoc: valueLoc,
+
   }
 }
 

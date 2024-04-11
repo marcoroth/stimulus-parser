@@ -11,6 +11,8 @@ export type ValueDefinitionValue = string | number | bigint | boolean | object |
 export type ValueDefinition = {
   type: string
   default: ValueDefinitionValue
+  keyLoc?: Acorn.SourceLocation | null
+  valueLoc?: Acorn.SourceLocation | null
 }
 
 export type ValueDefinitionObject = { [key: string]: ValueDefinition }

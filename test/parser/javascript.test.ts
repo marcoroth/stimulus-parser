@@ -102,11 +102,35 @@ describe("with JS Syntax", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.valueDefinitionsMap).toEqual({
-      string: { type: "String", default: "string" },
-      object: { type: "Object", default: { object: "Object" } },
-      boolean: { type: "Boolean", default: true },
-      array: { type: "Array", default: ["Array"] },
-      number: { type: "Number", default: 1 },
+      string: { 
+        type: "String", default: "string", 
+        valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } },
+        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } } 
+      },
+      object: { 
+        type: "Object", 
+        default: { object: "Object" }, 
+        valueLoc: { end: { column: 26, line: 6 }, start: { column: 20, line: 6 } },
+        keyLoc: { end: { column: 18, line: 6 }, start: { column: 14, line: 6 } },
+      },
+      boolean: { 
+        type: "Boolean", 
+        default: true, 
+        valueLoc: { end: { column: 28, line: 7 }, start: { column: 21, line: 7 } },
+        keyLoc: { end: { column: 19, line: 7 }, start: { column: 15, line: 7 } } 
+      },
+      array: { 
+        type: "Array", 
+        default: ["Array"], 
+        valueLoc: { end: { column: 24, line: 8 }, start: { column: 19, line: 8 } },
+        keyLoc: { end: { column: 17, line: 8 }, start: { column: 13, line: 8 } } 
+      },
+      number: { 
+        type: "Number", 
+        default: 1, 
+        valueLoc: { end: { column: 26, line: 9 }, start: { column: 20, line: 9 } },
+        keyLoc: { end: { column: 18, line: 9 }, start: { column: 14, line: 9 } } 
+      },
     })
   })
 
@@ -229,8 +253,18 @@ describe("with JS Syntax", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.valueDefinitionsMap).toEqual({
-      object: { type: "Object", default: { object: { some: { more: { levels: {} } } } } },
-      array: { type: "Array", default: [["Array", "with", ["nested", ["values"]]]] },
+      object: { 
+        type: "Object", 
+        default: { object: { some: { more: { levels: {} } } } }, 
+        valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } },
+        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } } 
+      },
+      array: { 
+        type: "Array", 
+        default: [["Array", "with", ["nested", ["values"]]]], 
+        valueLoc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } },
+        keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } } 
+      },
     })
   })
 
