@@ -287,7 +287,7 @@ describe("parse values", () => {
         @Value(String) stringValue! = "string"
         @Value(Object) objectValue! = {}
         @Value(Boolean) booleanValue! = false
-        @Value(Array) arrayValue! = []
+        @Value(Array) arrayValue! = [1, 2, 3]
         @Value(Number) numberValue! = 10
       }
     `
@@ -299,8 +299,11 @@ describe("parse values", () => {
       string: { type: "String", default: "string" },
       object: { type: "Object", default: {} },
       boolean: { type: "Boolean", default: false },
-      array: { type: "Array", default: [] },
       number: { type: "Number", default: 10 },
+      array: {
+        type: "Array",
+        default: [1, 2, 3],
+      },
     })
   })
 

@@ -99,7 +99,7 @@ describe("parse targets", () => {
     const controller = parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.targetNames).toEqual(["one", "1", "3.14", "/something/", "true", "false"])
+    expect(controller.targetNames).toEqual(["one", "1", "3.14", "/something/", "true", "false", "null", "undefined"])
     expect(controller.hasErrors).toBeFalsy()
   })
 

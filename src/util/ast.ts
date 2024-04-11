@@ -11,13 +11,27 @@ export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.Sp
   )
 }
 
-export function convertArrayExpression(value: Acorn.ArrayExpression): Array<string> {
+export function convertArrayExpressionToLiterals(value: Acorn.ArrayExpression): Array<ValueDefinitionValue> {
   return value.elements.map(node => {
     if (!node) return
 
     switch (node.type) {
-      case "ArrayExpression": return convertArrayExpression(node)
-      case "Literal":         return node.value?.toString()
+      case "ArrayExpression": return convertArrayExpressionToLiterals(node)
+      case "Literal":         return extractLiteral(node)
+      case "SpreadElement":   return // TODO: implement support for spreads
+      default:                return
+    }
+  })
+}
+
+export function convertArrayExpressionToStrings(value: Acorn.ArrayExpression): string[] {
+  return value.elements.map(node => {
+    if (!node) return
+
+    switch (node.type) {
+      case "ArrayExpression": return convertArrayExpressionToStrings(node)
+      case "Literal":         return node.value?.toString() ?? node.raw
+      case "Identifier":      return node.name
       case "SpreadElement":   return // TODO: implement support for spreads
       default:                return
     }
@@ -107,7 +121,7 @@ export function getDefaultValueFromNode(node?: Acorn.Expression | null) {
 
   switch (node.type) {
     case "ArrayExpression":
-      return convertArrayExpression(node)
+      return convertArrayExpressionToLiterals(node)
     case "ObjectExpression":
       return convertObjectExpression(node)
     case "Literal":
