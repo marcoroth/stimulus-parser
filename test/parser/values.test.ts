@@ -197,10 +197,10 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(18)
-    expect(controller.errors[0].loc.end.line).toEqual(8)
-    expect(controller.errors[0].loc.end.column).toEqual(3)
+    expect(controller.errors[0].loc.start.line).toEqual(6)
+    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.end.line).toEqual(6)
+    expect(controller.errors[0].loc.end.column).toEqual(15)
   })
 
   test("duplicate static values from parent", () => {
@@ -228,10 +228,10 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one". A parent controller already defines this Value.`)
-    expect(controller.errors[0].loc.start.line).toEqual(10)
-    expect(controller.errors[0].loc.start.column).toEqual(18)
-    expect(controller.errors[0].loc.end.line).toEqual(13)
-    expect(controller.errors[0].loc.end.column).toEqual(3)
+    expect(controller.errors[0].loc.start.line).toEqual(11)
+    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.end.line).toEqual(11)
+    expect(controller.errors[0].loc.end.column).toEqual(15)
   })
 
   test("assigns values outside of class via member expression", () => {
@@ -281,10 +281,10 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(8)
-    expect(controller.errors[0].loc.start.column).toEqual(18)
-    expect(controller.errors[0].loc.end.line).toEqual(10)
-    expect(controller.errors[0].loc.end.column).toEqual(3)
+    expect(controller.errors[0].loc.start.line).toEqual(9)
+    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.end.line).toEqual(9)
+    expect(controller.errors[0].loc.end.column).toEqual(15)
   })
 
   test("duplicate static values mixed with decorator", () => {
@@ -309,10 +309,10 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(6)
-    expect(controller.errors[0].loc.start.column).toEqual(18)
-    expect(controller.errors[0].loc.end.line).toEqual(8)
-    expect(controller.errors[0].loc.end.column).toEqual(3)
+    expect(controller.errors[0].loc.start.line).toEqual(7)
+    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.end.line).toEqual(7)
+    expect(controller.errors[0].loc.end.column).toEqual(15)
   })
 
   test("decorated", () => {
