@@ -7,7 +7,7 @@ export type NestedObject<T> = {
 }
 
 export type ValueDefinitionValue = string | number | bigint | boolean | object | null | undefined
-export type ValueDefinitionKind = "explicit" | "inferred" | "shorthand" | "decorator"
+export type ValueDefinitionKind = "expanded" | "inferred" | "shorthand" | "decorator"
 
 export type ValueDefinition = {
   type: string

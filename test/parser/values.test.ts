@@ -112,7 +112,7 @@ describe("parse values", () => {
       string: {
         type: "String",
         default: "string",
-        kind: "explicit",
+        kind: "expanded",
         valueLoc: {
           end: { column: 26, line: 5 },
           start: { column: 20, line: 5 },
@@ -125,7 +125,7 @@ describe("parse values", () => {
       object: {
         type: "Object",
         default: { object: "Object" },
-        kind: "explicit",
+        kind: "expanded",
         valueLoc: {
           end: { column: 26, line: 6 },
           start: { column: 20, line: 6 },
@@ -138,7 +138,7 @@ describe("parse values", () => {
       boolean: {
         type: "Boolean",
         default: true,
-        kind: "explicit",
+        kind: "expanded",
         valueLoc: {
           end: { column: 28, line: 7 },
           start: { column: 21, line: 7 },
@@ -151,7 +151,7 @@ describe("parse values", () => {
       array: {
         type: "Array",
         default: ["Array"],
-        kind: "explicit",
+        kind: "expanded",
         valueLoc: {
           end: { column: 24, line: 8 },
           start: { column: 19, line: 8 },
@@ -164,7 +164,7 @@ describe("parse values", () => {
       number: {
         type: "Number",
         default: 1,
-        kind: "explicit",
+        kind: "expanded",
         valueLoc: {
           end: { column: 26, line: 9 },
           start: { column: 20, line: 9 },
@@ -448,14 +448,14 @@ describe("parse values", () => {
       object: {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },
-        kind: "explicit",
+        kind: "expanded",
         keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } },
         valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } }
       },
       array: {
         type: "Array",
         default: [["Array", "with", ["nested", ["values"]]]],
-        kind: "explicit",
+        kind: "expanded",
         keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } },
         valueLoc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } }
       },
@@ -545,7 +545,7 @@ describe("parse values", () => {
     })
   })
 
-  test("explicit-version", () => {
+  test("expanded-version", () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
 
@@ -566,7 +566,7 @@ describe("parse values", () => {
       name: {
         type: "String",
         default: "Stimulus",
-        kind: "explicit",
+        kind: "expanded",
         keyLoc: { end: { column: 10, line: 6 }, start: { column: 6, line: 6 } },
         valueLoc: { end: { column: 18, line: 6 }, start: { column: 12, line: 6 } },
       },

@@ -97,7 +97,7 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
   return {
     type,
     default: defaultValue,
-    kind: "explicit",
+    kind: "expanded",
     keyLoc,
     valueLoc,
   }
