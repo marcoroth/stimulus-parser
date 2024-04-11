@@ -93,7 +93,9 @@ export function convertPropertyToValueDefinition(property: Acorn.Property): Valu
     case "Identifier":
       return {
         type: property.value.name,
-        default: ValueDefinition.defaultValuesForType[property.value.name]
+        default: ValueDefinition.defaultValuesForType[property.value.name],
+        keyLoc: property.key.loc,
+        valueLoc: property.value.loc
       }
     case "ObjectExpression":
       return convertObjectExpressionToValueDefinition(property.value)
