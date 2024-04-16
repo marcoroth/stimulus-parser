@@ -32,6 +32,28 @@ export class ValueDefinition extends ControllerPropertyDefinition {
     return this.definition.type
   }
 
+  get propertyValues() {
+    const node = this.node as Acorn.ObjectExpression
+    const properties = node.properties.filter(property => property.type === "Property") as Acorn.Property[]
+    return properties.find(property =>
+      ((property.key.type === "Identifier") ? property.key.name : undefined) === this.name
+    )
+  }
+
+  get keyLocTest() {
+    if(!this.propertyValues) {
+      return 
+    }
+    return this.propertyValues.key.loc
+  }
+
+  get valueLocTest() {
+    if(!this.propertyValues) {
+      return 
+    }
+    return this.propertyValues.value.loc
+  }
+
   get default() {
     return this.definition.default
   }
