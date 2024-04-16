@@ -1,6 +1,7 @@
 import type * as Acorn  from "acorn"
 
 import type { ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "./types"
+import { findPropertyInProperties } from "./util/ast"
 
 // TODO: ArrayExpression and ObjectExpression shoudl probably be PropertyDefinition as well
 // AssignmentExpression | PropertyDefinition
@@ -34,24 +35,30 @@ export class ValueDefinition extends ControllerPropertyDefinition {
 
   get propertyValues() {
     const node = this.node as Acorn.ObjectExpression
-    const properties = node.properties.filter(property => property.type === "Property") as Acorn.Property[]
-    return properties.find(property =>
-      ((property.key.type === "Identifier") ? property.key.name : undefined) === this.name
-    )
+    return findPropertyInProperties(node.properties, this.name)
   }
 
   get keyLocTest() {
+    return this.propertyValues?.key.loc
+  }
+
+  get typeLocTest() {
     if(!this.propertyValues) {
       return 
     }
-    return this.propertyValues.key.loc
+    switch(this.propertyValues.value.type) {
+      case "Identifier": 
+        return this.propertyValues.value.loc
+      case "ObjectExpression": 
+        const valueLocation = findPropertyInProperties(this.propertyValues.value.properties, "type")?.value?.loc
+        return valueLocation
+        default: 
+          return
+    }
   }
 
   get valueLocTest() {
-    if(!this.propertyValues) {
-      return 
-    }
-    return this.propertyValues.value.loc
+    return this.propertyValues?.value.loc
   }
 
   get default() {
