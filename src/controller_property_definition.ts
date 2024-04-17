@@ -46,11 +46,12 @@ export class ValueDefinition extends ControllerPropertyDefinition {
     if(!this.propertyValues) {
       return 
     }
-    switch(this.propertyValues.value.type) {
-      case "Identifier": 
+    switch(this.definition.kind) {
+      case "shorthand": 
         return this.propertyValues.value.loc
-      case "ObjectExpression": 
-        const valueLocation = findPropertyInProperties(this.propertyValues.value.properties, "type")?.value?.loc
+      case "expanded": 
+        const propValues = this.propertyValues.value as Acorn.ObjectExpression
+        const valueLocation = findPropertyInProperties(propValues.properties, "type")?.value?.loc
         return valueLocation
         default: 
           return
