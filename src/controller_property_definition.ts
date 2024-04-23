@@ -38,7 +38,7 @@ export class ValueDefinition extends ControllerPropertyDefinition {
       return
     }
     const node = this.node as Acorn.ObjectExpression
-    return findPropertyInProperties(node.properties, this.name)
+    return findPropertyInProperties(node.properties, this.name, this.node.type)
   }
 
   get keyLoc() {

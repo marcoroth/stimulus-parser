@@ -3,12 +3,18 @@ import { ValueDefinition } from "../controller_property_definition"
 import type * as Acorn from "acorn"
 import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
 
-export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
+export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string, valueKind?: (string | null | undefined)): Acorn.Property | undefined {
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
 
-  return properties.find(property =>
+  const foundProperties = properties.filter(property =>
     ((property.key.type === "Identifier") ? property.key.name : undefined) === propertyName
   )
+
+  if(valueKind) {
+    return foundProperties.find(property => property.value.type === valueKind)
+  } else {
+    return foundProperties[0]
+  }
 }
 
 export function convertArrayExpressionToLiterals(value: Acorn.ArrayExpression): Array<ValueDefinitionValue> {
@@ -89,17 +95,13 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
 
   if (!type) return
 
-  const valueLoc = typeProperty?.value.loc
-  const keyLoc = typeProperty?.key.loc
 
   let defaultValue = getDefaultValueFromNode(defaultProperty?.value)
 
   return {
     type,
     default: defaultValue,
-    kind: "expanded",
-    keyLoc,
-    valueLoc,
+    kind: "expanded"
   }
 }
 
@@ -109,9 +111,7 @@ export function convertPropertyToValueDefinition(property: Acorn.Property): Valu
       return {
         type: property.value.name,
         default: ValueDefinition.defaultValuesForType[property.value.name],
-        kind: "shorthand",
-        keyLoc: property.key.loc,
-        valueLoc: property.value.loc
+        kind: "shorthand"
       }
     case "ObjectExpression":
       return convertObjectExpressionToValueDefinition(property.value)

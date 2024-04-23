@@ -26,66 +26,26 @@ describe("parse values", () => {
         type: "Array",
         default: [],
         kind: "shorthand",
-        keyLoc: {
-          end: { column: 9, line: 8 },
-          start: { column: 4, line: 8 },
-        },
-        valueLoc: {
-          end: { column: 16, line: 8 },
-          start: { column: 11, line: 8 },
-        },
       },
       boolean: {
         type: "Boolean",
         default: false,
         kind: "shorthand",
-        keyLoc: {
-          end: { column: 11, line: 7 },
-          start: { column: 4, line: 7 },
-        },
-        valueLoc: {
-          end: { column: 20, line: 7 },
-          start: { column: 13, line: 7 },
-        },
       },
       number: {
         type: "Number",
         default: 0,
         kind: "shorthand",
-        keyLoc: {
-          end: { column: 10, line: 9 },
-          start: { column: 4, line: 9 },
-        },
-        valueLoc: {
-          end: { column: 18, line: 9 },
-          start: { column: 12, line: 9 },
-        },
       },
       object: {
         type: "Object",
         default: {},
         kind: "shorthand",
-        keyLoc: {
-          end: { column: 10, line: 6 },
-          start: { column: 4, line: 6 },
-        },
-        valueLoc: {
-          end: { column: 18, line: 6 },
-          start: { column: 12, line: 6 },
-        },
       },
       string: {
         type: "String",
         default: "",
         kind: "shorthand",
-        keyLoc: {
-          end: { column: 10, line: 5 },
-          start: { column: 4, line: 5 },
-        },
-        valueLoc: {
-          end: { column: 18, line: 5 },
-          start: { column: 12, line: 5 },
-        },
       },
     })
   })
@@ -113,66 +73,26 @@ describe("parse values", () => {
         type: "String",
         default: "string",
         kind: "expanded",
-        valueLoc: {
-          end: { column: 26, line: 5 },
-          start: { column: 20, line: 5 },
-        },
-        keyLoc: {
-          end: { column: 18, line: 5 },
-          start: { column: 14, line: 5 },
-        },
       },
       object: {
         type: "Object",
         default: { object: "Object" },
         kind: "expanded",
-        valueLoc: {
-          end: { column: 26, line: 6 },
-          start: { column: 20, line: 6 },
-        },
-        keyLoc: {
-          end: { column: 18, line: 6 },
-          start: { column: 14, line: 6 },
-        },
       },
       boolean: {
         type: "Boolean",
         default: true,
         kind: "expanded",
-        valueLoc: {
-          end: { column: 28, line: 7 },
-          start: { column: 21, line: 7 },
-        },
-        keyLoc: {
-          end: { column: 19, line: 7 },
-          start: { column: 15, line: 7 },
-        },
       },
       array: {
         type: "Array",
         default: ["Array"],
         kind: "expanded",
-        valueLoc: {
-          end: { column: 24, line: 8 },
-          start: { column: 19, line: 8 },
-        },
-        keyLoc: {
-          end: { column: 17, line: 8 },
-          start: { column: 13, line: 8 },
-        },
       },
       number: {
         type: "Number",
         default: 1,
         kind: "expanded",
-        valueLoc: {
-          end: { column: 26, line: 9 },
-          start: { column: 20, line: 9 },
-        },
-        keyLoc: {
-          end: { column: 18, line: 9 },
-          start: { column: 14, line: 9 },
-        },
       },
     })
   })
@@ -198,9 +118,9 @@ describe("parse values", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(6)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.start.column).toEqual(4)
     expect(controller.errors[0].loc.end.line).toEqual(6)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(controller.errors[0].loc.end.column).toEqual(7)
   })
 
   test("duplicate static values from parent", () => {
@@ -229,9 +149,9 @@ describe("parse values", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one". A parent controller already defines this Value.`)
     expect(controller.errors[0].loc.start.line).toEqual(11)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.start.column).toEqual(4)
     expect(controller.errors[0].loc.end.line).toEqual(11)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(controller.errors[0].loc.end.column).toEqual(7)
   })
 
   test("assigns values outside of class via member expression", () => {
@@ -282,9 +202,9 @@ describe("parse values", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(9)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.start.column).toEqual(4)
     expect(controller.errors[0].loc.end.line).toEqual(9)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(controller.errors[0].loc.end.column).toEqual(7)
   })
 
   test("duplicate static values mixed with decorator", () => {
@@ -310,9 +230,9 @@ describe("parse values", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(7)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
+    expect(controller.errors[0].loc.start.column).toEqual(4)
     expect(controller.errors[0].loc.end.line).toEqual(7)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(controller.errors[0].loc.end.column).toEqual(7)
   })
 
   test("decorated", () => {
@@ -338,36 +258,26 @@ describe("parse values", () => {
         type: "Array",
         default: [],
         kind: "decorator",
-        keyLoc: { end: { column: 15, line: 9 }, start: { column: 2, line: 9 } },
-        valueLoc: { end: { column: 32, line: 9 }, start: { column: 2, line: 9 } },
       },
       boolean: {
         type: "Boolean",
         default: false,
         kind: "decorator",
-        keyLoc: { end: { column: 17, line: 8 }, start: { column: 2, line: 8 } },
-        valueLoc: { end: { column: 41, line: 8 }, start: { column: 2, line: 8 } },
       },
       number: {
         type: "Number",
         default: 0,
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 10 }, start: { column: 2, line: 10 } },
-        valueLoc: { end: { column: 38, line: 10 }, start: { column: 2, line: 10 } },
       },
       object: {
         type: "Object",
         default: {},
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 7 }, start: { column: 2, line: 7 } },
-        valueLoc: { end: { column: 34, line: 7 }, start: { column: 2, line: 7 } },
       },
       string: {
         type: "String",
         default: "",
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 38, line: 6 }, start: { column: 2, line: 6 } },
       },
     })
   })
@@ -395,36 +305,26 @@ describe("parse values", () => {
         type: "Array",
         default: [1, 2, 3],
         kind: "decorator",
-        keyLoc: { end: { column: 15, line: 9 }, start: { column: 2, line: 9 } },
-        valueLoc: { end: { column: 39, line: 9 }, start: { column: 2, line: 9 } },
       },
       boolean: {
         type: "Boolean",
         default: true,
         kind: "decorator",
-        keyLoc: { end: { column: 17, line: 8 }, start: { column: 2, line: 8 } },
-        valueLoc: { end: { column: 38, line: 8 }, start: { column: 2, line: 8 } },
       },
       number: {
         type: "Number",
         default: 10,
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 10 }, start: { column: 2, line: 10 } },
-        valueLoc: { end: { column: 34, line: 10 }, start: { column: 2, line: 10 } },
       },
       object: {
         type: "Object",
         default: { hello: "world" },
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 7 }, start: { column: 2, line: 7 } },
-        valueLoc: { end: { column: 50, line: 7 }, start: { column: 2, line: 7 } },
       },
       string: {
         type: "String",
         default: "string",
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 40, line: 6 }, start: { column: 2, line: 6 } },
       },
     })
   })
@@ -449,15 +349,11 @@ describe("parse values", () => {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },
         kind: "expanded",
-        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } },
-        valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } }
       },
       array: {
         type: "Array",
         default: [["Array", "with", ["nested", ["values"]]]],
         kind: "expanded",
-        keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } },
-        valueLoc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } }
       },
     })
   })
@@ -482,15 +378,11 @@ describe("parse values", () => {
         type: "Array",
         default: [["Array", "with", ["nested", ["values"]]]],
         kind: "decorator",
-        keyLoc: { end: { column: 15, line: 7 }, start: { column: 2, line: 7 } },
-        valueLoc: { end: { column: 73, line: 7 }, start: { column: 2, line: 7 } },
       },
       object: {
         type: "Object",
         default: { object: { some: { more: { levels: {} } } } },
         kind: "decorator",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 78, line: 6 }, start: { column: 2, line: 6 } },
       },
     })
   })
@@ -514,8 +406,6 @@ describe("parse values", () => {
         type: "String",
         default: "Number",
         kind: "inferred",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 78, line: 6 }, start: { column: 2, line: 6 } },
       },
     })
   })
@@ -539,8 +429,6 @@ describe("parse values", () => {
         type: "String",
         default: "",
         kind: "shorthand",
-        keyLoc: { end: { column: 8, line: 5 }, start: { column: 4, line: 5 } },
-        valueLoc: { end: { column: 16, line: 5 }, start: { column: 10, line: 5 } },
       },
     })
   })
@@ -567,8 +455,6 @@ describe("parse values", () => {
         type: "String",
         default: "Stimulus",
         kind: "expanded",
-        keyLoc: { end: { column: 10, line: 6 }, start: { column: 6, line: 6 } },
-        valueLoc: { end: { column: 18, line: 6 }, start: { column: 12, line: 6 } },
       },
     })
   })

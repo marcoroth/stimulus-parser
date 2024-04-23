@@ -86,9 +86,7 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
   const definition: ValueDefinitionType = {
     type: type.name,
     default: defaultValue,
-    kind: "decorator",
-    keyLoc: decorator.loc,
-    valueLoc: node.loc
+    kind: "decorator"
   }
 
   const valueDefinition = new ValueDefinition(key, definition, node as any, node.loc, "decorator")
