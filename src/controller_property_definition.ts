@@ -38,6 +38,15 @@ export class ValueDefinition extends ControllerPropertyDefinition {
     return this.definition.type
   }
 
+  get elementNodePropertyValue() {
+    const propertyValue = this.propertyNode?.value
+
+    if (!propertyValue) return
+    if (propertyValue.type !== "ObjectExpression") return
+
+    return propertyValue
+  }
+
   get keyLoc() {
     if (this.definitionType === "decorator") {
       return (this.node as Acorn.PropertyDefinition).key?.loc || this.node.loc
@@ -52,12 +61,7 @@ export class ValueDefinition extends ControllerPropertyDefinition {
         return this.propertyNode.value?.loc || this.node.loc
 
       case "expanded":
-        const propertyValue = this.propertyNode?.value
-
-        if (!propertyValue) return this.node.loc
-        if (propertyValue.type !== "ObjectExpression") return
-
-        return findPropertyInProperties(propertyValue.properties, "type")?.value?.loc || this.node.loc
+        return findPropertyInProperties(this.elementNodePropertyValue?.properties || [], "type")?.value?.loc || this.node.loc
 
       case "decorator":
         const decorators = (this.node as any as TSESTree.PropertyDefinition).decorators || []
@@ -66,6 +70,25 @@ export class ValueDefinition extends ControllerPropertyDefinition {
       default:
         return this.node.loc
     }
+  }
+
+  get defaultValueLoc(): Acorn.SourceLocation | null | undefined {
+    switch(this.definition.kind) {
+      case "shorthand": return undefined
+
+      case "expanded":
+        return findPropertyInProperties(this.elementNodePropertyValue?.properties || [], "default")?.value?.loc
+
+      case "decorator":
+        return (this.node as Acorn.PropertyDefinition).value?.loc
+
+      default:
+        return undefined
+    }
+  }
+
+  get hasExplicitDefaultValue(): boolean {
+    return !!this.defaultValueLoc
   }
 
   get valueLoc() {

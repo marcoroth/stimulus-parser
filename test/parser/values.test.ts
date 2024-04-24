@@ -26,6 +26,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 16])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([8, 11, 8, 16])
+    expect(controller.valueDefinitionsMap.array.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [],
@@ -35,6 +37,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([7, 4, 7, 11])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([7, 13, 7, 20])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([7, 13, 7, 20])
+    expect(controller.valueDefinitionsMap.boolean.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.boolean.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
       type: "Boolean",
       default: false,
@@ -44,6 +48,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([9, 4, 9, 10])
     expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([9, 12, 9, 18])
     expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([9, 12, 9, 18])
+    expect(controller.valueDefinitionsMap.number.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.number.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.number.definition).toEqual({
       type: "Number",
       default: 0,
@@ -53,6 +59,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 4, 6, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 12, 6, 18])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 12, 6, 18])
+    expect(controller.valueDefinitionsMap.object.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: {},
@@ -62,6 +70,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([5, 12, 5, 18])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([5, 12, 5, 18])
+    expect(controller.valueDefinitionsMap.string.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "",
@@ -91,6 +101,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([5, 12, 5, 47])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([5, 20, 5, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.string.defaultValueLoc)).toEqual([5, 37, 5, 45])
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "string",
@@ -100,6 +112,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 4, 6, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 12, 6, 59])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 20, 6, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.object.defaultValueLoc)).toEqual([6, 37, 6, 57])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: { object: "Object" },
@@ -109,6 +123,7 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([7, 4, 7, 11])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([7, 13, 7, 45])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([7, 21, 7, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.defaultValueLoc)).toEqual([7, 39, 7, 43])
     expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
       type: "Boolean",
       default: true,
@@ -118,6 +133,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 46])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([8, 19, 8, 24])
+    expect(extractLoc(controller.valueDefinitionsMap.array.defaultValueLoc)).toEqual([8, 35, 8, 44])
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: ["Array"],
@@ -127,6 +144,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([9, 4, 9, 10])
     expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([9, 12, 9, 40])
     expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([9, 20, 9, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.number.defaultValueLoc)).toEqual([9, 37, 9, 38])
+    expect(controller.valueDefinitionsMap.number.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.number.definition).toEqual({
       type: "Number",
       default: 1,
@@ -141,8 +160,8 @@ describe("parse values", () => {
       export default class extends Controller {
         static values = {
           one: String,
-          one: { type: "String", default: ""},
-          three: { type: "String", default: ""},
+          one: { type: "String", default: "" },
+          three: { type: "String", default: "" },
         }
       }
     `
@@ -282,6 +301,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([6, 17, 6, 28])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([6, 2, 6, 38])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([6, 2, 6, 16])
+    expect(controller.valueDefinitionsMap.string.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "",
@@ -291,6 +312,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([7, 17, 7, 28])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([7, 2, 7, 34])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([7, 2, 7, 16])
+    expect(controller.valueDefinitionsMap.object.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: {},
@@ -300,6 +323,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([8, 18, 8, 30])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([8, 2, 8, 41])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([8, 2, 8, 17])
+    expect(controller.valueDefinitionsMap.boolean.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.boolean.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
       type: "Boolean",
       default: false,
@@ -309,6 +334,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([9, 16, 9, 26])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([9, 2, 9, 32])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([9, 2, 9, 15])
+    expect(controller.valueDefinitionsMap.array.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [],
@@ -318,6 +345,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([10, 17, 10, 28])
     expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([10, 2, 10, 38])
     expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([10, 2, 10, 16])
+    expect(controller.valueDefinitionsMap.number.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.number.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.number.definition).toEqual({
       type: "Number",
       default: 0,
@@ -347,6 +376,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([6, 17, 6, 28])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([6, 32, 6, 40])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([6, 2, 6, 16])
+    expect(extractLoc(controller.valueDefinitionsMap.string.defaultValueLoc)).toEqual([6, 32, 6, 40])
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "string",
@@ -356,6 +387,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([7, 17, 7, 28])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([7, 32, 7, 50])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([7, 2, 7, 16])
+    expect(extractLoc(controller.valueDefinitionsMap.object.defaultValueLoc)).toEqual([7, 32, 7, 50])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: { hello: "world" },
@@ -365,6 +398,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([8, 18, 8, 30])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([8, 34, 8, 38])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([8, 2, 8, 17])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.defaultValueLoc)).toEqual([8, 34, 8, 38])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
       type: "Boolean",
       default: true,
@@ -374,6 +409,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([9, 16, 9, 26])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([9, 30, 9, 39])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([9, 2, 9, 15])
+    expect(extractLoc(controller.valueDefinitionsMap.array.defaultValueLoc)).toEqual([9, 30, 9, 39])
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [1, 2, 3],
@@ -383,6 +420,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([10, 17, 10, 28])
     expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([10, 32, 10, 34])
     expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([10, 2, 10, 16])
+    expect(extractLoc(controller.valueDefinitionsMap.number.defaultValueLoc)).toEqual([10, 32, 10, 34])
+    expect(controller.valueDefinitionsMap.number.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.number.definition).toEqual({
       type: "Number",
       default: 10,
@@ -409,6 +448,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([5, 12, 5, 85])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([5, 20, 5, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.object.defaultValueLoc)).toEqual([5, 37, 5, 83])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: { object: { some: { more: { levels: {} } } } },
@@ -418,6 +459,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([6, 4, 6, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([6, 11, 6, 80])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([6, 19, 6, 24])
+    expect(extractLoc(controller.valueDefinitionsMap.array.defaultValueLoc)).toEqual([6, 35, 6, 78])
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [["Array", "with", ["nested", ["values"]]]],
@@ -444,6 +487,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 17, 6, 28])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 32, 6, 78])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 2, 6, 16])
+    expect(extractLoc(controller.valueDefinitionsMap.object.defaultValueLoc)).toEqual([6, 32, 6, 78])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: { object: { some: { more: { levels: {} } } } },
@@ -453,6 +498,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([7, 16, 7, 26])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([7, 30, 7, 73])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([7, 2, 7, 15])
+    expect(extractLoc(controller.valueDefinitionsMap.array.defaultValueLoc)).toEqual([7, 30, 7, 73])
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [["Array", "with", ["nested", ["values"]]]],
@@ -478,6 +525,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([])
+    expect(extractLoc(controller.valueDefinitionsMap.string.defaultValueLoc)).toEqual([])
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "Number",
@@ -502,6 +551,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.name.keyLoc)).toEqual([5, 4, 5, 8])
     expect(extractLoc(controller.valueDefinitionsMap.name.valueLoc)).toEqual([5, 10, 5, 16])
     expect(extractLoc(controller.valueDefinitionsMap.name.typeLoc)).toEqual([5, 10, 5, 16])
+    expect(controller.valueDefinitionsMap.name.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.name.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.name.definition).toEqual({
       type: "String",
       default: "",
@@ -530,6 +581,8 @@ describe("parse values", () => {
     expect(extractLoc(controller.valueDefinitionsMap.name.keyLoc)).toEqual([5, 4, 5, 8])
     expect(extractLoc(controller.valueDefinitionsMap.name.valueLoc)).toEqual([5, 10, 8, 5])
     expect(extractLoc(controller.valueDefinitionsMap.name.typeLoc)).toEqual([6, 12, 6, 18])
+    expect(extractLoc(controller.valueDefinitionsMap.name.defaultValueLoc)).toEqual([7, 15, 7, 25])
+    expect(controller.valueDefinitionsMap.name.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.name.definition).toEqual({
       type: "String",
       default: "Stimulus",
