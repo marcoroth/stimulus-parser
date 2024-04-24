@@ -154,7 +154,7 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(extractLoc(controller.errors[0].loc)).toEqual([5, 4, 5, 7])
+    expect(extractLoc(controller.errors[0].loc)).toEqual([6, 4, 6, 7])
   })
 
   test("duplicate static values from parent", () => {

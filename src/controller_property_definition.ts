@@ -10,11 +10,13 @@ import type { TSESTree } from "@typescript-eslint/typescript-estree"
 //
 // maybe the ControllerPropertyDefinition superclass should be Acorn.Node, but the subclasses themselves can narrow down the type
 type Node = Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.ObjectExpression
+type ElementNode = Acorn.Property | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.Literal | Acorn.Identifier | Acorn.MethodDefinition
 
 export abstract class ControllerPropertyDefinition {
   constructor(
     public readonly name: string,
     public readonly node: Node,
+    public readonly elementNode: ElementNode,
     public readonly loc?: Acorn.SourceLocation | null,
     public readonly definitionType: "decorator" | "static" = "static",
   ) {}
@@ -25,10 +27,11 @@ export class ValueDefinition extends ControllerPropertyDefinition {
     name: string,
     public readonly definition: ValueDefinitionType,
     node: Node,
+    propertyNode: Acorn.Property,
     loc?: Acorn.SourceLocation | null,
     definitionType: "decorator" | "static" = "static",
   ) {
-    super(name, node, loc, definitionType)
+    super(name, node, propertyNode, loc, definitionType)
   }
 
   get type() {
@@ -47,16 +50,19 @@ export class ValueDefinition extends ControllerPropertyDefinition {
       return (this.node as Acorn.PropertyDefinition).key?.loc || this.node.loc
     }
 
-    return this.propertyValues?.key.loc || this.node.loc
+    return (this.elementNode as Acorn.PropertyDefinition).key?.loc || this.node.loc
   }
 
   get typeLoc() {
     switch(this.definition.kind) {
       case "shorthand":
-        return this.propertyValues?.value.loc || this.node.loc
+        return (this.elementNode as Acorn.PropertyDefinition).value?.loc || this.node.loc
 
       case "expanded":
-        const propValues = this.propertyValues?.value as Acorn.ObjectExpression
+        const propValues = (this.elementNode as Acorn.Property)?.value as Acorn.ObjectExpression | undefined
+
+        if (!propValues) return this.node.loc
+
         return findPropertyInProperties(propValues.properties, "type")?.value?.loc || this.node.loc
 
       case "decorator":

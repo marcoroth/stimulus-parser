@@ -39,6 +39,20 @@ export function convertArrayExpressionToStrings(value: Acorn.ArrayExpression): s
   }).filter(value => value !== undefined) as string[]
 }
 
+export function convertArrayExpressionToStringsAndNodes(value: Acorn.ArrayExpression): [string, Acorn.ArrayExpression|Acorn.Literal|Acorn.Identifier][] {
+  return value.elements.map(node => {
+    if (!node) return []
+
+    switch (node.type) {
+      case "ArrayExpression": return [convertArrayExpressionToStringsAndNodes(node), node]
+      case "Literal":         return [node.value?.toString() ?? node.raw, node]
+      case "Identifier":      return [node.name, node]
+      case "SpreadElement":   return [] // TODO: implement support for spreads
+      default:                return []
+    }
+  }).filter(values => values[0] !== undefined) as [string, Acorn.ArrayExpression|Acorn.Literal|Acorn.Identifier][]
+}
+
 export function convertObjectExpression(value: Acorn.ObjectExpression): NestedObject<ValueDefinitionValue> {
   const properties = value.properties.map(property => {
     if (property.type === "SpreadElement") return [] // TODO: implement support for spreads
@@ -55,8 +69,8 @@ export function convertObjectExpression(value: Acorn.ObjectExpression): NestedOb
   return Object.fromEntries(properties)
 }
 
-export function convertObjectExpressionToValueDefinitions(objectExpression: Acorn.ObjectExpression): [string, ValueDefinitionType][] {
-  const definitions: [string, ValueDefinitionType][] = []
+export function convertObjectExpressionToValueDefinitions(objectExpression: Acorn.ObjectExpression): [string, ValueDefinitionType, Acorn.Property][] {
+  const definitions: [string, ValueDefinitionType, Acorn.Property][] = []
 
   objectExpression.properties.map(property => {
     if (property.type !== "Property") return
@@ -65,7 +79,7 @@ export function convertObjectExpressionToValueDefinitions(objectExpression: Acor
     const definition = convertPropertyToValueDefinition(property)
 
     if (definition) {
-      definitions.push([property.key.name, definition])
+      definitions.push([property.key.name, definition, property])
     }
   })
 

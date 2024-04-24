@@ -35,9 +35,9 @@ describe("parse classes", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.start.column).toEqual(27)
     expect(controller.errors[0].loc.end.line).toEqual(4)
-    expect(controller.errors[0].loc.end.column).toEqual(42)
+    expect(controller.errors[0].loc.end.column).toEqual(32)
   })
 
   test("duplicate static classes from parent", () => {
@@ -61,9 +61,9 @@ describe("parse classes", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one". A parent controller already defines this Class.`)
     expect(controller.errors[0].loc.start.line).toEqual(8)
-    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.start.column).toEqual(20)
     expect(controller.errors[0].loc.end.line).toEqual(8)
-    expect(controller.errors[0].loc.end.column).toEqual(35)
+    expect(controller.errors[0].loc.end.column).toEqual(25)
   })
 
   test("assigns classes outside of class via member expression", () => {
