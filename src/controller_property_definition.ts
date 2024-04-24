@@ -38,13 +38,6 @@ export class ValueDefinition extends ControllerPropertyDefinition {
     return this.definition.type
   }
 
-  get propertyValues() {
-    if (this.definitionType === "decorator") return
-
-    const node = this.node as Acorn.ObjectExpression
-    return findPropertyInProperties(node.properties, this.name)
-  }
-
   get keyLoc() {
     if (this.definitionType === "decorator") {
       return (this.node as Acorn.PropertyDefinition).key?.loc || this.node.loc
@@ -79,7 +72,7 @@ export class ValueDefinition extends ControllerPropertyDefinition {
       return (this.node as Acorn.PropertyDefinition).value?.loc || this.node.loc
     }
 
-    return this.propertyValues?.value.loc || this.node.loc
+    return (this.elementNode as Acorn.PropertyDefinition).value?.loc || this.node.loc
   }
 
   get default() {
