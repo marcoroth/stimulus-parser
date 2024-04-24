@@ -80,6 +80,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 16])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([8, 11, 8, 16])
+    expect(controller.valueDefinitionsMap.array.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [],
@@ -89,6 +91,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([7, 4, 7, 11])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([7, 13, 7, 20])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([7, 13, 7, 20])
+    expect(controller.valueDefinitionsMap.boolean.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.boolean.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
       type: "Boolean",
       default: false,
@@ -98,6 +102,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([9, 4, 9, 10])
     expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([9, 12, 9, 18])
     expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([9, 12, 9, 18])
+    expect(controller.valueDefinitionsMap.number.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.number.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.number.definition).toEqual({
       type: "Number",
       default: 0,
@@ -107,6 +113,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 4, 6, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 12, 6, 18])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 12, 6, 18])
+    expect(controller.valueDefinitionsMap.object.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: {},
@@ -116,6 +124,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([5, 12, 5, 18])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([5, 12, 5, 18])
+    expect(controller.valueDefinitionsMap.string.defaultValueLoc).toBeUndefined()
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeFalsy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "",
@@ -142,6 +152,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 46])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([8, 19, 8, 24])
+    expect(extractLoc(controller.valueDefinitionsMap.array.defaultValueLoc)).toEqual([8, 35, 8, 44])
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: ["Array"],
@@ -151,6 +163,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([7, 4, 7, 11])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([7, 13, 7, 45])
     expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([7, 21, 7, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.defaultValueLoc)).toEqual([7, 39, 7, 43])
+    expect(controller.valueDefinitionsMap.boolean.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
       type: "Boolean",
       default: true,
@@ -160,6 +174,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([9, 4, 9, 10])
     expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([9, 12, 9, 40])
     expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([9, 20, 9, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.number.defaultValueLoc)).toEqual([9, 37, 9, 38])
+    expect(controller.valueDefinitionsMap.number.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.number.definition).toEqual({
       type: "Number",
       default: 1,
@@ -169,6 +185,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 4, 6, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 12, 6, 59])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 20, 6, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.object.defaultValueLoc)).toEqual([6, 37, 6, 57])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: { object: "Object" },
@@ -178,6 +196,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([5, 12, 5, 47])
     expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([5, 20, 5, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.string.defaultValueLoc)).toEqual([5, 37, 5, 45])
+    expect(controller.valueDefinitionsMap.string.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.string.definition).toEqual({
       type: "String",
       default: "string",
@@ -306,6 +326,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([5, 12, 5, 85])
     expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([5, 20, 5, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.object.defaultValueLoc)).toEqual([5, 37, 5, 83])
+    expect(controller.valueDefinitionsMap.object.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.object.definition).toEqual({
       type: "Object",
       default: { object: { some: { more: { levels: {} } } } },
@@ -315,6 +337,8 @@ describe("with JS Syntax", () => {
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([6, 4, 6, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([6, 11, 6, 80])
     expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([6, 19, 6, 24])
+    expect(extractLoc(controller.valueDefinitionsMap.array.defaultValueLoc)).toEqual([6, 35, 6, 78])
+    expect(controller.valueDefinitionsMap.array.hasExplicitDefaultValue).toBeTruthy()
     expect(controller.valueDefinitionsMap.array.definition).toEqual({
       type: "Array",
       default: [["Array", "with", ["nested", ["values"]]]],
