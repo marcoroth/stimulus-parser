@@ -44,7 +44,7 @@ export class ValueDefinition extends ControllerPropertyDefinition {
 
   get keyLoc() {
     if (this.definitionType === "decorator") {
-      return (this.node as Acorn.PropertyDefinition).key.loc
+      return (this.node as Acorn.PropertyDefinition).key?.loc || this.node.loc
     }
 
     return this.propertyValues?.key.loc || this.node.loc
@@ -53,14 +53,15 @@ export class ValueDefinition extends ControllerPropertyDefinition {
   get typeLoc() {
     switch(this.definition.kind) {
       case "shorthand":
-        return this.propertyValues?.value.loc
+        return this.propertyValues?.value.loc || this.node.loc
 
       case "expanded":
         const propValues = this.propertyValues?.value as Acorn.ObjectExpression
-        return findPropertyInProperties(propValues.properties, "type")?.value?.loc
+        return findPropertyInProperties(propValues.properties, "type")?.value?.loc || this.node.loc
 
       case "decorator":
-        return (this.node as any as TSESTree.PropertyDefinition).decorators[0]?.loc || this.node.loc
+        const decorators = (this.node as any as TSESTree.PropertyDefinition).decorators || []
+        return decorators[0]?.loc || this.node.loc
 
       default:
         return this.node.loc
