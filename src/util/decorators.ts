@@ -48,7 +48,7 @@ export function parseDecorator(controllerDefinition: ControllerDefinition | unde
 export function parseTargetDecorator(controllerDefinition: ControllerDefinition, name: string, node: TSESTree.PropertyDefinition): void {
   controllerDefinition.anyDecorator = true
 
-  const targetDefinition = new TargetDefinition(stripDecoratorSuffix(name, "Target"), node as any, node.loc, "decorator")
+  const targetDefinition = new TargetDefinition(stripDecoratorSuffix(name, "Target"), node as any, node as any, node.loc, "decorator")
 
   controllerDefinition.addTargetDefinition(targetDefinition)
 }
@@ -56,7 +56,7 @@ export function parseTargetDecorator(controllerDefinition: ControllerDefinition,
 export function parseClassDecorator(controllerDefinition: ControllerDefinition, name: string, node: TSESTree.PropertyDefinition): void {
   controllerDefinition.anyDecorator = true
 
-  const classDefinition = new ClassDefinition(stripDecoratorSuffix(name, "Class"), node as any, node.loc, "decorator")
+  const classDefinition = new ClassDefinition(stripDecoratorSuffix(name, "Class"), node as any, node as any, node.loc, "decorator")
 
   controllerDefinition.addClassDefinition(classDefinition)
 }
@@ -86,12 +86,10 @@ export function parseValueDecorator(controllerDefinition: ControllerDefinition, 
   const definition: ValueDefinitionType = {
     type: type.name,
     default: defaultValue,
-    kind: "decorator",
-    keyLoc: decorator.loc,
-    valueLoc: node.loc
+    kind: "decorator"
   }
 
-  const valueDefinition = new ValueDefinition(key, definition, node as any, node.loc, "decorator")
+  const valueDefinition = new ValueDefinition(key, definition, node as any, node as any, node.loc, "decorator")
 
   controllerDefinition.addValueDefinition(valueDefinition)
 }

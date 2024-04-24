@@ -12,8 +12,6 @@ export type ValueDefinitionKind = "expanded" | "inferred" | "shorthand" | "decor
 export type ValueDefinition = {
   type: string
   default: ValueDefinitionValue
-  keyLoc: Acorn.SourceLocation | undefined | null
-  valueLoc: Acorn.SourceLocation | undefined | null
   kind: ValueDefinitionKind
 }
 

@@ -65,9 +65,9 @@ describe("compiled JavaScript", () => {
     expect(controller.hasErrors).toEqual(true)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "item"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.start.column).toEqual(20)
     expect(controller.errors[0].loc.end.line).toEqual(4)
-    expect(controller.errors[0].loc.end.column).toEqual(27)
+    expect(controller.errors[0].loc.end.column).toEqual(26)
 
     expect(controller.actionNames).toEqual([])
     expect(controller.targetNames).toEqual(["item", "item"])

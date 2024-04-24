@@ -1,6 +1,7 @@
 import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
+import { extractLoc } from "../helpers/matchers"
 
 describe("parse values", () => {
   test("static", () => {
@@ -21,72 +22,50 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      array: {
-        type: "Array",
-        default: [],
-        kind: "shorthand",
-        keyLoc: {
-          end: { column: 9, line: 8 },
-          start: { column: 4, line: 8 },
-        },
-        valueLoc: {
-          end: { column: 16, line: 8 },
-          start: { column: 11, line: 8 },
-        },
-      },
-      boolean: {
-        type: "Boolean",
-        default: false,
-        kind: "shorthand",
-        keyLoc: {
-          end: { column: 11, line: 7 },
-          start: { column: 4, line: 7 },
-        },
-        valueLoc: {
-          end: { column: 20, line: 7 },
-          start: { column: 13, line: 7 },
-        },
-      },
-      number: {
-        type: "Number",
-        default: 0,
-        kind: "shorthand",
-        keyLoc: {
-          end: { column: 10, line: 9 },
-          start: { column: 4, line: 9 },
-        },
-        valueLoc: {
-          end: { column: 18, line: 9 },
-          start: { column: 12, line: 9 },
-        },
-      },
-      object: {
-        type: "Object",
-        default: {},
-        kind: "shorthand",
-        keyLoc: {
-          end: { column: 10, line: 6 },
-          start: { column: 4, line: 6 },
-        },
-        valueLoc: {
-          end: { column: 18, line: 6 },
-          start: { column: 12, line: 6 },
-        },
-      },
-      string: {
-        type: "String",
-        default: "",
-        kind: "shorthand",
-        keyLoc: {
-          end: { column: 10, line: 5 },
-          start: { column: 4, line: 5 },
-        },
-        valueLoc: {
-          end: { column: 18, line: 5 },
-          start: { column: 12, line: 5 },
-        },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
+    expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 16])
+    expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([8, 11, 8, 16])
+    expect(controller.valueDefinitionsMap.array.definition).toEqual({
+      type: "Array",
+      default: [],
+      kind: "shorthand",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([7, 4, 7, 11])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([7, 13, 7, 20])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([7, 13, 7, 20])
+    expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
+      type: "Boolean",
+      default: false,
+      kind: "shorthand",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([9, 4, 9, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([9, 12, 9, 18])
+    expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([9, 12, 9, 18])
+    expect(controller.valueDefinitionsMap.number.definition).toEqual({
+      type: "Number",
+      default: 0,
+      kind: "shorthand",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 4, 6, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 12, 6, 18])
+    expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 12, 6, 18])
+    expect(controller.valueDefinitionsMap.object.definition).toEqual({
+      type: "Object",
+      default: {},
+      kind: "shorthand",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([5, 4, 5, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([5, 12, 5, 18])
+    expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([5, 12, 5, 18])
+    expect(controller.valueDefinitionsMap.string.definition).toEqual({
+      type: "String",
+      default: "",
+      kind: "shorthand",
     })
   })
 
@@ -108,72 +87,50 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      string: {
-        type: "String",
-        default: "string",
-        kind: "expanded",
-        valueLoc: {
-          end: { column: 26, line: 5 },
-          start: { column: 20, line: 5 },
-        },
-        keyLoc: {
-          end: { column: 18, line: 5 },
-          start: { column: 14, line: 5 },
-        },
-      },
-      object: {
-        type: "Object",
-        default: { object: "Object" },
-        kind: "expanded",
-        valueLoc: {
-          end: { column: 26, line: 6 },
-          start: { column: 20, line: 6 },
-        },
-        keyLoc: {
-          end: { column: 18, line: 6 },
-          start: { column: 14, line: 6 },
-        },
-      },
-      boolean: {
-        type: "Boolean",
-        default: true,
-        kind: "expanded",
-        valueLoc: {
-          end: { column: 28, line: 7 },
-          start: { column: 21, line: 7 },
-        },
-        keyLoc: {
-          end: { column: 19, line: 7 },
-          start: { column: 15, line: 7 },
-        },
-      },
-      array: {
-        type: "Array",
-        default: ["Array"],
-        kind: "expanded",
-        valueLoc: {
-          end: { column: 24, line: 8 },
-          start: { column: 19, line: 8 },
-        },
-        keyLoc: {
-          end: { column: 17, line: 8 },
-          start: { column: 13, line: 8 },
-        },
-      },
-      number: {
-        type: "Number",
-        default: 1,
-        kind: "expanded",
-        valueLoc: {
-          end: { column: 26, line: 9 },
-          start: { column: 20, line: 9 },
-        },
-        keyLoc: {
-          end: { column: 18, line: 9 },
-          start: { column: 14, line: 9 },
-        },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([5, 4, 5, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([5, 12, 5, 47])
+    expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([5, 20, 5, 26])
+    expect(controller.valueDefinitionsMap.string.definition).toEqual({
+      type: "String",
+      default: "string",
+      kind: "expanded",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 4, 6, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 12, 6, 59])
+    expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 20, 6, 26])
+    expect(controller.valueDefinitionsMap.object.definition).toEqual({
+      type: "Object",
+      default: { object: "Object" },
+      kind: "expanded",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([7, 4, 7, 11])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([7, 13, 7, 45])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([7, 21, 7, 28])
+    expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
+      type: "Boolean",
+      default: true,
+      kind: "expanded",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
+    expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 46])
+    expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([8, 19, 8, 24])
+    expect(controller.valueDefinitionsMap.array.definition).toEqual({
+      type: "Array",
+      default: ["Array"],
+      kind: "expanded",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([9, 4, 9, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([9, 12, 9, 40])
+    expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([9, 20, 9, 26])
+    expect(controller.valueDefinitionsMap.number.definition).toEqual({
+      type: "Number",
+      default: 1,
+      kind: "expanded",
     })
   })
 
@@ -197,10 +154,7 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(6)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
-    expect(controller.errors[0].loc.end.line).toEqual(6)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([6, 4, 6, 7])
   })
 
   test("duplicate static values from parent", () => {
@@ -228,10 +182,7 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one". A parent controller already defines this Value.`)
-    expect(controller.errors[0].loc.start.line).toEqual(11)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
-    expect(controller.errors[0].loc.end.line).toEqual(11)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([11, 4, 11, 7])
   })
 
   test("assigns values outside of class via member expression", () => {
@@ -269,7 +220,7 @@ describe("parse values", () => {
         @Value(String) oneValue!: string;
 
         static values = {
-          one: { type: "String", default: ""}
+          one: { type: "String", default: "" }
         }
       }
     `
@@ -281,10 +232,7 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(9)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
-    expect(controller.errors[0].loc.end.line).toEqual(9)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([9, 4, 9, 7])
   })
 
   test("duplicate static values mixed with decorator", () => {
@@ -309,10 +257,7 @@ describe("parse values", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Value "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(7)
-    expect(controller.errors[0].loc.start.column).toEqual(11)
-    expect(controller.errors[0].loc.end.line).toEqual(7)
-    expect(controller.errors[0].loc.end.column).toEqual(15)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([7, 4, 7, 7])
   })
 
   test("decorated", () => {
@@ -333,42 +278,50 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      array: {
-        type: "Array",
-        default: [],
-        kind: "decorator",
-        keyLoc: { end: { column: 15, line: 9 }, start: { column: 2, line: 9 } },
-        valueLoc: { end: { column: 32, line: 9 }, start: { column: 2, line: 9 } },
-      },
-      boolean: {
-        type: "Boolean",
-        default: false,
-        kind: "decorator",
-        keyLoc: { end: { column: 17, line: 8 }, start: { column: 2, line: 8 } },
-        valueLoc: { end: { column: 41, line: 8 }, start: { column: 2, line: 8 } },
-      },
-      number: {
-        type: "Number",
-        default: 0,
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 10 }, start: { column: 2, line: 10 } },
-        valueLoc: { end: { column: 38, line: 10 }, start: { column: 2, line: 10 } },
-      },
-      object: {
-        type: "Object",
-        default: {},
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 7 }, start: { column: 2, line: 7 } },
-        valueLoc: { end: { column: 34, line: 7 }, start: { column: 2, line: 7 } },
-      },
-      string: {
-        type: "String",
-        default: "",
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 38, line: 6 }, start: { column: 2, line: 6 } },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([6, 17, 6, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([6, 2, 6, 38])
+    expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([6, 2, 6, 16])
+    expect(controller.valueDefinitionsMap.string.definition).toEqual({
+      type: "String",
+      default: "",
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([7, 17, 7, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([7, 2, 7, 34])
+    expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([7, 2, 7, 16])
+    expect(controller.valueDefinitionsMap.object.definition).toEqual({
+      type: "Object",
+      default: {},
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([8, 18, 8, 30])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([8, 2, 8, 41])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([8, 2, 8, 17])
+    expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
+      type: "Boolean",
+      default: false,
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([9, 16, 9, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([9, 2, 9, 32])
+    expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([9, 2, 9, 15])
+    expect(controller.valueDefinitionsMap.array.definition).toEqual({
+      type: "Array",
+      default: [],
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([10, 17, 10, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([10, 2, 10, 38])
+    expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([10, 2, 10, 16])
+    expect(controller.valueDefinitionsMap.number.definition).toEqual({
+      type: "Number",
+      default: 0,
+      kind: "decorator",
     })
   })
 
@@ -390,42 +343,50 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      array: {
-        type: "Array",
-        default: [1, 2, 3],
-        kind: "decorator",
-        keyLoc: { end: { column: 15, line: 9 }, start: { column: 2, line: 9 } },
-        valueLoc: { end: { column: 39, line: 9 }, start: { column: 2, line: 9 } },
-      },
-      boolean: {
-        type: "Boolean",
-        default: true,
-        kind: "decorator",
-        keyLoc: { end: { column: 17, line: 8 }, start: { column: 2, line: 8 } },
-        valueLoc: { end: { column: 38, line: 8 }, start: { column: 2, line: 8 } },
-      },
-      number: {
-        type: "Number",
-        default: 10,
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 10 }, start: { column: 2, line: 10 } },
-        valueLoc: { end: { column: 34, line: 10 }, start: { column: 2, line: 10 } },
-      },
-      object: {
-        type: "Object",
-        default: { hello: "world" },
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 7 }, start: { column: 2, line: 7 } },
-        valueLoc: { end: { column: 50, line: 7 }, start: { column: 2, line: 7 } },
-      },
-      string: {
-        type: "String",
-        default: "string",
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 40, line: 6 }, start: { column: 2, line: 6 } },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([6, 17, 6, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([6, 32, 6, 40])
+    expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([6, 2, 6, 16])
+    expect(controller.valueDefinitionsMap.string.definition).toEqual({
+      type: "String",
+      default: "string",
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([7, 17, 7, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([7, 32, 7, 50])
+    expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([7, 2, 7, 16])
+    expect(controller.valueDefinitionsMap.object.definition).toEqual({
+      type: "Object",
+      default: { hello: "world" },
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.keyLoc)).toEqual([8, 18, 8, 30])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.valueLoc)).toEqual([8, 34, 8, 38])
+    expect(extractLoc(controller.valueDefinitionsMap.boolean.typeLoc)).toEqual([8, 2, 8, 17])
+    expect(controller.valueDefinitionsMap.boolean.definition).toEqual({
+      type: "Boolean",
+      default: true,
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([9, 16, 9, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([9, 30, 9, 39])
+    expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([9, 2, 9, 15])
+    expect(controller.valueDefinitionsMap.array.definition).toEqual({
+      type: "Array",
+      default: [1, 2, 3],
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.number.keyLoc)).toEqual([10, 17, 10, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.number.valueLoc)).toEqual([10, 32, 10, 34])
+    expect(extractLoc(controller.valueDefinitionsMap.number.typeLoc)).toEqual([10, 2, 10, 16])
+    expect(controller.valueDefinitionsMap.number.definition).toEqual({
+      type: "Number",
+      default: 10,
+      kind: "decorator",
     })
   })
 
@@ -444,21 +405,23 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      object: {
-        type: "Object",
-        default: { object: { some: { more: { levels: {} } } } },
-        kind: "expanded",
-        keyLoc: { end: { column: 18, line: 5 }, start: { column: 14, line: 5 } },
-        valueLoc: { end: { column: 26, line: 5 }, start: { column: 20, line: 5 } }
-      },
-      array: {
-        type: "Array",
-        default: [["Array", "with", ["nested", ["values"]]]],
-        kind: "expanded",
-        keyLoc: { end: { column: 17, line: 6 }, start: { column: 13, line: 6 } },
-        valueLoc: { end: { column: 24, line: 6 }, start: { column: 19, line: 6 } }
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([5, 4, 5, 10])
+    expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([5, 12, 5, 85])
+    expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([5, 20, 5, 26])
+    expect(controller.valueDefinitionsMap.object.definition).toEqual({
+      type: "Object",
+      default: { object: { some: { more: { levels: {} } } } },
+      kind: "expanded",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([6, 4, 6, 9])
+    expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([6, 11, 6, 80])
+    expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([6, 19, 6, 24])
+    expect(controller.valueDefinitionsMap.array.definition).toEqual({
+      type: "Array",
+      default: [["Array", "with", ["nested", ["values"]]]],
+      kind: "expanded",
     })
   })
 
@@ -477,21 +440,23 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      array: {
-        type: "Array",
-        default: [["Array", "with", ["nested", ["values"]]]],
-        kind: "decorator",
-        keyLoc: { end: { column: 15, line: 7 }, start: { column: 2, line: 7 } },
-        valueLoc: { end: { column: 73, line: 7 }, start: { column: 2, line: 7 } },
-      },
-      object: {
-        type: "Object",
-        default: { object: { some: { more: { levels: {} } } } },
-        kind: "decorator",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 78, line: 6 }, start: { column: 2, line: 6 } },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([6, 17, 6, 28])
+    expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([6, 32, 6, 78])
+    expect(extractLoc(controller.valueDefinitionsMap.object.typeLoc)).toEqual([6, 2, 6, 16])
+    expect(controller.valueDefinitionsMap.object.definition).toEqual({
+      type: "Object",
+      default: { object: { some: { more: { levels: {} } } } },
+      kind: "decorator",
+    })
+
+    expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([7, 16, 7, 26])
+    expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([7, 30, 7, 73])
+    expect(extractLoc(controller.valueDefinitionsMap.array.typeLoc)).toEqual([7, 2, 7, 15])
+    expect(controller.valueDefinitionsMap.array.definition).toEqual({
+      type: "Array",
+      default: [["Array", "with", ["nested", ["values"]]]],
+      kind: "decorator",
     })
   })
 
@@ -509,14 +474,14 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      string: {
-        type: "String",
-        default: "Number",
-        kind: "inferred",
-        keyLoc: { end: { column: 16, line: 6 }, start: { column: 2, line: 6 } },
-        valueLoc: { end: { column: 78, line: 6 }, start: { column: 2, line: 6 } },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.string.keyLoc)).toEqual([])
+    expect(extractLoc(controller.valueDefinitionsMap.string.valueLoc)).toEqual([])
+    expect(extractLoc(controller.valueDefinitionsMap.string.typeLoc)).toEqual([])
+    expect(controller.valueDefinitionsMap.string.definition).toEqual({
+      type: "String",
+      default: "Number",
+      kind: "inferred",
     })
   })
 
@@ -534,14 +499,13 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      name: {
-        type: "String",
-        default: "",
-        kind: "shorthand",
-        keyLoc: { end: { column: 8, line: 5 }, start: { column: 4, line: 5 } },
-        valueLoc: { end: { column: 16, line: 5 }, start: { column: 10, line: 5 } },
-      },
+    expect(extractLoc(controller.valueDefinitionsMap.name.keyLoc)).toEqual([5, 4, 5, 8])
+    expect(extractLoc(controller.valueDefinitionsMap.name.valueLoc)).toEqual([5, 10, 5, 16])
+    expect(extractLoc(controller.valueDefinitionsMap.name.typeLoc)).toEqual([5, 10, 5, 16])
+    expect(controller.valueDefinitionsMap.name.definition).toEqual({
+      type: "String",
+      default: "",
+      kind: "shorthand",
     })
   })
 
@@ -562,14 +526,14 @@ describe("parse values", () => {
     const controller = parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeFalsy()
-    expect(controller.valueDefinitionsMap).toEqual({
-      name: {
-        type: "String",
-        default: "Stimulus",
-        kind: "expanded",
-        keyLoc: { end: { column: 10, line: 6 }, start: { column: 6, line: 6 } },
-        valueLoc: { end: { column: 18, line: 6 }, start: { column: 12, line: 6 } },
-      },
+
+    expect(extractLoc(controller.valueDefinitionsMap.name.keyLoc)).toEqual([5, 4, 5, 8])
+    expect(extractLoc(controller.valueDefinitionsMap.name.valueLoc)).toEqual([5, 10, 8, 5])
+    expect(extractLoc(controller.valueDefinitionsMap.name.typeLoc)).toEqual([6, 12, 6, 18])
+    expect(controller.valueDefinitionsMap.name.definition).toEqual({
+      type: "String",
+      default: "Stimulus",
+      kind: "expanded",
     })
   })
 })

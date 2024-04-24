@@ -4,6 +4,7 @@ import type * as Acorn from "acorn"
 import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
 
 export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
+
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
 
   return properties.find(property =>
@@ -38,6 +39,20 @@ export function convertArrayExpressionToStrings(value: Acorn.ArrayExpression): s
   }).filter(value => value !== undefined) as string[]
 }
 
+export function convertArrayExpressionToStringsAndNodes(value: Acorn.ArrayExpression): [string, Acorn.ArrayExpression|Acorn.Literal|Acorn.Identifier][] {
+  return value.elements.map(node => {
+    if (!node) return []
+
+    switch (node.type) {
+      case "ArrayExpression": return [convertArrayExpressionToStringsAndNodes(node), node]
+      case "Literal":         return [node.value?.toString() ?? node.raw, node]
+      case "Identifier":      return [node.name, node]
+      case "SpreadElement":   return [] // TODO: implement support for spreads
+      default:                return []
+    }
+  }).filter(values => values[0] !== undefined) as [string, Acorn.ArrayExpression|Acorn.Literal|Acorn.Identifier][]
+}
+
 export function convertObjectExpression(value: Acorn.ObjectExpression): NestedObject<ValueDefinitionValue> {
   const properties = value.properties.map(property => {
     if (property.type === "SpreadElement") return [] // TODO: implement support for spreads
@@ -54,8 +69,8 @@ export function convertObjectExpression(value: Acorn.ObjectExpression): NestedOb
   return Object.fromEntries(properties)
 }
 
-export function convertObjectExpressionToValueDefinitions(objectExpression: Acorn.ObjectExpression): [string, ValueDefinitionType][] {
-  const definitions: [string, ValueDefinitionType][] = []
+export function convertObjectExpressionToValueDefinitions(objectExpression: Acorn.ObjectExpression): [string, ValueDefinitionType, Acorn.Property][] {
+  const definitions: [string, ValueDefinitionType, Acorn.Property][] = []
 
   objectExpression.properties.map(property => {
     if (property.type !== "Property") return
@@ -64,7 +79,7 @@ export function convertObjectExpressionToValueDefinitions(objectExpression: Acor
     const definition = convertPropertyToValueDefinition(property)
 
     if (definition) {
-      definitions.push([property.key.name, definition])
+      definitions.push([property.key.name, definition, property])
     }
   })
 
@@ -89,17 +104,13 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
 
   if (!type) return
 
-  const valueLoc = typeProperty?.value.loc
-  const keyLoc = typeProperty?.key.loc
 
   let defaultValue = getDefaultValueFromNode(defaultProperty?.value)
 
   return {
     type,
     default: defaultValue,
-    kind: "expanded",
-    keyLoc,
-    valueLoc,
+    kind: "expanded"
   }
 }
 
@@ -109,9 +120,7 @@ export function convertPropertyToValueDefinition(property: Acorn.Property): Valu
       return {
         type: property.value.name,
         default: ValueDefinition.defaultValuesForType[property.value.name],
-        kind: "shorthand",
-        keyLoc: property.key.loc,
-        valueLoc: property.value.loc
+        kind: "shorthand"
       }
     case "ObjectExpression":
       return convertObjectExpressionToValueDefinition(property.value)

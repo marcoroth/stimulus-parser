@@ -34,9 +34,9 @@ describe("parse targets", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "one"`)
     expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.start.column).toEqual(27)
     expect(controller.errors[0].loc.end.line).toEqual(4)
-    expect(controller.errors[0].loc.end.column).toEqual(42)
+    expect(controller.errors[0].loc.end.column).toEqual(32)
   })
 
   test("duplicate static targets from parent", () => {
@@ -60,9 +60,9 @@ describe("parse targets", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "one". A parent controller already defines this Target.`)
     expect(controller.errors[0].loc.start.line).toEqual(8)
-    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.start.column).toEqual(20)
     expect(controller.errors[0].loc.end.line).toEqual(8)
-    expect(controller.errors[0].loc.end.column).toEqual(35)
+    expect(controller.errors[0].loc.end.column).toEqual(25)
   })
 
   test("assigns targets outside of class via member expression", () => {
@@ -276,8 +276,8 @@ describe("parse targets", () => {
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "output"`)
     expect(controller.errors[0].loc.start.line).toEqual(6)
-    expect(controller.errors[0].loc.start.column).toEqual(19)
+    expect(controller.errors[0].loc.start.column).toEqual(20)
     expect(controller.errors[0].loc.end.line).toEqual(6)
-    expect(controller.errors[0].loc.end.column).toEqual(29)
+    expect(controller.errors[0].loc.end.column).toEqual(28)
   })
 })
