@@ -1,6 +1,7 @@
 import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
+import { extractLoc } from "../helpers/matchers"
 
 describe("compiled JavaScript", () => {
   test("transpiled", () => {
@@ -64,10 +65,7 @@ describe("compiled JavaScript", () => {
 
     expect(controller.hasErrors).toEqual(true)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "item"`)
-    expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(20)
-    expect(controller.errors[0].loc.end.line).toEqual(4)
-    expect(controller.errors[0].loc.end.column).toEqual(26)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([4, 20, 4, 26])
 
     expect(controller.actionNames).toEqual([])
     expect(controller.targetNames).toEqual(["item", "item"])

@@ -1,6 +1,7 @@
 import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
+import { extractLoc } from "../helpers/matchers"
 
 describe("parse targets", () => {
   test("static targets", () => {
@@ -33,10 +34,7 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(27)
-    expect(controller.errors[0].loc.end.line).toEqual(4)
-    expect(controller.errors[0].loc.end.column).toEqual(32)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([4, 27, 4, 32])
   })
 
   test("duplicate static targets from parent", () => {
@@ -59,10 +57,7 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "one". A parent controller already defines this Target.`)
-    expect(controller.errors[0].loc.start.line).toEqual(8)
-    expect(controller.errors[0].loc.start.column).toEqual(20)
-    expect(controller.errors[0].loc.end.line).toEqual(8)
-    expect(controller.errors[0].loc.end.column).toEqual(25)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([8, 20, 8, 25])
   })
 
   test("assigns targets outside of class via member expression", () => {
@@ -193,10 +188,7 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "output"`)
-    expect(controller.errors[0].loc.start.line).toEqual(7)
-    expect(controller.errors[0].loc.start.column).toEqual(2)
-    expect(controller.errors[0].loc.end.line).toEqual(7)
-    expect(controller.errors[0].loc.end.column).toEqual(57)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([7, 2, 7, 57])
   })
 
   test("single @Targets decorator", () => {
@@ -275,9 +267,6 @@ describe("parse targets", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Target "output"`)
-    expect(controller.errors[0].loc.start.line).toEqual(6)
-    expect(controller.errors[0].loc.start.column).toEqual(20)
-    expect(controller.errors[0].loc.end.line).toEqual(6)
-    expect(controller.errors[0].loc.end.column).toEqual(28)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([6, 20, 6, 28])
   })
 })

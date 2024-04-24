@@ -1,6 +1,7 @@
 import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
+import { extractLoc } from "../helpers/matchers"
 
 describe("decorator", () => {
   test("parse single target", () => {
@@ -72,10 +73,7 @@ describe("decorator", () => {
     expect(controller.isTyped).toBeFalsy()
     expect(controller.errors.length).toEqual(1)
     expect(controller.errors[0].message).toEqual("Controller needs to be decorated with @TypedController in order to use decorators.")
-    expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(15)
-    expect(controller.errors[0].loc.end.line).toEqual(6)
-    expect(controller.errors[0].loc.end.column).toEqual(1)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([4, 15, 6, 1])
     expect(controller.targetNames).toEqual(['output'])
   })
 
@@ -92,9 +90,6 @@ describe("decorator", () => {
     expect(controller.isTyped).toBeTruthy()
     expect(controller.errors.length).toEqual(1)
     expect(controller.errors[0].message).toEqual("Controller was decorated with @TypedController but Controller didn't use any decorators.")
-    expect(controller.errors[0].loc.start.line).toEqual(5)
-    expect(controller.errors[0].loc.start.column).toEqual(15)
-    expect(controller.errors[0].loc.end.line).toEqual(5)
-    expect(controller.errors[0].loc.end.column).toEqual(42)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([5, 15, 5, 42])
   })
 })

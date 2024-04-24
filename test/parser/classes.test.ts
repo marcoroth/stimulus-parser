@@ -1,6 +1,7 @@
 import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
+import { extractLoc } from "../helpers/matchers"
 
 describe("parse classes", () => {
   test("static", () => {
@@ -34,10 +35,7 @@ describe("parse classes", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one"`)
-    expect(controller.errors[0].loc.start.line).toEqual(4)
-    expect(controller.errors[0].loc.start.column).toEqual(27)
-    expect(controller.errors[0].loc.end.line).toEqual(4)
-    expect(controller.errors[0].loc.end.column).toEqual(32)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([4, 27, 4, 32])
   })
 
   test("duplicate static classes from parent", () => {
@@ -60,10 +58,7 @@ describe("parse classes", () => {
     expect(controller.hasErrors).toBeTruthy()
     expect(controller.errors).toHaveLength(1)
     expect(controller.errors[0].message).toEqual(`Duplicate definition of Stimulus Class "one". A parent controller already defines this Class.`)
-    expect(controller.errors[0].loc.start.line).toEqual(8)
-    expect(controller.errors[0].loc.start.column).toEqual(20)
-    expect(controller.errors[0].loc.end.line).toEqual(8)
-    expect(controller.errors[0].loc.end.column).toEqual(25)
+    expect(extractLoc(controller.errors[0].loc)).toEqual([8, 20, 8, 25])
   })
 
   test("assigns classes outside of class via member expression", () => {
