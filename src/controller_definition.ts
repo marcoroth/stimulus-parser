@@ -128,11 +128,11 @@ export class ControllerDefinition {
   }
 
   get valueDefinitionsMap() {
-    return Object.fromEntries(this.values.map(definition => [definition.name, definition.definition]))
+    return Object.fromEntries(this.values.map(definition => [definition.name, definition]))
   }
 
   get localValueDefinitionsMap() {
-    return Object.fromEntries(this.localValues.map(definition => [definition.name, definition.definition]))
+    return Object.fromEntries(this.localValues.map(definition => [definition.name, definition]))
   }
 
   get controllerRoot(): string {

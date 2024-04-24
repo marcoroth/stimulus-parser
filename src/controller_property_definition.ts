@@ -1,7 +1,9 @@
+import { findPropertyInProperties } from "./util/ast"
+
 import type * as Acorn  from "acorn"
 
 import type { ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "./types"
-import { findPropertyInProperties } from "./util/ast"
+import type { TSESTree } from "@typescript-eslint/typescript-estree"
 
 // TODO: ArrayExpression and ObjectExpression shoudl probably be PropertyDefinition as well
 // AssignmentExpression | PropertyDefinition
@@ -34,35 +36,43 @@ export class ValueDefinition extends ControllerPropertyDefinition {
   }
 
   get propertyValues() {
-    if(this.definitionType === "decorator") {
-      return
-    }
+    if (this.definitionType === "decorator") return
+
     const node = this.node as Acorn.ObjectExpression
-    return findPropertyInProperties(node.properties, this.name, this.node.type)
+    return findPropertyInProperties(node.properties, this.name)
   }
 
   get keyLoc() {
-    return this.propertyValues?.key.loc
+    if (this.definitionType === "decorator") {
+      return (this.node as Acorn.PropertyDefinition).key.loc
+    }
+
+    return this.propertyValues?.key.loc || this.node.loc
   }
 
   get typeLoc() {
-    if(!this.propertyValues) {
-      return 
-    }
     switch(this.definition.kind) {
-      case "shorthand": 
-        return this.propertyValues.value.loc
-      case "expanded": 
-        const propValues = this.propertyValues.value as Acorn.ObjectExpression
-        const valueLocation = findPropertyInProperties(propValues.properties, "type")?.value?.loc
-        return valueLocation
-        default: 
-          return
+      case "shorthand":
+        return this.propertyValues?.value.loc
+
+      case "expanded":
+        const propValues = this.propertyValues?.value as Acorn.ObjectExpression
+        return findPropertyInProperties(propValues.properties, "type")?.value?.loc
+
+      case "decorator":
+        return (this.node as any as TSESTree.PropertyDefinition).decorators[0]?.loc || this.node.loc
+
+      default:
+        return this.node.loc
     }
   }
 
   get valueLoc() {
-    return this.propertyValues?.value.loc
+    if (this.definitionType === "decorator") {
+      return (this.node as Acorn.PropertyDefinition).value?.loc || this.node.loc
+    }
+
+    return this.propertyValues?.value.loc || this.node.loc
   }
 
   get default() {

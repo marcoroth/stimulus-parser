@@ -3,18 +3,13 @@ import { ValueDefinition } from "../controller_property_definition"
 import type * as Acorn from "acorn"
 import type { NestedObject, ValueDefinitionValue, ValueDefinition as ValueDefinitionType } from "../types"
 
-export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string, valueKind?: (string | null | undefined)): Acorn.Property | undefined {
+export function findPropertyInProperties(_properties: (Acorn.Property | Acorn.SpreadElement)[], propertyName: string): Acorn.Property | undefined {
+
   const properties = _properties.filter(property => property.type === "Property") as Acorn.Property[]
 
-  const foundProperties = properties.filter(property =>
+  return properties.find(property =>
     ((property.key.type === "Identifier") ? property.key.name : undefined) === propertyName
   )
-
-  if(valueKind) {
-    return foundProperties.find(property => property.value.type === valueKind)
-  } else {
-    return foundProperties[0]
-  }
 }
 
 export function convertArrayExpressionToLiterals(value: Acorn.ArrayExpression): Array<ValueDefinitionValue> {
