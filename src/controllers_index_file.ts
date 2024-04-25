@@ -29,8 +29,12 @@ export class ControllersIndexFile {
 
   get applicationImport(): ImportDeclaration | undefined {
     return this.sourceFile.importDeclarations.find(declaration =>
-      declaration.originalName === this.project.applicationFile?.exportDeclaration?.exportedName
+      declaration.originalName === this.project.applicationFile?.exportDeclaration?.exportedName && declaration.originalName !== undefined
     )
+  }
+
+  get localApplicationConstant() {
+    return this.applicationImport?.localName || this.sourceFile.stimulusApplicationImport?.localName
   }
 
   async analyze() {

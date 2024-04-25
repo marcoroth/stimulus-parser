@@ -1,3 +1,6 @@
+import { walk } from "./util/walk"
+
+import type * as Acorn from "acorn"
 import type { Project } from "./project"
 import type { SourceFile } from "./source_file"
 import type { RegisteredController } from "./registered_controller"
@@ -25,9 +28,44 @@ export class ApplicationFile {
     return this.sourceFile.stimulusApplicationImport
   }
 
+  get localApplicationConstant() {
+    const importName = this.applicationImport?.localName
+
+    if (!importName) return
+
+    let localName = null
+
+    walk(this.sourceFile.ast, {
+      VariableDeclaration: (node: Acorn.VariableDeclaration) => {
+
+        node.declarations.forEach(declarator => {
+          if (declarator.id?.type !== "Identifier") return
+          if (declarator.init?.type !== "CallExpression") return
+
+          const call = declarator.init
+
+          if (call.callee.type !== "MemberExpression") return
+          if (call.callee.object.type !== "Identifier") return
+          if (call.callee.property.type !== "Identifier") return
+
+          if (call.callee.object.name !== importName) return
+          if (call.callee.property.name !== "start") return
+
+          localName = declarator.id.name
+        })
+      }
+    })
+
+    return localName
+  }
+
   get exportDeclaration(): ExportDeclaration | undefined {
-    // TODO: this should trace from the application import, to the variable declaration to the export
-    // return this.sourceFile.exportDeclarations.find(declaration => declaration.localName === this.applicationImport?.localName)
-    return this.sourceFile.exportDeclarations[0]
+    if (!this.localApplicationConstant) return
+
+    return this.sourceFile.findExport(this.localApplicationConstant)
+  }
+
+  get exportedApplicationConstant() {
+    return this.exportDeclaration?.exportedName
   }
 }

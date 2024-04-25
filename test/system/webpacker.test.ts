@@ -11,11 +11,15 @@ describe("System", () => {
 
     await project.initialize()
 
-    expect(project.controllersFile).toBeDefined()
-    expect(project.relativePath(project.controllersFile.path)).toEqual("app/javascript/controllers/index.js")
-
     expect(project.applicationFile).toBeDefined()
+    expect(project.applicationFile.localApplicationConstant).toEqual("application")
+    expect(project.applicationFile.exportedApplicationConstant).toEqual("application")
     expect(project.relativePath(project.applicationFile.path)).toEqual("app/javascript/controllers/application.js")
+
+    expect(project.controllersFile).toBeDefined()
+    expect(project.controllersFile.applicationImport).toBeDefined()
+    expect(project.controllersFile.localApplicationConstant).toEqual("application")
+    expect(project.relativePath(project.controllersFile.path)).toEqual("app/javascript/controllers/index.js")
 
     expect(project.registeredControllers.length).toEqual(1)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-webpack-helpers"]])
