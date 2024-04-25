@@ -88,17 +88,21 @@ export class SourceFile {
     )
   }
 
+  get hasStimulusApplicationImport() {
+    return !!this.stimulusApplicationImport
+  }
+
+  get hasResolvedStimulusApplicationFileImport() {
+    return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path === declaration.resolvedRelativePath)
+  }
+
   get hasHelperPackage() {
     return this.importDeclarations.some(declaration => helperPackages.includes(declaration.source))
   }
 
-  get hasStimulusApplicationImport() {
-    return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path == declaration.resolvedRelativePath)
-  }
-
   get isStimulusControllersIndex() {
     if (this.hasHelperPackage) return true
-    if (this.hasStimulusApplicationImport) return true
+    if (this.hasResolvedStimulusApplicationFileImport) return true
 
     return false
   }

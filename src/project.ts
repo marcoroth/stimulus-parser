@@ -194,7 +194,7 @@ export class Project {
   async analyzeReferencedModules() {
     const referencesModules = Array.from(this.referencedNodeModules).map(async packageName => {
       const nodeModule = (
-        this.detectedNodeModules.find(module => module.name === packageName) || 
+        this.detectedNodeModules.find(module => module.name === packageName) ||
         await analyzePackage(this, packageName)
       )
 
@@ -236,6 +236,11 @@ export class Project {
 
   async analyzeStimulusControllersIndexFile() {
     let controllersFile = this.projectFiles.find(file => file.isStimulusControllersIndex)
+
+    // TODO: this should be fully traced
+    if (!controllersFile && this.applicationFile && this.applicationFile.sourceFile.hasStimulusApplicationImport) {
+      controllersFile = this.applicationFile.sourceFile
+    }
 
     if (controllersFile) {
       this.controllersFile = new ControllersIndexFile(this, controllersFile)

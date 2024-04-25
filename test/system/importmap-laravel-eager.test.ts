@@ -11,11 +11,15 @@ describe("System", () => {
 
     await project.initialize()
 
-    expect(project.controllersFile).toBeDefined()
-    expect(project.relativePath(project.controllersFile.path)).toEqual("resources/js/controllers/index.js")
-
     expect(project.applicationFile).toBeDefined()
+    expect(project.applicationFile.localApplicationConstant).toEqual("Stimulus")
+    expect(project.applicationFile.exportedApplicationConstant).toEqual("Stimulus")
     expect(project.relativePath(project.applicationFile.path)).toEqual("resources/js/libs/stimulus.js")
+
+    expect(project.controllersFile).toBeDefined()
+    expect(project.controllersFile.applicationImport).toBeDefined()
+    expect(project.controllersFile.localApplicationConstant).toEqual("Stimulus")
+    expect(project.relativePath(project.controllersFile.path)).toEqual("resources/js/controllers/index.js")
 
     expect(project.registeredControllers.length).toEqual(1)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-eager"]])
