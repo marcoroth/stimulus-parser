@@ -1,6 +1,6 @@
-import { Application } from "@hotwired/stimulus"
+import { Application as MyApplication } from "@hotwired/stimulus"
 
-const application = Application.start()
+const application = MyApplication.start()
 
 // Configure Stimulus development experience
 application.debug = false
