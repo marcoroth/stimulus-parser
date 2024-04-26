@@ -1,0 +1,12 @@
+<div id="<%= dom_id(comment.id) %>">
+  <time class="posted" datetime="<%= comment.created_at.iso8601 %>">
+    <%= comment.created_at.strftime("%b %-d") %>
+  </time>
+
+  <div class="avatar">
+    <img src="<%= avatar %>" />
+  </div>
+
+  <div class="author"><%= commenter_name %></div>
+  <div class="body"><%= formatted_body %></div>
+</div>
