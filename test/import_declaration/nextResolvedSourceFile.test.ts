@@ -36,6 +36,31 @@ describe("ImportDeclaration", () => {
       expect(project.relativePath(importDeclaration.nextResolvedSourceFile.path)).toEqual("src/parent_controller.js")
     })
 
+    test("resolve importmap import to file", async () => {
+      const parentCode = dedent`
+        export class ParentController {}
+      `
+      const childCode = dedent`
+        import { ParentController } from "controllers/parent_controller"
+      `
+
+      const parentFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/controllers/parent_controller.js"), parentCode)
+      const childFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/controllers/child_controller.js"), childCode)
+
+      project.projectFiles.push(parentFile)
+      project.projectFiles.push(childFile)
+
+      await project.analyze()
+
+      const importDeclaration = childFile.importDeclarations[0]
+
+      expect(importDeclaration).toBeDefined()
+      expect(importDeclaration.nextResolvedSourceFile).toBeDefined()
+      expect(importDeclaration.nextResolvedSourceFile).toBeInstanceOf(SourceFile)
+      expect(importDeclaration.nextResolvedSourceFile).toEqual(parentFile)
+      expect(project.relativePath(importDeclaration.nextResolvedSourceFile.path)).toEqual("app/javascript/controllers/parent_controller.js")
+    })
+
     test("resolve SourceFile to node module entry point", async () => {
       const childCode = dedent`
         import { Modal } from "tailwindcss-stimulus-components"

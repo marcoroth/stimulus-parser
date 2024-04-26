@@ -1,17 +1,18 @@
+import path from "path"
 import { glob } from "glob"
 
 import { ApplicationFile } from "./application_file"
 import { ControllerDefinition } from "./controller_definition"
 import { ControllersIndexFile } from "./controllers_index_file"
+import { ImportmapFile } from "./importmap_file.mjs"
 import { ExportDeclaration } from "./export_declaration"
 import { ImportDeclaration } from "./import_declaration"
 import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
 
 import { analyzeAll, analyzePackage } from "./packages"
-import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
+import { fileExists, readFile, resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { calculateControllerRoots } from "./util/project"
-
 import type { NodeModule } from "./node_module"
 import type { RegisteredController } from "./registered_controller"
 
@@ -29,6 +30,7 @@ export class Project {
   public parser: Parser = new Parser(this)
   public applicationFile?: ApplicationFile
   public controllersFile?: ControllersIndexFile
+  public importmapFiles: Array<ImportmapFile> = []
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
@@ -158,6 +160,7 @@ export class Project {
     await this.analyzeProjectFiles()
     await this.analyzeStimulusApplicationFile()
     await this.analyzeStimulusControllersIndexFile()
+    await this.analyzeImportmaps()
   }
 
   async reset() {
@@ -248,6 +251,45 @@ export class Project {
       await this.controllersFile.analyze()
     } else {
       // TODO: we probably want to add an error to the project
+    }
+  }
+
+  get importmapRailsPath() {
+    return path.join(this.projectPath, "config/importmap.rb")
+  }
+
+  get importmapLaravelPath() {
+    return path.join(this.projectPath, "routes/importmap.php")
+  }
+
+  get importmapPath() {
+    return this.importmapFiles[0]?.path
+  }
+
+  get hasImportmapFile() {
+    return this.importmapFiles.length > 0
+  }
+
+  async analyzeImportmaps() {
+    const hasRailsFile = await fileExists(this.importmapRailsPath)
+    const hasLaravelFile = await fileExists(this.importmapLaravelPath)
+
+    if (hasRailsFile) {
+      const sourceFile = new SourceFile(this, this.importmapRailsPath, await readFile(this.importmapRailsPath))
+      const importmapFile = new ImportmapFile(this, sourceFile, "ruby")
+
+      await importmapFile.analyze()
+
+      this.importmapFiles.push()
+    }
+
+    if (hasLaravelFile) {
+      const sourceFile = new SourceFile(this, this.importmapLaravelPath, await readFile(this.importmapLaravelPath))
+      const importmapFile = new ImportmapFile(this, sourceFile, "php")
+
+      await importmapFile.analyze()
+
+      this.importmapFiles.push(importmapFile)
     }
   }
 
