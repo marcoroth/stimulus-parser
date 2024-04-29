@@ -1,0 +1,9 @@
+{
+  "name": "esbuild-rails-with-viewcomponents-nested",
+  "private": true,
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "esbuild": "^0.20.0",
+    "esbuild-rails": "^1.0.7"
+  }
+}
