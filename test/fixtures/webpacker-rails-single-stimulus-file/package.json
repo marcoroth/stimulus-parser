@@ -1,0 +1,13 @@
+{
+  "name": "webpacker-rails-single-stimulus-file",
+  "private": true,
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/stimulus-webpack-helpers": "^1.0.1",
+    "@rails/webpacker": "^5.4.4",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.0"
+  }
+}
