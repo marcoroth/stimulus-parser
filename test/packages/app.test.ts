@@ -20,7 +20,7 @@ describe("packages", () => {
       ])
 
       expect(project.detectedNodeModules.map(module => module.name).sort()).toEqual(["tailwindcss-stimulus-components"])
-      expect(Array.from(project.controllerRoots)).toEqual(["src/controllers"])
+      expect(Array.from(project.controllerRoots).sort()).toEqual(["src/controllers"])
       expect(project.guessedControllerRoots).toEqual([
         "src/controllers",
         "node_modules/tailwindcss-stimulus-components/src",
@@ -101,7 +101,7 @@ describe("packages", () => {
         "tailwindcss-stimulus-components",
       ])
 
-      expect(Array.from(project.controllerRoots)).toEqual(["src/controllers"])
+      expect(Array.from(project.controllerRoots).sort()).toEqual(["src/controllers"])
 
       expect(project.guessedControllerRoots).toEqual([
         "src/controllers",

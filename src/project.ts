@@ -28,7 +28,7 @@ export class Project {
   public _controllerRoots: Set<string> = new Set()
   public parser: Parser = new Parser(this)
   public applicationFile?: ApplicationFile
-  public controllersFile?: ControllersIndexFile
+  public controllersFiles: ControllersIndexFile[] = []
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
@@ -107,6 +107,10 @@ export class Project {
     return Array.from(this._controllerRoots)
   }
 
+  get calculatedControllerRoots() {
+    return this.controllersFiles.map(file => this.relativePath(file.path.split("/").slice(0, -1).join("/")))
+  }
+
   get guessedControllerRoots() {
     const controllerFiles = this.allSourceFiles.filter(file => file.controllerDefinitions.length > 0)
     const relativePaths = controllerFiles.map(file => this.relativePath(file.path))
@@ -116,9 +120,9 @@ export class Project {
   }
 
   get registeredControllers(): RegisteredController[] {
-    if (!this.controllersFile) return []
+    if (this.controllersFiles.length === 0) return []
 
-    return this.controllersFile.registeredControllers
+    return this.controllersFiles.flatMap(file => file.registeredControllers)
   }
 
   get referencedNodeModulesLazy() {
@@ -235,19 +239,21 @@ export class Project {
   }
 
   async analyzeStimulusControllersIndexFile() {
-    let controllersFile = this.projectFiles.find(file => file.isStimulusControllersIndex)
+    const controllersFiles = this.projectFiles.filter(file => file.isStimulusControllersIndex)
 
     // TODO: this should be fully traced
-    if (!controllersFile && this.applicationFile && this.applicationFile.sourceFile.hasStimulusApplicationImport) {
-      controllersFile = this.applicationFile.sourceFile
+    if (controllersFiles.length === 0 && this.applicationFile && this.applicationFile.sourceFile.hasStimulusApplicationImport) {
+      controllersFiles.push(this.applicationFile.sourceFile)
     }
 
-    if (controllersFile) {
-      this.controllersFile = new ControllersIndexFile(this, controllersFile)
+    controllersFiles.forEach(controllersFile =>
+      this.controllersFiles.push(new ControllersIndexFile(this, controllersFile))
+    )
 
-      await this.controllersFile.analyze()
-    } else {
+    if (this.controllersFiles.length === 0) {
       // TODO: we probably want to add an error to the project
+    } else {
+      await Promise.allSettled(this.controllersFiles.map(file => file.analyze()))
     }
   }
 

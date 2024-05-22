@@ -38,12 +38,12 @@ describe("Project", () => {
     expect(project.guessedControllerRoots).toEqual([
       "app/javascript/controllers",
     ])
-    expect(Array.from(project.controllerRoots)).toEqual([])
+    expect(Array.from(project.controllerRoots).sort()).toEqual([])
 
     await project.initialize()
 
     expect(project.controllerRoot).toEqual("app/javascript/controllers")
-    expect(Array.from(project.controllerRoots)).toEqual([])
+    expect(Array.from(project.controllerRoots).sort()).toEqual([])
     expect(project.guessedControllerRoots).toEqual([
       "app/javascript/controllers",
       "app/packs/controllers",
