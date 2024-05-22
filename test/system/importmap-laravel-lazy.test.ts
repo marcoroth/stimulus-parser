@@ -5,7 +5,7 @@ const project = setupProject("importmap-laravel-lazy")
 
 describe("System", () => {
   test("importmap-laravel-lazy", async () => {
-    expect(project.controllersFile).toBeUndefined()
+    expect(project.controllersFiles.length).toEqual(0)
     expect(project.applicationFile).toBeUndefined()
     expect(project.registeredControllers.length).toEqual(0)
 
@@ -16,10 +16,10 @@ describe("System", () => {
     expect(project.applicationFile.exportedApplicationConstant).toEqual("Stimulus")
     expect(project.relativePath(project.applicationFile.path)).toEqual("resources/js/libs/stimulus.js")
 
-    expect(project.controllersFile).toBeDefined()
-    expect(project.controllersFile.applicationImport).toBeDefined()
-    expect(project.controllersFile.localApplicationConstant).toEqual("Stimulus")
-    expect(project.relativePath(project.controllersFile.path)).toEqual("resources/js/controllers/index.js")
+    expect(project.controllersFiles.length).toEqual(1)
+    expect(project.controllersFiles[0].applicationImport).toBeDefined()
+    expect(project.controllersFiles[0].localApplicationConstant).toEqual("Stimulus")
+    expect(project.relativePath(project.controllersFiles[0].path)).toEqual("resources/js/controllers/index.js")
 
     expect(project.registeredControllers.length).toEqual(1)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-lazy"]])

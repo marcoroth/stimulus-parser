@@ -5,7 +5,7 @@ const project = setupProject("webpacker")
 
 describe("System", () => {
   test("webpacker", async () => {
-    expect(project.controllersFile).toBeUndefined()
+    expect(project.controllersFiles.length).toEqual(0)
     expect(project.applicationFile).toBeUndefined()
     expect(project.registeredControllers.length).toEqual(0)
 

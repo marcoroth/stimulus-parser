@@ -5,7 +5,7 @@ const project = setupProject("esbuild-rails-with-viewcomponents")
 
 describe("System", () => {
   test("esbuild-rails-with-viewcomponents", async () => {
-    expect(project.controllersFile).toBeUndefined()
+    expect(project.controllersFiles.length).toEqual(0)
     expect(project.applicationFile).toBeUndefined()
     expect(project.registeredControllers.length).toEqual(0)
 
@@ -16,18 +16,21 @@ describe("System", () => {
     expect(project.applicationFile.exportedApplicationConstant).toEqual("application")
     expect(project.relativePath(project.applicationFile.path)).toEqual("app/javascript/controllers/application.js")
 
-    expect(project.controllersFile).toBeDefined()
-    expect(project.controllersFile.applicationImport).toBeDefined()
-    expect(project.controllersFile.localApplicationConstant).toEqual("application")
+    expect(project.controllersFiles.length).toEqual(2)
 
-    expect(project.relativePath(project.controllersFile.path)).toEqual("app/javascript/controllers/index.js")
-    // expect(project.relativePath(project.controllersFile.path)).toEqual("app/components/index.js")
+    expect(project.controllersFiles[0].applicationImport).toBeDefined()
+    expect(project.controllersFiles[0].localApplicationConstant).toEqual("application")
+    expect(project.relativePath(project.controllersFiles[0].path)).toEqual("app/components/index.js")
+
+    expect(project.controllersFiles[1].applicationImport).toBeDefined()
+    expect(project.controllersFiles[1].localApplicationConstant).toEqual("application")
+    expect(project.relativePath(project.controllersFiles[1].path)).toEqual("app/javascript/controllers/index.js")
 
     expect(project.registeredControllers.length).toEqual(3)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([
-      ["hello", "esbuild-rails"],
       ["message", "esbuild-rails"],
       ["comment--component", "esbuild-rails"],
+      ["hello", "esbuild-rails"],
     ])
     expect(Array.from(project.controllerRoots)).toEqual([
       "app/components",
