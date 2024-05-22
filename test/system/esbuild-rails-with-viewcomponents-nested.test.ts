@@ -27,12 +27,14 @@ describe("System", () => {
     expect(project.relativePath(project.controllersFiles[1].path)).toEqual("app/javascript/controllers/index.js")
 
     expect(project.registeredControllers.length).toEqual(3)
-    expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([
-      ["user--message", "esbuild-rails"],
+
+    expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode]).sort()).toEqual([
       ["comment--component", "esbuild-rails"],
       ["hello", "esbuild-rails"],
+      ["user--message", "esbuild-rails"],
     ])
-    expect(Array.from(project.controllerRoots)).toEqual([
+
+    expect(Array.from(project.controllerRoots).sort()).toEqual([
       "app/components",
       "app/javascript/controllers",
     ])

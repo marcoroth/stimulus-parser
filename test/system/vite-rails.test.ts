@@ -23,6 +23,6 @@ describe("System", () => {
 
     expect(project.registeredControllers.length).toEqual(1)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-vite-helpers"]])
-    expect(Array.from(project.controllerRoots)).toEqual(["app/frontend/controllers"])
+    expect(Array.from(project.controllerRoots).sort()).toEqual(["app/frontend/controllers"])
   })
 })

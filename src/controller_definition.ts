@@ -147,6 +147,10 @@ export class ControllerDefinition {
     return this.project.guessedRelativeControllerPath(this.path)
   }
 
+  get relativePath() {
+    return this.project.relativePath(this.path)
+  }
+
   get isExported(): boolean {
     return this.classDeclaration.isExported
   }
@@ -157,6 +161,10 @@ export class ControllerDefinition {
 
   get registeredIdentifiers(): string[] {
     return this.registeredControllers.map(controller => controller.identifier)
+  }
+
+  identifierForControllerRoot(controllerRoot: string) {
+    return identifierForContextKey(this.relativePath.replace(`${controllerRoot}/`, "")) || ""
   }
 
   get guessedIdentifier() {

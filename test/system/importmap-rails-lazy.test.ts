@@ -23,6 +23,6 @@ describe("System", () => {
 
     expect(project.registeredControllers.length).toEqual(1)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([["hello", "stimulus-loading-lazy"]])
-    expect(Array.from(project.controllerRoots)).toEqual(["app/javascript/controllers"])
+    expect(Array.from(project.controllerRoots).sort()).toEqual(["app/javascript/controllers"])
   })
 })

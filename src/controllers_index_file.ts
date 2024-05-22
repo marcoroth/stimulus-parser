@@ -107,6 +107,7 @@ export class ControllersIndexFile {
 
   async analyzeStimulusLoadingCalls() {
     let controllersGlob
+    let relativeControllerPath
     let type: ControllerLoadMode = "stimulus-loading-eager"
 
     walk(this.sourceFile.ast, {
@@ -122,8 +123,9 @@ export class ControllersIndexFile {
 
           const base = this.project.relativePath(path.dirname(path.dirname(this.sourceFile.path)))
           const controllerRoot = path.join(this.project.projectPath, base, controllersPath)
+          relativeControllerPath = this.project.relativePath(controllerRoot)
 
-          this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
+          this.project._controllerRoots.add(relativeControllerPath)
 
           controllersGlob = path.join(controllerRoot, `**/*.{${this.project.extensionsGlob}}`)
         }
@@ -131,9 +133,9 @@ export class ControllersIndexFile {
     })
 
 
-    if (!controllersGlob) return
+    if (!controllersGlob || !relativeControllerPath) return
 
-    await this.evaluateControllerGlob(controllersGlob, type)
+    await this.evaluateControllerGlob(relativeControllerPath, controllersGlob, type)
   }
 
   async analyzeEsbuildRails() {
@@ -149,9 +151,12 @@ export class ControllersIndexFile {
 
     if (!controllersGlob) return
 
-    this.project._controllerRoots.add(this.project.relativePath(path.dirname(this.sourceFile.path)))
+    const controllerRoot = path.dirname(this.sourceFile.path)
+    const relativeControllerRoot = this.project.relativePath(controllerRoot)
 
-    await this.evaluateControllerGlob(controllersGlob, "esbuild-rails")
+    this.project._controllerRoots.add(relativeControllerRoot)
+
+    await this.evaluateControllerGlob(relativeControllerRoot, controllersGlob, "esbuild-rails")
   }
 
   async analyzeStimulusViteHelpers() {
@@ -160,6 +165,7 @@ export class ControllersIndexFile {
     if (!hasViteHelpers) return
 
     let controllersGlob
+    let relativeControllerRoot
 
     walk(this.sourceFile.ast, {
       CallExpression: node => {
@@ -170,15 +176,16 @@ export class ControllersIndexFile {
           if (!importGlob) return
 
           const controllerRoot = path.dirname(this.sourceFile.path)
-          this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
+          relativeControllerRoot = this.project.relativePath(controllerRoot)
+          this.project._controllerRoots.add(relativeControllerRoot)
 
           controllersGlob = path.join(controllerRoot, importGlob)
         }
       }
     })
 
-    if (controllersGlob) {
-      await this.evaluateControllerGlob(controllersGlob, "stimulus-vite-helpers")
+    if (controllersGlob && relativeControllerRoot) {
+      await this.evaluateControllerGlob(relativeControllerRoot, controllersGlob, "stimulus-vite-helpers")
     }
   }
 
@@ -188,6 +195,7 @@ export class ControllersIndexFile {
     if (!hasWebpackHelpers) return
 
     let controllersGlob
+    let relativeControllerRoot
     let definitionsFromContextCalled = false
 
     walk(this.sourceFile.ast, {
@@ -198,7 +206,8 @@ export class ControllersIndexFile {
             const [folder, _arg, pattern] = node.arguments.map(m => m.type === "Literal" ? m.value : undefined).filter(c => c).slice(0, 3)
 
             const controllerRoot = path.join(path.dirname(path.dirname(this.sourceFile.path)), folder?.toString() || "")
-            this.project._controllerRoots.add(this.project.relativePath(controllerRoot))
+            relativeControllerRoot = this.project.relativePath(controllerRoot)
+            this.project._controllerRoots.add(relativeControllerRoot)
 
             if (pattern instanceof RegExp) {
               controllersGlob = path.join(controllerRoot, `**/*${pattern.source.replace("$", "").replace("\\.", ".")}`)
@@ -221,19 +230,24 @@ export class ControllersIndexFile {
       }
     })
 
-
-    if (controllersGlob && definitionsFromContextCalled) {
-      await this.evaluateControllerGlob(controllersGlob, "stimulus-webpack-helpers")
+    if (relativeControllerRoot && controllersGlob && definitionsFromContextCalled) {
+      await this.evaluateControllerGlob(relativeControllerRoot, controllersGlob, "stimulus-webpack-helpers")
     }
   }
 
-  private async evaluateControllerGlob(controllersGlob: string, type: ControllerLoadMode) {
+  private async evaluateControllerGlob(controllerRoot: string, controllersGlob: string, type: ControllerLoadMode) {
     const controllerFiles = (await glob(controllersGlob)).map(path => this.project.relativePath(path))
     const sourceFiles = this.project.projectFiles.filter(file => controllerFiles.includes(this.project.relativePath(file.path)))
     const controllerDefinitions = sourceFiles.flatMap(file => file.defaultExportControllerDefinition || [])
 
     controllerDefinitions.forEach(controller => {
-      this.registeredControllers.push(new RegisteredController(controller.guessedIdentifier, controller, type))
+      const registeredController = new RegisteredController(
+        controller.identifierForControllerRoot(controllerRoot),
+        controller,
+        type
+      )
+
+      this.registeredControllers.push(registeredController)
     })
   }
 }

@@ -32,7 +32,7 @@ describe("System", () => {
       ["comment--component", "esbuild-rails"],
       ["hello", "esbuild-rails"],
     ])
-    expect(Array.from(project.controllerRoots)).toEqual([
+    expect(Array.from(project.controllerRoots).sort()).toEqual([
       "app/components",
       "app/javascript/controllers",
     ])

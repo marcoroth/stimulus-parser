@@ -13,7 +13,7 @@ describe("packages", () => {
       await project.initialize()
 
       expect(project.detectedNodeModules.map(module => module.name)).toEqual(["tailwindcss-stimulus-components"])
-      expect(Array.from(project.controllerRoots)).toEqual([])
+      expect(Array.from(project.controllerRoots).sort()).toEqual([])
       expect(project.guessedControllerRoots).toEqual([
         "app/javascript/controllers",
         "node_modules/tailwindcss-stimulus-components/src",

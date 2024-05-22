@@ -107,6 +107,10 @@ export class Project {
     return Array.from(this._controllerRoots)
   }
 
+  get calculatedControllerRoots() {
+    return this.controllersFiles.map(file => this.relativePath(file.path.split("/").slice(0, -1).join("/")))
+  }
+
   get guessedControllerRoots() {
     const controllerFiles = this.allSourceFiles.filter(file => file.controllerDefinitions.length > 0)
     const relativePaths = controllerFiles.map(file => this.relativePath(file.path))
