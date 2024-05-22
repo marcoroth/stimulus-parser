@@ -3,7 +3,7 @@ import path from "path"
 import { nestedFolderSort } from "./fs"
 
 export function calculateControllerRoots(filenames: string[]) {
-  let controllerRoots: string[] = [];
+  const controllerRoots: string[] = [];
 
   filenames = filenames.sort(nestedFolderSort)
 
