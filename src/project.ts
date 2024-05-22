@@ -229,7 +229,7 @@ export class Project {
   }
 
   async analyzeStimulusApplicationFile() {
-    let applicationFile = this.projectFiles.find(file => !!file.stimulusApplicationImport)
+    const applicationFile = this.projectFiles.find(file => !!file.stimulusApplicationImport)
 
     if (applicationFile) {
       this.applicationFile = new ApplicationFile(this, applicationFile)

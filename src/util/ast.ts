@@ -105,7 +105,7 @@ export function convertObjectExpressionToValueDefinition(objectExpression: Acorn
   if (!type) return
 
 
-  let defaultValue = getDefaultValueFromNode(defaultProperty?.value)
+  const defaultValue = getDefaultValueFromNode(defaultProperty?.value)
 
   return {
     type,

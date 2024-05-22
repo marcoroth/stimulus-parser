@@ -6,7 +6,7 @@ import { setupProject } from "../helpers/setup"
 import { ClassDeclaration, StimulusControllerClassDeclaration } from "../../src/class_declaration"
 import { SourceFile } from "../../src/source_file"
 
-let project = setupProject("packages/stimulus-dropdown")
+const project = setupProject("packages/stimulus-dropdown")
 
 describe("@hotwired/stimulus Controller", () => {
   test("parse parent", async () => {
