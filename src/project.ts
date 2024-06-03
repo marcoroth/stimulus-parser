@@ -28,7 +28,7 @@ export class Project {
   public _controllerRoots: Set<string> = new Set()
   public parser: Parser = new Parser(this)
   public applicationFile?: ApplicationFile
-  public controllersFiles: ControllersIndexFile[] = []
+  public controllersIndexFiles: ControllersIndexFile[] = []
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
@@ -108,7 +108,7 @@ export class Project {
   }
 
   get calculatedControllerRoots() {
-    return this.controllersFiles.map(file => this.relativePath(file.path.split("/").slice(0, -1).join("/")))
+    return this.controllersIndexFiles.map(file => this.relativePath(file.path.split("/").slice(0, -1).join("/")))
   }
 
   get guessedControllerRoots() {
@@ -120,9 +120,9 @@ export class Project {
   }
 
   get registeredControllers(): RegisteredController[] {
-    if (this.controllersFiles.length === 0) return []
+    if (this.controllersIndexFiles.length === 0) return []
 
-    return this.controllersFiles.flatMap(file => file.registeredControllers)
+    return this.controllersIndexFiles.flatMap(file => file.registeredControllers)
   }
 
   get referencedNodeModulesLazy() {
@@ -247,13 +247,13 @@ export class Project {
     }
 
     controllersFiles.forEach(controllersFile =>
-      this.controllersFiles.push(new ControllersIndexFile(this, controllersFile))
+      this.controllersIndexFiles.push(new ControllersIndexFile(this, controllersFile))
     )
 
-    if (this.controllersFiles.length === 0) {
+    if (this.controllersIndexFiles.length === 0) {
       // TODO: we probably want to add an error to the project
     } else {
-      await Promise.allSettled(this.controllersFiles.map(file => file.analyze()))
+      await Promise.allSettled(this.controllersIndexFiles.map(file => file.analyze()))
     }
   }
 
