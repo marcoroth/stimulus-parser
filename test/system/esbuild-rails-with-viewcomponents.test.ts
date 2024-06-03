@@ -5,7 +5,7 @@ const project = setupProject("esbuild-rails-with-viewcomponents")
 
 describe("System", () => {
   test("esbuild-rails-with-viewcomponents", async () => {
-    expect(project.controllersFiles.length).toEqual(0)
+    expect(project.controllersIndexFiles.length).toEqual(0)
     expect(project.applicationFile).toBeUndefined()
     expect(project.registeredControllers.length).toEqual(0)
 
@@ -16,15 +16,15 @@ describe("System", () => {
     expect(project.applicationFile.exportedApplicationConstant).toEqual("application")
     expect(project.relativePath(project.applicationFile.path)).toEqual("app/javascript/controllers/application.js")
 
-    expect(project.controllersFiles.length).toEqual(2)
+    expect(project.controllersIndexFiles.length).toEqual(2)
 
-    expect(project.controllersFiles[0].applicationImport).toBeDefined()
-    expect(project.controllersFiles[0].localApplicationConstant).toEqual("application")
-    expect(project.relativePath(project.controllersFiles[0].path)).toEqual("app/components/index.js")
+    expect(project.controllersIndexFiles[0].applicationImport).toBeDefined()
+    expect(project.controllersIndexFiles[0].localApplicationConstant).toEqual("application")
+    expect(project.relativePath(project.controllersIndexFiles[0].path)).toEqual("app/components/index.js")
 
-    expect(project.controllersFiles[1].applicationImport).toBeDefined()
-    expect(project.controllersFiles[1].localApplicationConstant).toEqual("application")
-    expect(project.relativePath(project.controllersFiles[1].path)).toEqual("app/javascript/controllers/index.js")
+    expect(project.controllersIndexFiles[1].applicationImport).toBeDefined()
+    expect(project.controllersIndexFiles[1].localApplicationConstant).toEqual("application")
+    expect(project.relativePath(project.controllersIndexFiles[1].path)).toEqual("app/javascript/controllers/index.js")
 
     expect(project.registeredControllers.length).toEqual(3)
     expect(project.registeredControllers.map(controller => [controller.identifier, controller.loadMode])).toEqual([
