@@ -33,7 +33,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@types/node": "^20.10.5",
     "dedent": "^1.5.1",
-    "minimatch": "^9.0.3",
+    "minimatch": "^10.0.1",
     "path": "^0.12.7",
     "rimraf": "^5.0.5",
     "source-map": "^0.7.4",
