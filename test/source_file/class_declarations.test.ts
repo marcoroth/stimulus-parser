@@ -158,6 +158,26 @@ describe("SourceFile", () => {
       expect(something.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
     })
 
+    test("named class with superclass from Stimulus Controller import and old package name", async () => {
+      const code = dedent`
+        import { Controller } from "stimulus"
+        class Something extends Controller {}
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      const something = sourceFile.findClass("Something")
+
+      expect(something).toBeDefined()
+      expect(something.isStimulusDescendant).toBeTruthy()
+      expect(something.superClass).toBeDefined()
+      expect(something.superClass.isStimulusDescendant).toBeTruthy()
+      expect(something.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
+    })
+
     test("anonymous class assigned to variable from Stimulus Controller import", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"

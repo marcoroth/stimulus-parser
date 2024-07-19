@@ -202,6 +202,26 @@ describe("SourceFile", async () => {
       expect(controller.type).toEqual("named")
     })
 
+    test("stimulus controller import with old package name", async () => {
+      const code = dedent`
+        import { Controller } from "stimulus"
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      const controller = sourceFile.findImport("Controller")
+
+      expect(controller.isRenamedImport).toEqual(false)
+      expect(controller.isStimulusImport).toEqual(true)
+      expect(controller.localName).toEqual("Controller")
+      expect(controller.originalName).toEqual("Controller")
+      expect(controller.source).toEqual("stimulus")
+      expect(controller.type).toEqual("named")
+    })
+
     test("stimulus controller import with alias", async () => {
       const code = dedent`
         import { Controller as StimulusController } from "@hotwired/stimulus"
@@ -219,6 +239,26 @@ describe("SourceFile", async () => {
       expect(controller.localName).toEqual("StimulusController")
       expect(controller.originalName).toEqual("Controller")
       expect(controller.source).toEqual("@hotwired/stimulus")
+      expect(controller.type).toEqual("named")
+    })
+
+    test("stimulus controller import with alias and old package name", async () => {
+      const code = dedent`
+        import { Controller as StimulusController } from "stimulus"
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      const controller = sourceFile.findImport("StimulusController")
+
+      expect(controller.isRenamedImport).toEqual(true)
+      expect(controller.isStimulusImport).toEqual(true)
+      expect(controller.localName).toEqual("StimulusController")
+      expect(controller.originalName).toEqual("Controller")
+      expect(controller.source).toEqual("stimulus")
       expect(controller.type).toEqual("named")
     })
   })
