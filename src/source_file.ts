@@ -220,7 +220,7 @@ export class SourceFile {
           const originalName = (original === "default") ? undefined : original
           const localName = specifier.local.name
           const source = ast.extractLiteral(node.source) as string
-          const isStimulusImport = (originalName === "Controller" && source === "@hotwired/stimulus")
+          const isStimulusImport = (originalName === "Controller" && ["@hotwired/stimulus", "stimulus"].includes(source))
 
           let type: ImportDeclarationType = "default"
 
