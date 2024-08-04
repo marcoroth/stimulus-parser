@@ -27,7 +27,7 @@
     "acorn-walk": "^8.3.1",
     "astring": "^1.8.6",
     "fs": "^0.0.1-security",
-    "glob": "^10.3.10"
+    "glob": "^11.0.0"
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.2.2",
