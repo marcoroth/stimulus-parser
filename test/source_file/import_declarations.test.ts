@@ -261,5 +261,45 @@ describe("SourceFile", async () => {
       expect(controller.source).toEqual("stimulus")
       expect(controller.type).toEqual("named")
     })
+
+    test("Strada BridgeComponent import", async () => {
+      const code = dedent`
+        import { BridgeComponent } from "@hotwired/strada"
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      const controller = sourceFile.findImport("BridgeComponent")
+
+      expect(controller.isRenamedImport).toEqual(false)
+      expect(controller.isStimulusImport).toEqual(true)
+      expect(controller.localName).toEqual("BridgeComponent")
+      expect(controller.originalName).toEqual("BridgeComponent")
+      expect(controller.source).toEqual("@hotwired/strada")
+      expect(controller.type).toEqual("named")
+    })
+
+    test("Hotwire Native BridgeComponent import", async () => {
+      const code = dedent`
+        import { BridgeComponent } from "@hotwired/hotwire-native-bridge"
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      const controller = sourceFile.findImport("BridgeComponent")
+
+      expect(controller.isRenamedImport).toEqual(false)
+      expect(controller.isStimulusImport).toEqual(true)
+      expect(controller.localName).toEqual("BridgeComponent")
+      expect(controller.originalName).toEqual("BridgeComponent")
+      expect(controller.source).toEqual("@hotwired/hotwire-native-bridge")
+      expect(controller.type).toEqual("named")
+    })
   })
 })

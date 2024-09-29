@@ -1,0 +1,9 @@
+{
+  "name": "esbuild-hotwire-native-bridge",
+  "private": true,
+  "dependencies": {
+    "@hotwired/hotwire-native-bridge": "^1.0.0",
+    "@hotwired/stimulus": "^3.2.2",
+    "esbuild": "^0.20.0"
+  }
+}

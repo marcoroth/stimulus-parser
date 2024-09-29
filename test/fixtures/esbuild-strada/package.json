@@ -1,0 +1,8 @@
+{
+  "name": "esbuild-strada",
+  "private": true,
+  "dependencies": {
+    "@hotwired/strada": "^1.0.0-beta1",
+    "esbuild": "^0.20.0"
+  }
+}
