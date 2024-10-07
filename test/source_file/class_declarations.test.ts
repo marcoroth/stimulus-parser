@@ -198,6 +198,31 @@ describe("SourceFile", () => {
       expect(something.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
     })
 
+    test("anonymous class assgined to VariableDeclaration", async () => {
+      const code = dedent`
+        import { Controller } from "@hotwired/stimulus"
+
+        var BridgeComponent = class extends Controller {
+          static get shouldLoad() {
+            return [];
+          }
+        }
+      `
+
+      const sourceFile = new SourceFile(project, "abc.js", code)
+      project.projectFiles.push(sourceFile)
+
+      await project.analyze()
+
+      const bridge = sourceFile.findClass("BridgeComponent")
+
+      expect(bridge).toBeDefined()
+      expect(bridge.isStimulusDescendant).toBeTruthy()
+      expect(bridge.superClass).toBeDefined()
+      expect(bridge.superClass.isStimulusDescendant).toBeTruthy()
+      expect(bridge.superClass).toBeInstanceOf(StimulusControllerClassDeclaration)
+    })
+
     test("anonymous class (ClassExpression) as argument to function call", async () => {
       const code = dedent`
         import { Controller } from "@hotwired/stimulus"
