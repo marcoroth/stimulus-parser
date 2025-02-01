@@ -10,28 +10,45 @@ import type { TSESTree } from "@typescript-eslint/typescript-estree"
 //
 // maybe the ControllerPropertyDefinition superclass should be Acorn.Node, but the subclasses themselves can narrow down the type
 type Node = Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.ObjectExpression
-type ElementNode = Acorn.Property | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.Literal | Acorn.Identifier | Acorn.MethodDefinition
+type ElementNode = Acorn.Property | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.Literal | Acorn.Identifier | Acorn.MethodDefinition
 
 export abstract class ControllerPropertyDefinition {
+  public readonly name: string
+  public readonly node: Node
+  public readonly elementNode: ElementNode
+  public readonly loc?: Acorn.SourceLocation | null
+  public readonly definitionType: "decorator" | "static" = "static"
+
   constructor(
-    public readonly name: string,
-    public readonly node: Node,
-    public readonly elementNode: ElementNode,
-    public readonly loc?: Acorn.SourceLocation | null,
-    public readonly definitionType: "decorator" | "static" = "static",
-  ) {}
+    name: string,
+    node: Node,
+    elementNode: ElementNode,
+    loc?: Acorn.SourceLocation | null,
+    definitionType: "decorator" | "static" = "static",
+  ) {
+    this.name = name
+    this.node = node
+    this.elementNode = elementNode
+    this.loc = loc
+    this.definitionType = definitionType
+  }
 }
 
 export class ValueDefinition extends ControllerPropertyDefinition {
+  public readonly definition: ValueDefinitionType
+  private propertyNode: Acorn.Property
+
   constructor(
     name: string,
-    public readonly definition: ValueDefinitionType,
+    definition: ValueDefinitionType,
     node: Node,
-    private propertyNode: Acorn.Property,
+    propertyNode: Acorn.Property,
     loc?: Acorn.SourceLocation | null,
     definitionType: "decorator" | "static" = "static",
   ) {
     super(name, node, propertyNode, loc, definitionType)
+    this.definition = definition
+    this.propertyNode = propertyNode
   }
 
   get type() {
