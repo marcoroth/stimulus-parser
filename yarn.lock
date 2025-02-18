@@ -1108,9 +1108,9 @@ tslib@^2.6.2:
   integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
 
 typescript@^5.8.0-beta:
-  version "5.8.0-dev.20250205"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20250205.tgz#2dba6030c2bf5b258777703036502010afa8f477"
-  integrity sha512-ElowVOyGLZ8RSwHA7UZF8M3n4iT/QaU6jCF9N9z2vT/lTjvM3K2eFliQsmF6Iaz9vOhFVUNfe1Mr8aXnpMXiHA==
+  version "5.8.0-dev.20250217"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20250217.tgz#b4d18fe18243d6c39f549ecefe922d3b5997e6e7"
+  integrity sha512-ucr3Nf7Fmd3nbF7qo+D+SqAqfdSOJCm1AneFjVsjgomUXY3zaCofP5DpY8kJGzynaGRdz5XECeh3ksZOvgJKoA==
 
 undici-types@~6.20.0:
   version "6.20.0"
