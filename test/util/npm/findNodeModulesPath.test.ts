@@ -28,7 +28,7 @@ describe("util.npm", () => {
 
     test("for directory outside project", async () => {
       const splits = project.projectPath.split("/")
-      const path = splits.slice(0, splits.length - 1).join("/")
+      const path = splits.slice(0, splits.length - 2).join("/")
 
       expect(await findNodeModulesPath(path)).toEqual(null)
     })
