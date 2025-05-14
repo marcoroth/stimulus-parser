@@ -18,7 +18,8 @@
     "prerelease": "yarn build",
     "install:fixtures": "node scripts/setupFixtures.mjs",
     "pretest": "yarn install:fixtures",
-    "test": "vitest"
+    "test": "vitest",
+    "test:ui": "yarn test --ui"
   },
   "dependencies": {
     "@hotwired/stimulus-webpack-helpers": "^1.0.1",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@hotwired/stimulus": "^3.2.2",
     "@types/node": "^22.0.0",
+    "@vitest/ui": "^3.0.4",
     "dedent": "^1.5.1",
     "minimatch": "^9.0.3",
     "path": "^0.12.7",
