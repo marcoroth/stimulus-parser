@@ -31,6 +31,8 @@ import { Project } from "stimulus-parser"
 
 const project = new Project("/Users/user/path/to/project")
 
+await project.initialize()
+
 const controllers = project.controllerDefinitions
 const controller = controllers[0]
 
