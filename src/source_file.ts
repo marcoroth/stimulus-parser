@@ -93,7 +93,7 @@ export class SourceFile {
   }
 
   get hasResolvedStimulusApplicationFileImport() {
-    return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path === declaration.resolvedRelativePath)
+    return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path === declaration.resolvedRelativePath)
   }
 
   get hasHelperPackage() {

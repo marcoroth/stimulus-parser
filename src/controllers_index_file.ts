@@ -34,7 +34,7 @@ export class ControllersIndexFile {
   }
 
   get localApplicationConstant() {
-    return this.applicationImport?.localName || this.sourceFile.stimulusApplicationImport?.localName
+    return this.applicationImport?.localName || this.sourceFile.stimulusApplicationImport?.localName
   }
 
   async analyze() {
@@ -133,7 +133,7 @@ export class ControllersIndexFile {
     })
 
 
-    if (!controllersGlob || !relativeControllerPath) return
+    if (!controllersGlob || !relativeControllerPath) return
 
     await this.evaluateControllerGlob(relativeControllerPath, controllersGlob, type)
   }
