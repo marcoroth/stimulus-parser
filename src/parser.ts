@@ -2,7 +2,7 @@ import * as ESLintParser from "@typescript-eslint/typescript-estree"
 
 import { Project } from "./project"
 
-import type { ParserOptions } from "./types"
+import type { ParserOptions } from "@typescript-eslint/types"
 
 export class Parser {
   readonly project: Project
