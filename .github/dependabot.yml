@@ -10,7 +10,6 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      eslint:
+      typescript-eslint:
         patterns:
           - "@typescript-eslint*"
-          - "eslint*"
