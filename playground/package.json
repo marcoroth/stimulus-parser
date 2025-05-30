@@ -12,7 +12,7 @@
     "@alenaksu/json-viewer": "^2.0.1",
     "@hotwired/stimulus": "^3.2.2",
     "dedent": "^1.5.1",
-    "express": "^4.20.0",
+    "express": "^4.21.2",
     "lz-string": "^1.5.0",
     "stimulus-parser": "link:../"
   },
