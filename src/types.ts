@@ -17,16 +17,6 @@ export type ValueDefinition = {
 
 export type ValueDefinitionObject = { [key: string]: ValueDefinition }
 
-export type ParserOptions = {
-  loc: boolean
-  range?: boolean
-  tokens?: boolean
-  comment?: boolean
-  sourceType: string
-  ecmaVersion: string
-  filePath?: string
-}
-
 export type ClassDeclarationNode = Acorn.ClassDeclaration | Acorn.AnonymousClassDeclaration | Acorn.ClassExpression
 
 export type ApplicationType =

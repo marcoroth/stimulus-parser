@@ -4,7 +4,7 @@ import { visitorKeys } from "@typescript-eslint/visitor-keys"
 import type * as Acorn from "acorn"
 import type * as Walk from "acorn-walk"
 
-import type { ParserOptions } from "../types"
+import type { ParserOptions } from "@typescript-eslint/types"
 import type { AST } from "@typescript-eslint/typescript-estree"
 import type { TSESTree } from "@typescript-eslint/typescript-estree"
 

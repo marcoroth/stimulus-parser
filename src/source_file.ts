@@ -16,7 +16,7 @@ import { helperPackages } from "./packages"
 
 import type * as Acorn from "acorn"
 import type { AST } from "@typescript-eslint/typescript-estree"
-import type { ParserOptions } from "./types"
+import type { ParserOptions } from "@typescript-eslint/types"
 import type { ImportDeclarationType } from "./import_declaration"
 
 export class SourceFile {

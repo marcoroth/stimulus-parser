@@ -36,7 +36,7 @@ describe("SourceFile", () => {
         },
       },
       range: [0, 0],
-      sourceType: "script",
+      sourceType: "module",
       tokens: [],
       type: "Program",
     })
