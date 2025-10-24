@@ -43,21 +43,26 @@ describe("Project", () => {
   test("doesn't re-add files when calling initialize() once and refresh() more than once", async () => {
     expect(project.projectFiles.length).toEqual(0)
     expect(project.controllerDefinitions.length).toEqual(0)
+    expect(project.registeredControllers).toHaveLength(0)
 
     await project.initialize()
     expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
+    expect(project.registeredControllers).toHaveLength(2)
 
     await project.refresh()
     expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
+    expect(project.registeredControllers).toHaveLength(2)
 
     await project.refresh()
     expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
+    expect(project.registeredControllers).toHaveLength(2)
 
     await project.refresh()
     expect(project.projectFiles).toHaveLength(4)
     expect(project.controllerDefinitions).toHaveLength(2)
+    expect(project.registeredControllers).toHaveLength(2)
   })
 })
