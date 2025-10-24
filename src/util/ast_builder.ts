@@ -62,6 +62,7 @@ export function ImportDeclaration(specifiers: Acorn.ImportSpecifier[], source: A
     type: "ImportDeclaration",
     source,
     specifiers,
+    attributes: [],
   }
 }
 
