@@ -246,6 +246,8 @@ export class Project {
       controllersFiles.push(this.applicationFile.sourceFile)
     }
 
+    this.controllersIndexFiles = []
+
     controllersFiles.forEach(controllersFile =>
       this.controllersIndexFiles.push(new ControllersIndexFile(this, controllersFile))
     )
