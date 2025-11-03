@@ -441,17 +441,17 @@
     estree-walker "^3.0.3"
     magic-string "^0.30.19"
 
-"@vitest/pretty-format@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.0.3.tgz#0f7632c5100793eb1848efa1d826709639caf485"
-  integrity sha512-N7gly/DRXzxa9w9sbDXwD9QNFYP2hw90LLLGDobPNwiWgyW95GMxsCt29/COIKKh3P7XJICR38PSDePenMBtsw==
-  dependencies:
-    tinyrainbow "^3.0.3"
-
 "@vitest/pretty-format@4.0.5":
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.0.5.tgz#b2abb93323867c569e3c950cb309a6e0793767c2"
   integrity sha512-t1T/sSdsYyNc5AZl0EMeD0jW9cpJe2cODP0R++ZQe1kTkpgrwEfxGFR/yCG4w8ZybizbXRTHU7lE8sTDD/QsGw==
+  dependencies:
+    tinyrainbow "^3.0.3"
+
+"@vitest/pretty-format@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.0.6.tgz#af838540d3cd6b29c5d434fbdd36eb2543b040a3"
+  integrity sha512-4vptgNkLIA1W1Nn5X4x8rLJBzPiJwnPc+awKtfBE5hNMVsoAl/JCCPPzNrbf+L4NKgklsis5Yp2gYa+XAS442g==
   dependencies:
     tinyrainbow "^3.0.3"
 
@@ -478,24 +478,16 @@
   integrity sha512-TUmVQpAQign7r8+EnZsgTF3vY9BdGofTUge1rGNbnHn2IN3FChiQoT9lrPz7A7AVUZJU2LAZXl4v66HhsNMhoA==
 
 "@vitest/ui@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-4.0.3.tgz#90c299a3ef7d36be613e3eb2f1d1054d3167c13e"
-  integrity sha512-HURRrgGVzz2GQ2Imurp55FA+majHXgCXMzcwtojUZeRsAXyHNgEvxGRJf4QQY4kJeVakiugusGYeUqBgZ/xylg==
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-4.0.6.tgz#e6f86eeed06617b3024e6fab73ba6193c3d96a8d"
+  integrity sha512-1ekpBsYNUm0Xv/0YsTvoSRmiRkmzz9Pma7qQ3Ui76sg2gwp2/ewSWqx4W/HfaN5dF0E8iBbidFo1wGaeqXYIrQ==
   dependencies:
-    "@vitest/utils" "4.0.3"
+    "@vitest/utils" "4.0.6"
     fflate "^0.8.2"
     flatted "^3.3.3"
     pathe "^2.0.3"
     sirv "^3.0.2"
     tinyglobby "^0.2.15"
-    tinyrainbow "^3.0.3"
-
-"@vitest/utils@4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.0.3.tgz#068fa94ac39fd596102f480b50be1103a7b9ca4f"
-  integrity sha512-qV6KJkq8W3piW6MDIbGOmn1xhvcW4DuA07alqaQ+vdx7YA49J85pnwnxigZVQFQw3tWnQNRKWwhz5wbP6iv/GQ==
-  dependencies:
-    "@vitest/pretty-format" "4.0.3"
     tinyrainbow "^3.0.3"
 
 "@vitest/utils@4.0.5":
@@ -504,6 +496,14 @@
   integrity sha512-V5RndUgCB5/AfNvK9zxGCrRs99IrPYtMTIdUzJMMFs9nrmE5JXExIEfjVtUteyTRiLfCm+dCRMHf/Uu7Mm8/dg==
   dependencies:
     "@vitest/pretty-format" "4.0.5"
+    tinyrainbow "^3.0.3"
+
+"@vitest/utils@4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.0.6.tgz#e8ce743a4a5adcd7228823249b643bc894c0955d"
+  integrity sha512-bG43VS3iYKrMIZXBo+y8Pti0O7uNju3KvNn6DrQWhQQKcLavMB+0NZfO1/QBAEbq0MaQ3QjNsnnXlGQvsh0Z6A==
+  dependencies:
+    "@vitest/pretty-format" "4.0.6"
     tinyrainbow "^3.0.3"
 
 acorn-walk@^8.1.1, acorn-walk@^8.3.4:
