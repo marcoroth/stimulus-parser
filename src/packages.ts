@@ -8,6 +8,7 @@ import { findNodeModulesPath, parsePackageJSON, nodeModuleForPackageJSONPath, ha
 export const helperPackages = [
   "@hotwired/stimulus-loading",
   "@hotwired/stimulus-webpack-helpers",
+  "@symfony/stimulus-bridge",
   "bun-stimulus-plugin",
   "esbuild-plugin-stimulus",
   "stimulus-vite-helpers",
