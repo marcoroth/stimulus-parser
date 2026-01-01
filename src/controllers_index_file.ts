@@ -44,10 +44,10 @@ export class ControllersIndexFile {
     await this.analyzeEsbuildRails()
     await this.analyzeStimulusViteHelpers()
     await this.analyzeStimulusWebpackHelpers()
-    await this.analyzeStimulusBridgeLazyLoading()
+    await this.analyzeSymfonyStimulusBridge()
   }
 
-  async analyzeStimulusBridgeLazyLoading() {
+  async analyzeSymfonyStimulusBridge() {
     const hasStimulusBridge = await hasDepedency(this.project.projectPath, "@symfony/stimulus-bridge")
 
     if (!hasStimulusBridge) return
