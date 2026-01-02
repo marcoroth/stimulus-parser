@@ -50,8 +50,9 @@ export class ControllersIndexFile {
   async analyzeSymfonyStimulusBridge() {
     const hasStimulusBridge = await hasDepedency(this.project.projectPath, "@symfony/stimulus-bridge")
     const isAssetMapper = this.project.isAssetMapper
+    const hasStimulusBundle = this.sourceFile.hasStimulusBundleImport
 
-    if (!hasStimulusBridge && !isAssetMapper) {
+    if (!hasStimulusBridge && !isAssetMapper && !hasStimulusBundle) {
       return
     }
 
@@ -83,7 +84,7 @@ export class ControllersIndexFile {
           const relativePath = requirePath.slice(lazyLoaderPrefix.length)
           const thisFileDir = path.dirname(this.sourceFile.path)
           controllerRoot = path.join(thisFileDir, relativePath)
-        } else if (isAssetMapper && !contextNode) {
+        } else if ((isAssetMapper || hasStimulusBundle) && !contextNode) {
           const thisFileDir = path.dirname(this.sourceFile.path)
           controllerRoot = path.join(thisFileDir, "controllers")
         }
