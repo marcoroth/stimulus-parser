@@ -9,6 +9,7 @@ export const helperPackages = [
   "@hotwired/stimulus-loading",
   "@hotwired/stimulus-webpack-helpers",
   "@symfony/stimulus-bridge",
+  "@symfony/stimulus-bundle",
   "bun-stimulus-plugin",
   "esbuild-plugin-stimulus",
   "stimulus-vite-helpers",
