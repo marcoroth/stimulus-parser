@@ -1,3 +1,6 @@
+import path from "path"
+import { existsSync } from "fs"
+
 import { glob } from "glob"
 
 import { ApplicationFile } from "./application_file"
@@ -32,6 +35,18 @@ export class Project {
 
   constructor(projectPath: string) {
     this.projectPath = projectPath
+  }
+
+  private _isAssetMapper?: boolean
+
+  get isAssetMapper(): boolean {
+    if (this._isAssetMapper !== undefined) return this._isAssetMapper
+
+    const importmapPath = path.join(this.projectPath, "importmap.php")
+    const stimulusConfigPath = path.join(this.projectPath, "config", "packages", "stimulus.yaml")
+
+    this._isAssetMapper = existsSync(importmapPath) || existsSync(stimulusConfigPath)
+    return this._isAssetMapper
   }
 
   relativePath(path: string) {
