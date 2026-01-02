@@ -93,6 +93,7 @@ export class SourceFile {
   }
 
   get hasResolvedStimulusApplicationFileImport() {
+    if (!this.project.applicationFile) return false
     return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path === declaration.resolvedRelativePath)
   }
 
