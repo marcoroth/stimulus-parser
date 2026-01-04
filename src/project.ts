@@ -41,11 +41,10 @@ export class Project {
 
   get isAssetMapper(): boolean {
     if (this._isAssetMapper !== undefined) return this._isAssetMapper
-
     const importmapPath = path.join(this.projectPath, "importmap.php")
     const stimulusConfigPath = path.join(this.projectPath, "config", "packages", "stimulus.yaml")
-
     this._isAssetMapper = existsSync(importmapPath) || existsSync(stimulusConfigPath)
+
     return this._isAssetMapper
   }
 

@@ -52,9 +52,7 @@ export class ControllersIndexFile {
     const isAssetMapper = this.project.isAssetMapper
     const hasStimulusBundle = this.sourceFile.hasStimulusBundleImport
 
-    if (!hasStimulusBridge && !isAssetMapper && !hasStimulusBundle) {
-      return
-    }
+    if (!hasStimulusBridge && !isAssetMapper && !hasStimulusBundle) return
 
     let controllerRoot = ""
 
