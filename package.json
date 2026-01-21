@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@hotwired/stimulus": "^3.2.2",
-    "@types/node": "^24.9.1",
+    "@types/node": "^25.0.9",
     "@typescript-eslint/types": "^8.46.2",
     "@vitest/ui": "^4.0.3",
     "dedent": "^1.7.0",
