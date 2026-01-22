@@ -93,6 +93,8 @@ export class SourceFile {
   }
 
   get hasResolvedStimulusApplicationFileImport() {
+    if (!this.project.applicationFile) return false
+
     return !!this.importDeclarations.find(declaration => this.project.applicationFile?.path === declaration.resolvedRelativePath)
   }
 
@@ -100,9 +102,14 @@ export class SourceFile {
     return this.importDeclarations.some(declaration => helperPackages.includes(declaration.source))
   }
 
+  get hasStimulusBundleImport() {
+    return this.importDeclarations.some(declaration => declaration.source === "@symfony/stimulus-bundle")
+  }
+
   get isStimulusControllersIndex() {
     if (this.hasHelperPackage) return true
     if (this.hasResolvedStimulusApplicationFileImport) return true
+    if (this.hasStimulusBundleImport && this.project.isAssetMapper) return true
 
     return false
   }

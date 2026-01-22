@@ -1,0 +1,7 @@
+{
+  "name": "test-symfony-stimulus-bridge",
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.0",
+    "@symfony/stimulus-bridge": "^3.2.0"
+  }
+}
