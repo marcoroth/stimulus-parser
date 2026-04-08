@@ -44,6 +44,57 @@ export class ControllersIndexFile {
     await this.analyzeEsbuildRails()
     await this.analyzeStimulusViteHelpers()
     await this.analyzeStimulusWebpackHelpers()
+    await this.analyzeSymfonyStimulusBridge()
+  }
+
+  async analyzeSymfonyStimulusBridge() {
+    const hasStimulusBridge = await hasDepedency(this.project.projectPath, "@symfony/stimulus-bridge")
+    const isAssetMapper = this.project.isAssetMapper
+    const hasStimulusBundle = this.sourceFile.hasStimulusBundleImport
+
+    if (!hasStimulusBridge && !isAssetMapper && !hasStimulusBundle) return
+
+    let controllerRoot = ""
+
+    walk(this.sourceFile.ast, {
+      CallExpression: node => {
+        if (node.callee.type !== "Identifier" || node.callee.name !== "startStimulusApp") return
+
+        const [contextNode] = node.arguments.slice(0, 1)
+
+        if (contextNode && contextNode.type === "CallExpression" &&
+            contextNode.callee.type === "MemberExpression" &&
+            contextNode.callee.object.type === "Identifier" &&
+            contextNode.callee.property.type === "Identifier" &&
+            contextNode.callee.object.name === "require" &&
+            contextNode.callee.property.name === "context" &&
+            contextNode.arguments.length >= 1) {
+
+          const pathNode = contextNode.arguments[0]
+          if (pathNode.type !== "Literal") return
+
+          const requirePath = pathNode.value as string
+          if (!requirePath) return
+
+          const lazyLoaderPrefix = "@symfony/stimulus-bridge/lazy-controller-loader!"
+          if (!requirePath.startsWith(lazyLoaderPrefix)) return
+
+          const relativePath = requirePath.slice(lazyLoaderPrefix.length)
+          const thisFileDir = path.dirname(this.sourceFile.path)
+          controllerRoot = path.join(thisFileDir, relativePath)
+        } else if ((isAssetMapper || hasStimulusBundle) && !contextNode) {
+          const thisFileDir = path.dirname(this.sourceFile.path)
+          controllerRoot = path.join(thisFileDir, "controllers")
+        }
+      }
+    })
+
+    if (controllerRoot) {
+      const relativeControllerRoot = this.project.relativePath(controllerRoot)
+      this.project._controllerRoots.add(relativeControllerRoot)
+      const controllersGlob = path.join(controllerRoot, `**/*.{${this.project.extensionsGlob}}`)
+      await this.evaluateControllerGlob(relativeControllerRoot, controllersGlob, "stimulus-loading-lazy")
+    }
   }
 
   analyzeApplicationRegisterCalls() {
