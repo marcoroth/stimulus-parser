@@ -1,0 +1,6 @@
+{
+  "name": "test-symfony-asset-mapper",
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.0"
+  }
+}
