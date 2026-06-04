@@ -285,13 +285,6 @@
     estree-walker "^3.0.3"
     magic-string "^0.30.21"
 
-"@vitest/pretty-format@4.0.18":
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.0.18.tgz#fbccd4d910774072ec15463553edb8ca5ce53218"
-  integrity sha512-P24GK3GulZWC5tz87ux0m8OADrQIUVDPIjjj65vBXYG17ZeU3qD7r+MNZ1RNv4l8CGU2vtTRqixrOi9fYk/yKw==
-  dependencies:
-    tinyrainbow "^3.0.3"
-
 "@vitest/pretty-format@4.1.8":
   version "4.1.8"
   resolved "https://registry.yarnpkg.com/@vitest/pretty-format/-/pretty-format-4.1.8.tgz#d9d2e248b900d7ad9556c4374fcdf1871c615193"
@@ -323,25 +316,17 @@
   integrity sha512-6EevtBp6OZOPF7bmz36HrGMeP3txgVSrgebWxHOafDXGkhIzfXK14f8KF6MuFfgXXUeHxmpD3BQxkV00/3s5mA==
 
 "@vitest/ui@^4.0.3":
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-4.0.18.tgz#ae5765c34e98bb5d7294eb38d624a87f7c8b0399"
-  integrity sha512-CGJ25bc8fRi8Lod/3GHSvXRKi7nBo3kxh0ApW4yCjmrWmRmlT53B5E08XRSZRliygG0aVNxLrBEqPYdz/KcCtQ==
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-4.1.8.tgz#521687753303a417acfa3630b2283957dc1c1b82"
+  integrity sha512-RUS2ZU2TsduVrI+9c12uTNaKrNUTsm6yFt3fueEUB9iKvyC2UP83F+sqIz00HQIah4UOL1TMoDAki8K0NjGvsA==
   dependencies:
-    "@vitest/utils" "4.0.18"
+    "@vitest/utils" "4.1.8"
     fflate "^0.8.2"
-    flatted "^3.3.3"
+    flatted "^3.4.2"
     pathe "^2.0.3"
     sirv "^3.0.2"
     tinyglobby "^0.2.15"
-    tinyrainbow "^3.0.3"
-
-"@vitest/utils@4.0.18":
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-4.0.18.tgz#9636b16d86a4152ec68a8d6859cff702896433d4"
-  integrity sha512-msMRKLMVLWygpK3u2Hybgi4MNjcYJvwTb0Ru09+fOyCXIgT5raYP041DRRdiJiI3k/2U6SEbAETB3YtBrUkCFA==
-  dependencies:
-    "@vitest/pretty-format" "4.0.18"
-    tinyrainbow "^3.0.3"
+    tinyrainbow "^3.1.0"
 
 "@vitest/utils@4.1.8":
   version "4.1.8"
@@ -462,7 +447,7 @@ fflate@^0.8.2:
   resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.8.2.tgz#fc8631f5347812ad6028bbe4a2308b2792aa1dea"
   integrity sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==
 
-flatted@^3.3.3:
+flatted@^3.4.2:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.4.2.tgz#f5c23c107f0f37de8dbdf24f13722b3b98d52726"
   integrity sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==
@@ -755,7 +740,7 @@ tinyglobby@^0.2.15, tinyglobby@^0.2.17:
     fdir "^6.5.0"
     picomatch "^4.0.4"
 
-tinyrainbow@^3.0.3, tinyrainbow@^3.1.0:
+tinyrainbow@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/tinyrainbow/-/tinyrainbow-3.1.0.tgz#1d8a623893f95cf0a2ddb9e5d11150e191409421"
   integrity sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==
