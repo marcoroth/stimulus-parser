@@ -1,14 +1,14 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
-let project = setupProject("empty")
+let project = setupProject("empty", { writable: true })
 
 describe("exported controller definitions", () => {
   beforeEach(() => {
-    project = setupProject("empty")
+    project = setupProject("empty", { writable: true })
   })
 
   test("only exports exported controllers", async () => {
@@ -20,7 +20,7 @@ describe("exported controller definitions", () => {
     `
 
 
-    const sourceFile = new SourceFile(project, "export_controller.js", code)
+    const sourceFile = createTestSourceFile(project, "export_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.initialize()

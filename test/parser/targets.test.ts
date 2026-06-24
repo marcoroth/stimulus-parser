@@ -4,7 +4,7 @@ import { parseController } from "../helpers/parse"
 import { extractLoc } from "../helpers/matchers"
 
 describe("parse targets", () => {
-  test("static targets", () => {
+  test("static targets", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -12,13 +12,13 @@ describe("parse targets", () => {
         static targets = ["one", "two", "three"]
       }
     `
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "two", "three"])
   })
 
-  test("duplicate static targets", () => {
+  test("duplicate static targets", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -27,7 +27,7 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "one", "three"])
@@ -37,7 +37,7 @@ describe("parse targets", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([4, 27, 4, 32])
   })
 
-  test("duplicate static targets from parent", () => {
+  test("duplicate static targets from parent", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -50,7 +50,7 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js", "Child")
+    const controller = await parseController(code, "target_controller.js", "Child")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "three", "one"])
@@ -60,7 +60,7 @@ describe("parse targets", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([8, 20, 8, 25])
   })
 
-  test("assigns targets outside of class via member expression", () => {
+  test("assigns targets outside of class via member expression", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -70,8 +70,8 @@ describe("parse targets", () => {
       One.targets = ["one", "two"]
     `
 
-    const one = parseController(code, "target_controller.js", "One")
-    const two = parseController(code, "target_controller.js", "Two")
+    const one = await parseController(code, "target_controller.js", "One")
+    const two = await parseController(code, "target_controller.js", "Two")
 
     expect(one.isTyped).toBeFalsy()
     expect(one.targetNames).toEqual(["one", "two"])
@@ -82,7 +82,7 @@ describe("parse targets", () => {
     expect(two.hasErrors).toBeFalsy()
   })
 
-  test("other literals are treated a strings in static targets array", () => {
+  test("other literals are treated a strings in static targets array", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -91,14 +91,14 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "1", "3.14", "/something/", "true", "false", "null", "undefined"])
     expect(controller.hasErrors).toBeFalsy()
   })
 
-  test.todo("variable reference in static targets array", () => {
+  test.todo("variable reference in static targets array", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -109,14 +109,14 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "two"])
     expect(controller.hasErrors).toBeFalsy()
   })
 
-  test.todo("trace variable reference in static targets array", () => {
+  test.todo("trace variable reference in static targets array", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -128,14 +128,14 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "two"])
     expect(controller.hasErrors).toBeFalsy()
   })
 
-  test.todo("trace static property literal reference in static targets array", () => {
+  test.todo("trace static property literal reference in static targets array", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -145,14 +145,14 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.targetNames).toEqual(["one", "two"])
     expect(controller.hasErrors).toBeFalsy()
   })
 
-  test("single @Target decorator", () => {
+  test("single @Target decorator", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -163,13 +163,13 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.ts")
+    const controller = await parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.targetNames).toEqual(["output"])
   })
 
-  test("duplicate @Target decorator", () => {
+  test("duplicate @Target decorator", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -181,7 +181,7 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.targetNames).toEqual(["output", "output"])
@@ -191,7 +191,7 @@ describe("parse targets", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([7, 2, 7, 57])
   })
 
-  test("single @Targets decorator", () => {
+  test("single @Targets decorator", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Targets, TypedController } from "@vytant/stimulus-decorators";
@@ -202,13 +202,13 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.ts")
+    const controller = await parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.targetNames).toEqual(["output"])
   })
 
-  test("parse multiple target definitions", () => {
+  test("parse multiple target definitions", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -220,13 +220,13 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "decorator_controller.ts")
+    const controller = await parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.targetNames).toEqual(["output", "name"])
   })
 
-  test("parse mix decorator and static definitions", () => {
+  test("parse mix decorator and static definitions", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -241,13 +241,13 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "decorator_controller.ts")
+    const controller = await parseController(code, "decorator_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.targetNames).toEqual(["output", "name", "item", "one", "two"])
   })
 
-  test("duplicate target in mix", () => {
+  test("duplicate target in mix", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -260,7 +260,7 @@ describe("parse targets", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.ts")
+    const controller = await parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.targetNames).toEqual(["output", "output"])

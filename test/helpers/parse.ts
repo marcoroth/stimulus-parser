@@ -1,14 +1,14 @@
 import { setupProject } from "./setup"
+import { createTestSourceFile } from "./temp"
 
-import { SourceFile } from "../../src/source_file"
 import type { ControllerDefinition } from "../../src/controller_definition"
 
-export function parseController(code: string, filename: string, controllerName?: string): ControllerDefinition {
-  const sourceFile = new SourceFile(setupProject(), filename, code)
-  sourceFile.initialize()
-  sourceFile.analyze()
+export async function parseController(code: string, filename: string, controllerName?: string): Promise<ControllerDefinition> {
+  const project = setupProject()
+  const sourceFile = createTestSourceFile(project, filename, code)
 
-  sourceFile.classDeclarations.forEach(klass => klass.analyze())
+  await sourceFile.initialize()
+  await sourceFile.analyze()
 
   if (controllerName) {
     return sourceFile.findClass(controllerName)?.controllerDefinition

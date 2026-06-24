@@ -1,13 +1,14 @@
 import dedent from "dedent"
-import path from "path"
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile, ClassDeclaration, StimulusControllerClassDeclaration } from "../../src"
+import { ClassDeclaration, StimulusControllerClassDeclaration } from "../../src"
+import { createTestSourceFile } from "../helpers/temp"
+import { setupProject } from "../helpers/setup"
 
-let project = new Project(process.cwd())
+let project = setupProject("app", { writable: true })
 
 describe("ClassDeclaration", () => {
   beforeEach(() => {
-    project = new Project(`${process.cwd()}/test/fixtures/app`)
+    project = setupProject("app", { writable: true })
   })
 
   describe("superClass", () => {
@@ -16,7 +17,7 @@ describe("ClassDeclaration", () => {
         class Child {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -34,7 +35,7 @@ describe("ClassDeclaration", () => {
         class Child extends Parent {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
 
       project.projectFiles.push(sourceFile)
 
@@ -59,7 +60,7 @@ describe("ClassDeclaration", () => {
         class Child extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
 
       project.projectFiles.push(sourceFile)
 
@@ -81,7 +82,7 @@ describe("ClassDeclaration", () => {
         class Child extends Parent {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
 
       project.projectFiles.push(sourceFile)
 
@@ -108,7 +109,7 @@ describe("ClassDeclaration", () => {
         class Child extends Parent {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -139,8 +140,8 @@ describe("ClassDeclaration", () => {
         export class ChildController extends ParentController {}
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -178,8 +179,8 @@ describe("ClassDeclaration", () => {
         export class ChildController extends ParentController {}
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(childFile)
       project.projectFiles.push(parentFile)
@@ -217,8 +218,8 @@ describe("ClassDeclaration", () => {
         export class ChildController extends ParentController {}
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -256,8 +257,8 @@ describe("ClassDeclaration", () => {
         export class ChildController extends ParentController {}
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -293,8 +294,8 @@ describe("ClassDeclaration", () => {
         export class ChildController extends ParentController {}
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)

@@ -8,6 +8,10 @@ import { ImportDeclaration } from "./import_declaration"
 import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
 
+import { ApplicationFileAnalyzer } from "./analyzers/application_file_analyzer"
+import { ControllersIndexAnalyzer } from "./analyzers/controllers_index_analyzer"
+import { SourceFileAnalyzer } from "./analyzers/source_file_analyzer"
+
 import { analyzeAll, analyzePackage } from "./packages"
 import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
 import { calculateControllerRoots } from "./util/project"
@@ -182,7 +186,6 @@ export class Project {
     return projectFile
   }
 
-
   async initializeProjectFiles() {
     await Promise.allSettled(this.projectFiles.map(file => file.initialize()))
   }
@@ -229,10 +232,23 @@ export class Project {
   }
 
   async analyzeStimulusApplicationFile() {
-    const applicationFile = this.projectFiles.find(file => !!file.stimulusApplicationImport)
+    const applicationSourceFile = this.projectFiles.find(file => !!file.stimulusApplicationImport)
 
-    if (applicationFile) {
-      this.applicationFile = new ApplicationFile(this, applicationFile)
+    if (applicationSourceFile) {
+      const importName = applicationSourceFile.stimulusApplicationImport?.localName
+
+      let localApplicationConstant: string | null = null
+
+      if (importName) {
+        const analyzer = new SourceFileAnalyzer(applicationSourceFile)
+        const ast = await analyzer.reparse()
+
+        if (ast) {
+          localApplicationConstant = ApplicationFileAnalyzer.computeLocalApplicationConstant(ast, importName)
+        }
+      }
+
+      this.applicationFile = new ApplicationFile(this, applicationSourceFile, localApplicationConstant)
     } else {
       // TODO: we probably want to add an error to the project
     }
@@ -255,7 +271,14 @@ export class Project {
     if (this.controllersIndexFiles.length === 0) {
       // TODO: we probably want to add an error to the project
     } else {
-      await Promise.allSettled(this.controllersIndexFiles.map(file => file.analyze()))
+      for (const file of this.controllersIndexFiles) {
+        const sourceAnalyzer = new SourceFileAnalyzer(file.sourceFile)
+        const ast = await sourceAnalyzer.reparse()
+        if (!ast) continue
+
+        const analyzer = new ControllersIndexAnalyzer(file, ast)
+        await analyzer.analyze()
+      }
     }
   }
 

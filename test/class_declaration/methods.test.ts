@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -20,7 +20,7 @@ describe("ClassDeclaration", () => {
         }
       `
 
-      const sourceFile = new SourceFile(project, "something.js", code)
+      const sourceFile = createTestSourceFile(project, "something.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -43,7 +43,7 @@ describe("ClassDeclaration", () => {
         }
       `
 
-      const sourceFile = new SourceFile(project, "something.js", code)
+      const sourceFile = createTestSourceFile(project, "something.js", code)
 
       project.projectFiles.push(sourceFile)
 
@@ -71,7 +71,7 @@ describe("ClassDeclaration", () => {
         }
       `
 
-      const sourceFile = new SourceFile(project, "something.js", code)
+      const sourceFile = createTestSourceFile(project, "something.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
