@@ -12,15 +12,15 @@ export class ExportDeclaration {
   public readonly localName?: string
   public readonly source?: string
   public readonly type: "default" | "named" | "namespace"
-  public readonly node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration
+  public readonly loc?: Acorn.SourceLocation | null
 
-  constructor(sourceFile: SourceFile, args: { exportedName?: string, localName?: string, source?: string, type: "default" | "named" | "namespace", node: Acorn.ExportNamedDeclaration | Acorn.ExportAllDeclaration | Acorn.ExportDefaultDeclaration}) {
+  constructor(sourceFile: SourceFile, args: { exportedName?: string, localName?: string, source?: string, type: "default" | "named" | "namespace", loc?: Acorn.SourceLocation | null }) {
     this.sourceFile = sourceFile
     this.exportedName = args.exportedName
     this.localName = args.localName
     this.source = args.source
     this.type = args.type
-    this.node = args.node
+    this.loc = args.loc
   }
 
   get project() {

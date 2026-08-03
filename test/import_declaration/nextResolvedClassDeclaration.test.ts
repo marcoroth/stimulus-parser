@@ -1,13 +1,14 @@
 import dedent from "dedent"
-import path from "path"
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile, ClassDeclaration } from "../../src"
+import { ClassDeclaration } from "../../src"
+import { createTestSourceFile } from "../helpers/temp"
+import { setupProject } from "../helpers/setup"
 
-let project = new Project(process.cwd())
+let project = setupProject("app", { writable: true })
 
 describe("ImportDeclaration", () => {
   beforeEach(() => {
-    project = new Project(`${process.cwd()}/test/fixtures/app`)
+    project = setupProject("app", { writable: true })
   })
 
   describe("nextResolvedClassDeclaration", () => {
@@ -19,8 +20,8 @@ describe("ImportDeclaration", () => {
         import { ParentController } from "./parent_controller"
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -50,8 +51,8 @@ describe("ImportDeclaration", () => {
         import ParentController from "./parent_controller"
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -90,9 +91,9 @@ describe("ImportDeclaration", () => {
         class ChildController extends ParentController {}
       `
 
-      const grandparentFile = new SourceFile(project, path.join(project.projectPath, "grandparent_controller.js"), grandparentCode)
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const grandparentFile = createTestSourceFile(project, "grandparent_controller.js", grandparentCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(grandparentFile)
       project.projectFiles.push(parentFile)
@@ -147,9 +148,9 @@ describe("ImportDeclaration", () => {
         import { GrandparentController } from "./parent_controller"
       `
 
-      const grandparentFile = new SourceFile(project, path.join(project.projectPath, "grandparent_controller.js"), grandparentCode)
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const grandparentFile = createTestSourceFile(project, "grandparent_controller.js", grandparentCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(grandparentFile)
       project.projectFiles.push(parentFile)
@@ -194,9 +195,9 @@ describe("ImportDeclaration", () => {
         import ParentController from "./parent_controller"
       `
 
-      const grandparentFile = new SourceFile(project, path.join(project.projectPath, "grandparent_controller.js"), grandparentCode)
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const grandparentFile = createTestSourceFile(project, "grandparent_controller.js", grandparentCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(grandparentFile)
       project.projectFiles.push(parentFile)
@@ -241,9 +242,9 @@ describe("ImportDeclaration", () => {
         import { RenamedController } from "./parent_controller"
       `
 
-      const grandparentFile = new SourceFile(project, path.join(project.projectPath, "grandparent_controller.js"), grandparentCode)
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const grandparentFile = createTestSourceFile(project, "grandparent_controller.js", grandparentCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(childFile)
       project.projectFiles.push(parentFile)
@@ -288,9 +289,9 @@ describe("ImportDeclaration", () => {
         import RenamedController from "./parent_controller"
       `
 
-      const grandparentFile = new SourceFile(project, path.join(project.projectPath, "grandparent_controller.js"), grandparentCode)
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "child_controller.js"), childCode)
+      const grandparentFile = createTestSourceFile(project, "grandparent_controller.js", grandparentCode)
+      const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
       project.projectFiles.push(childFile)
       project.projectFiles.push(parentFile)

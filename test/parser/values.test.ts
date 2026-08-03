@@ -4,7 +4,7 @@ import { parseController } from "../helpers/parse"
 import { extractLoc } from "../helpers/matchers"
 
 describe("parse values", () => {
-  test("static", () => {
+  test("static", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -19,7 +19,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
 
@@ -79,7 +79,7 @@ describe("parse values", () => {
     })
   })
 
-  test("static with default values", () => {
+  test("static with default values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -94,7 +94,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
 
@@ -153,7 +153,7 @@ describe("parse values", () => {
     })
   })
 
-  test("duplicate static values", () => {
+  test("duplicate static values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -166,7 +166,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.valueNames).toEqual(["one", "one", "three"])
@@ -176,7 +176,7 @@ describe("parse values", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([6, 4, 6, 7])
   })
 
-  test("duplicate static values from parent", () => {
+  test("duplicate static values from parent", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -194,7 +194,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.js", "Child")
+    const controller = await parseController(code, "target_controller.js", "Child")
 
     expect(controller.isTyped).toBeFalsy()
     expect(controller.valueNames).toEqual(["one", "three", "one"])
@@ -204,7 +204,7 @@ describe("parse values", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([11, 4, 11, 7])
   })
 
-  test("assigns values outside of class via member expression", () => {
+  test("assigns values outside of class via member expression", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -217,8 +217,8 @@ describe("parse values", () => {
       }
     `
 
-    const one = parseController(code, "values_controller.js", "One")
-    const two = parseController(code, "values_controller.js", "Two")
+    const one = await parseController(code, "values_controller.js", "One")
+    const two = await parseController(code, "values_controller.js", "Two")
 
     expect(one.isTyped).toBeFalsy()
     expect(one.valueNames).toEqual(["one", "two"])
@@ -229,7 +229,7 @@ describe("parse values", () => {
     expect(two.hasErrors).toBeFalsy()
   })
 
-  test("duplicate decorator mixed with static values", () => {
+  test("duplicate decorator mixed with static values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Value, TypedController } from "@vytant/stimulus-decorators";
@@ -244,7 +244,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.ts")
+    const controller = await parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.valueNames).toEqual(["one", "one"])
@@ -254,7 +254,7 @@ describe("parse values", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([9, 4, 9, 7])
   })
 
-  test("duplicate static values mixed with decorator", () => {
+  test("duplicate static values mixed with decorator", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Value, TypedController } from "@vytant/stimulus-decorators";
@@ -269,7 +269,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "target_controller.ts")
+    const controller = await parseController(code, "target_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
     expect(controller.valueNames).toEqual(["one", "one"])
@@ -279,7 +279,7 @@ describe("parse values", () => {
     expect(extractLoc(controller.errors[0].loc)).toEqual([7, 4, 7, 7])
   })
 
-  test("decorated", () => {
+  test("decorated", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
       import { Value, TypedController } from "@vytant/stimulus-decorators";
@@ -294,7 +294,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
 
@@ -354,7 +354,7 @@ describe("parse values", () => {
     })
   })
 
-  test("decorated with default values", () => {
+  test("decorated with default values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
       import { Value, TypedController } from "@vytant/stimulus-decorators";
@@ -369,7 +369,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
 
@@ -429,7 +429,7 @@ describe("parse values", () => {
     })
   })
 
-  test("parse static value with nested object/array default value", () => {
+  test("parse static value with nested object/array default value", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -441,7 +441,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(controller.isTyped).toBeFalsy()
 
@@ -468,7 +468,7 @@ describe("parse values", () => {
     })
   })
 
-  test("parse decorated @Value with nested object/array with default value", () => {
+  test("parse decorated @Value with nested object/array with default value", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
       import { Value, TypedController } from "@vytant/stimulus-decorators";
@@ -480,7 +480,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeTruthy()
 
@@ -507,7 +507,7 @@ describe("parse values", () => {
     })
   })
 
-  test.todo("implicit version", () => {
+  test.todo("implicit version", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
 
@@ -518,7 +518,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeFalsy()
 
@@ -534,7 +534,7 @@ describe("parse values", () => {
     })
   })
 
-  test("shorthand-version", () => {
+  test("shorthand-version", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
 
@@ -545,7 +545,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeFalsy()
     expect(extractLoc(controller.valueDefinitionsMap.name.keyLoc)).toEqual([5, 4, 5, 8])
@@ -560,7 +560,7 @@ describe("parse values", () => {
     })
   })
 
-  test("expanded-version", () => {
+  test("expanded-version", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus";
 
@@ -574,7 +574,7 @@ describe("parse values", () => {
       }
     `
 
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(controller.isTyped).toBeFalsy()
 

@@ -1,6 +1,7 @@
 import { describe, beforeEach, test, expect } from "vitest"
 import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -9,52 +10,27 @@ describe("SourceFile", () => {
     project = setupProject()
   })
 
-  test("parses with content", () => {
-    const sourceFile = new SourceFile(project, "abc.js", "")
+  test("parses with content", async () => {
+    const sourceFile = createTestSourceFile(project, "abc.js", "")
 
-    expect(sourceFile.hasContent).toEqual(true)
     expect(sourceFile.errors.length).toEqual(0)
     expect(sourceFile.controllerDefinitions).toEqual([])
-    expect(sourceFile.ast).toBeUndefined()
 
-    sourceFile.initialize()
+    await sourceFile.initialize()
 
-    expect(sourceFile.hasContent).toEqual(true)
     expect(sourceFile.errors.length).toEqual(0)
     expect(sourceFile.controllerDefinitions).toEqual([])
-    expect(sourceFile.ast).toEqual({
-      body: [],
-      comments: [],
-      loc: {
-        end: {
-          column: 0,
-          line: 1,
-        },
-        start: {
-          column: 0,
-          line: 1,
-        },
-      },
-      range: [0, 0],
-      sourceType: "module",
-      tokens: [],
-      type: "Program",
-    })
   })
 
-  test("doesn't parse with no content", () => {
-    const sourceFile = new SourceFile(project, "abc.js", undefined)
+  test("doesn't parse with no content", async () => {
+    const sourceFile = new SourceFile(project, "nonexistent_file.js")
 
-    expect(sourceFile.ast).toBeUndefined()
-    expect(sourceFile.hasContent).toEqual(false)
     expect(sourceFile.errors).toHaveLength(0)
 
-    sourceFile.parse()
+    await sourceFile.initialize()
 
-    expect(sourceFile.ast).toBeUndefined()
-    expect(sourceFile.hasContent).toEqual(false)
     expect(sourceFile.errors).toHaveLength(1)
-    expect(sourceFile.errors[0].message).toEqual("File content hasn't been read yet")
+    expect(sourceFile.errors[0].message).toEqual("Error reading file")
     expect(sourceFile.controllerDefinitions).toEqual([])
   })
 })

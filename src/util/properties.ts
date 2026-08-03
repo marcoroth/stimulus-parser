@@ -11,7 +11,7 @@ export function parseStaticControllerProperties(controllerDefinition: Controller
     if (left.name === "targets") {
       ast.convertArrayExpressionToStringsAndNodes(right).map(([element, elementNode]) =>
         controllerDefinition.addTargetDefinition(
-          new TargetDefinition(element, right, elementNode, right.loc, "static")
+          new TargetDefinition(element, right, elementNode, elementNode.loc, "static")
         )
       )
     }
@@ -19,7 +19,7 @@ export function parseStaticControllerProperties(controllerDefinition: Controller
     if (left.name === "classes") {
       ast.convertArrayExpressionToStringsAndNodes(right).map(([element, elementNode]) =>
         controllerDefinition.addClassDefinition(
-          new ClassDefinition(element, right, elementNode, right.loc, "static")
+          new ClassDefinition(element, right, elementNode, elementNode.loc, "static")
         )
       )
     }

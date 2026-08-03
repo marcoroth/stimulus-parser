@@ -1,9 +1,7 @@
 import dedent from "dedent"
-import path from "path"
-
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 const emptyController = `
   import { Controller } from "@hotwired/stimulus"
@@ -11,11 +9,11 @@ const emptyController = `
   export default class extends Controller {}
 `
 
-let project = setupProject("app")
+let project = setupProject("app", { writable: true })
 
 describe("SourceFile", () => {
   beforeEach(() => {
-    project = setupProject("app")
+    project = setupProject("app", { writable: true })
   })
 
   describe("resolve files", () => {
@@ -28,8 +26,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
@@ -37,7 +35,7 @@ describe("SourceFile", () => {
       await project.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)
-      expect(helloControllerFile.importDeclarations[0].resolvedPath).toEqual("app/javascript/application_controller.js")
+      expect(project.relativePath(helloControllerFile.importDeclarations[0].resolvedPath)).toEqual("app/javascript/application_controller.js")
     })
 
     test("relative path same directory with .ts files", async () => {
@@ -49,8 +47,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, "app/javascript/nested/application_controller.ts", applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.ts", helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/nested/application_controller.ts", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.ts", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
@@ -58,7 +56,7 @@ describe("SourceFile", () => {
       await project.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)
-      expect(helloControllerFile.importDeclarations[0].resolvedPath).toEqual("app/javascript/nested/application_controller.ts")
+      expect(project.relativePath(helloControllerFile.importDeclarations[0].resolvedPath)).toEqual("app/javascript/nested/application_controller.ts")
     })
 
     test("relative path same directory with .js file extension", async () => {
@@ -70,8 +68,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
@@ -79,7 +77,7 @@ describe("SourceFile", () => {
       await project.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)
-      expect(helloControllerFile.importDeclarations[0].resolvedPath).toEqual("app/javascript/application_controller.js")
+      expect(project.relativePath(helloControllerFile.importDeclarations[0].resolvedPath)).toEqual("app/javascript/application_controller.js")
     })
 
     test("relative path same directory with .ts file extension", async () => {
@@ -91,8 +89,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.ts", applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.ts", helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/application_controller.ts", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.ts", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
@@ -100,7 +98,7 @@ describe("SourceFile", () => {
       await project.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)
-      expect(helloControllerFile.importDeclarations[0].resolvedPath).toEqual("app/javascript/application_controller.ts")
+      expect(project.relativePath(helloControllerFile.importDeclarations[0].resolvedPath)).toEqual("app/javascript/application_controller.ts")
     })
 
     test("relative path directory above", async () => {
@@ -112,8 +110,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, "app/javascript/nested/hello_controller.js", helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/nested/hello_controller.js", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
@@ -121,7 +119,7 @@ describe("SourceFile", () => {
       await project.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)
-      expect(helloControllerFile.importDeclarations[0].resolvedPath).toEqual("app/javascript/application_controller.js")
+      expect(project.relativePath(helloControllerFile.importDeclarations[0].resolvedPath)).toEqual("app/javascript/application_controller.js")
     })
 
     test("relative path directory below", async () => {
@@ -133,8 +131,8 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, "app/javascript/nested/application_controller.js", applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/nested/application_controller.js", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
@@ -142,7 +140,7 @@ describe("SourceFile", () => {
       await project.analyze()
 
       expect(helloControllerFile.importDeclarations.length).toEqual(1)
-      expect(helloControllerFile.importDeclarations[0].resolvedPath).toEqual("app/javascript/nested/application_controller.js")
+      expect(project.relativePath(helloControllerFile.importDeclarations[0].resolvedPath)).toEqual("app/javascript/nested/application_controller.js")
     })
 
     test("doesn't resolve node module path for unknown package", async () => {
@@ -152,7 +150,7 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       project.projectFiles.push(helloControllerFile)
 
@@ -170,7 +168,7 @@ describe("SourceFile", () => {
         export default class extends ApplicationController {}
       `
 
-      const helloControllerFile = new SourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
       project.projectFiles.push(helloControllerFile)
 
       await project.analyze()
@@ -188,12 +186,12 @@ describe("SourceFile", () => {
         export default class extends IntermediateController {}
       `
 
-      const helloControllerFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/hello_controller.js"), helloControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
       project.projectFiles.push(helloControllerFile)
 
       await project.analyze()
 
-      expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
+      expect(project.projectFiles.map(file => [project.relativePath(file.path)])).toEqual([["app/javascript/hello_controller.js"]])
       expect(project.detectedNodeModules.map(m => m.name)).toContain("tailwindcss-stimulus-components")
       expect(Array.from(project.referencedNodeModules)).toEqual([
         "tailwindcss-stimulus-components",
@@ -252,12 +250,12 @@ describe("SourceFile", () => {
         }
       `
 
-      const helloControllerFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/hello_controller.js"), helloControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
       project.projectFiles.push(helloControllerFile)
 
       await project.analyze()
 
-      expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([["app/javascript/hello_controller.js", helloControllerCode]])
+      expect(project.projectFiles.map(file => [project.relativePath(file.path)])).toEqual([["app/javascript/hello_controller.js"]])
       expect(project.detectedNodeModules.map(m => m.name)).toContain("tailwindcss-stimulus-components")
       expect(Array.from(project.referencedNodeModules)).toEqual([
         "tailwindcss-stimulus-components",
@@ -320,17 +318,17 @@ describe("SourceFile", () => {
         export default class Hello extends IntermediateController {}
       `
 
-      const applicationControllerFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/application_controller.js"), applicationControllerCode)
-      const helloControllerFile = new SourceFile(project, path.join(project.projectPath, "app/javascript/hello_controller.js"), helloControllerCode)
+      const applicationControllerFile = createTestSourceFile(project, "app/javascript/application_controller.js", applicationControllerCode)
+      const helloControllerFile = createTestSourceFile(project, "app/javascript/hello_controller.js", helloControllerCode)
 
       project.projectFiles.push(applicationControllerFile)
       project.projectFiles.push(helloControllerFile)
 
       await project.analyze()
 
-      expect(project.projectFiles.map(file => [project.relativePath(file.path), file.content])).toEqual([
-        ["app/javascript/application_controller.js", applicationControllerCode],
-        ["app/javascript/hello_controller.js", helloControllerCode],
+      expect(project.projectFiles.map(file => [project.relativePath(file.path)])).toEqual([
+        ["app/javascript/application_controller.js"],
+        ["app/javascript/hello_controller.js"],
       ])
 
       expect(Array.from(project.referencedNodeModules)).toEqual([

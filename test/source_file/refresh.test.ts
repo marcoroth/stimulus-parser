@@ -1,7 +1,7 @@
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { mockFile } from "../helpers/mock"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -11,20 +11,10 @@ describe("SourceFile", () => {
   })
 
   describe("refresh", () => {
-    test("refreshes content", async () => {
-      const sourceFile = new SourceFile(project, "file.js", "initial")
-
-      expect(sourceFile.content).toEqual("initial")
-
-      mockFile("updated")
-
-      await sourceFile.refresh()
-      expect(sourceFile.content).toEqual("updated")
-    })
-
     test("refreshes class declarations", async () => {
-      const sourceFile = new SourceFile(project, "file.js", "")
+      const sourceFile = createTestSourceFile(project, "file.js", "")
 
+      await sourceFile.initialize()
       expect(sourceFile.classDeclarations.length).toEqual(0)
 
       mockFile(`class Class {}`)

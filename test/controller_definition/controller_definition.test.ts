@@ -2,11 +2,11 @@ import { describe, beforeEach, test, expect } from "vitest"
 import { ControllerDefinition } from "../../src"
 import { setupProject, controllerDefinitionFor } from "../helpers/setup"
 
-let project = setupProject("app")
+let project = setupProject("app", { writable: true })
 
 describe("ControllerDefinition", () => {
   beforeEach(async () => {
-    project = setupProject("app")
+    project = setupProject("app", { writable: true })
   })
 
   test("relative project path", async () => {

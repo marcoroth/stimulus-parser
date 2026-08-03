@@ -1,13 +1,13 @@
 import dedent from "dedent"
-import path from "path"
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { createTestSourceFile } from "../helpers/temp"
+import { setupProject } from "../helpers/setup"
 
-let project = new Project(process.cwd())
+let project = setupProject("app", { writable: true })
 
 describe("ExportDeclaration", () => {
   beforeEach(() => {
-    project = new Project(`${process.cwd()}/test/fixtures/app`)
+    project = setupProject("app", { writable: true })
   })
 
   describe("resolvedPath", () => {
@@ -20,8 +20,8 @@ describe("ExportDeclaration", () => {
         export { ParentController } from "./parent_controller"
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "src/parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "src/parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "src/child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -45,8 +45,8 @@ describe("ExportDeclaration", () => {
         export { ParentController } from "../parent_controller"
       `
 
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "src/parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/controllers/child_controller.js"), childCode)
+      const parentFile = createTestSourceFile(project, "src/parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "src/controllers/child_controller.js", childCode)
 
       project.projectFiles.push(parentFile)
       project.projectFiles.push(childFile)
@@ -74,9 +74,9 @@ describe("ExportDeclaration", () => {
         export { GrandparentController } from "./parent_controller"
       `
 
-      const grandparentFile = new SourceFile(project, path.join(project.projectPath, "src/grandparent_controller.js"), grandparentCode)
-      const parentFile = new SourceFile(project, path.join(project.projectPath, "src/parent_controller.js"), parentCode)
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/child_controller.js"), childCode)
+      const grandparentFile = createTestSourceFile(project, "src/grandparent_controller.js", grandparentCode)
+      const parentFile = createTestSourceFile(project, "src/parent_controller.js", parentCode)
+      const childFile = createTestSourceFile(project, "src/child_controller.js", childCode)
 
       project.projectFiles.push(grandparentFile)
       project.projectFiles.push(parentFile)
@@ -97,7 +97,7 @@ describe("ExportDeclaration", () => {
         export { Modal } from "tailwindcss-stimulus-components"
       `
 
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/controllers/child_controller.js"), childCode)
+      const childFile = createTestSourceFile(project, "src/controllers/child_controller.js", childCode)
       project.projectFiles.push(childFile)
 
       await project.analyze()

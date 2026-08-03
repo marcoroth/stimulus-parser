@@ -1,13 +1,13 @@
 import dedent from "dedent"
-import path from "path"
 import { describe, beforeEach, test, expect } from "vitest"
-import { Project, SourceFile } from "../../src"
+import { createTestSourceFile } from "../helpers/temp"
+import { setupProject } from "../helpers/setup"
 
-let project = new Project(process.cwd())
+let project = setupProject("app", { writable: true })
 
 describe("ExportDeclaration", () => {
   beforeEach(() => {
-    project = new Project(`${process.cwd()}/test/fixtures/app`)
+    project = setupProject("app", { writable: true })
   })
 
   describe("nextResolvedPath", () => {
@@ -16,7 +16,7 @@ describe("ExportDeclaration", () => {
         export { ParentController } from "./parent_controller"
       `
 
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/child_controller.js"), childCode)
+      const childFile = createTestSourceFile(project, "src/child_controller.js", childCode)
       project.projectFiles.push(childFile)
 
       await project.analyze()
@@ -34,7 +34,7 @@ describe("ExportDeclaration", () => {
         export { ParentController } from "../parent_controller"
       `
 
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/controllers/child_controller.js"), childCode)
+      const childFile = createTestSourceFile(project, "src/controllers/child_controller.js", childCode)
       project.projectFiles.push(childFile)
 
       await project.analyze()
@@ -52,7 +52,7 @@ describe("ExportDeclaration", () => {
         export { Modal } from "tailwindcss-stimulus-components"
       `
 
-      const childFile = new SourceFile(project, path.join(project.projectPath, "src/controllers/child_controller.js"), childCode)
+      const childFile = createTestSourceFile(project, "src/controllers/child_controller.js", childCode)
       project.projectFiles.push(childFile)
 
       await project.analyze()

@@ -4,7 +4,7 @@ import { parseController } from "../helpers/parse"
 import { extractLoc } from "../helpers/matchers"
 
 describe("decorator", () => {
-  test("parse single target", () => {
+  test("parse single target", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -15,13 +15,13 @@ describe("decorator", () => {
       }
     `
 
-    const controller = parseController(code, 'target_controller.js')
+    const controller = await parseController(code, 'target_controller.js')
     expect(controller.isTyped).toBeTruthy()
 
     expect(controller.targetNames).toEqual(['output'])
   })
 
-  test("parse multiple target definitions", () => {
+  test("parse multiple target definitions", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -33,13 +33,13 @@ describe("decorator", () => {
       }
     `
 
-    const controller = parseController(code, 'decorator_controller.js')
+    const controller = await parseController(code, 'decorator_controller.js')
     expect(controller.isTyped).toBeTruthy()
 
     expect(controller.targetNames).toEqual(['output', 'name'])
   })
 
-  test("parse mix decorator and static definitions", () => {
+  test("parse mix decorator and static definitions", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target, TypedController } from "@vytant/stimulus-decorators";
@@ -53,13 +53,13 @@ describe("decorator", () => {
       }
     `
 
-    const controller = parseController(code, 'decorator_controller.js')
+    const controller = await parseController(code, 'decorator_controller.js')
     expect(controller.isTyped).toBeTruthy()
 
     expect(controller.targetNames).toEqual(['output', 'name', 'one', 'two'])
   })
 
-  test("adds error when decorator is used but controller is not decorated with @TypedController", () => {
+  test("adds error when decorator is used but controller is not decorated with @TypedController", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { Target } from "@vytant/stimulus-decorators";
@@ -69,7 +69,7 @@ describe("decorator", () => {
       }
     `
 
-    const controller = parseController(code, 'target_controller.js')
+    const controller = await parseController(code, 'target_controller.js')
     expect(controller.isTyped).toBeFalsy()
     expect(controller.errors.length).toEqual(1)
     expect(controller.errors[0].message).toEqual("Controller needs to be decorated with @TypedController in order to use decorators.")
@@ -77,7 +77,7 @@ describe("decorator", () => {
     expect(controller.targetNames).toEqual(['output'])
   })
 
-  test("adds error when controller is decorated with @TypedController but no decorated in controller is used", () => {
+  test("adds error when controller is decorated with @TypedController but no decorated in controller is used", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
       import { TypedController } from "@vytant/stimulus-decorators";
@@ -86,7 +86,7 @@ describe("decorator", () => {
       export default class extends Controller {}
     `
 
-    const controller = parseController(code, 'target_controller.js')
+    const controller = await parseController(code, 'target_controller.js')
     expect(controller.isTyped).toBeTruthy()
     expect(controller.errors.length).toEqual(1)
     expect(controller.errors[0].message).toEqual("Controller was decorated with @TypedController but Controller didn't use any decorators.")
