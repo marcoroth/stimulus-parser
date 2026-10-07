@@ -1,13 +1,13 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
-let project = setupProject("app")
+let project = setupProject("app", { writable: true })
 
 describe("SourceFile", () => {
   beforeEach(() => {
-    project = setupProject("app")
+    project = setupProject("app", { writable: true })
   })
 
   describe("TypeScript syntax", () => {
@@ -18,7 +18,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -34,7 +34,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -50,7 +50,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -66,7 +66,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -82,7 +82,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -100,7 +100,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -118,7 +118,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -134,7 +134,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -151,7 +151,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -169,7 +169,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()
@@ -187,7 +187,7 @@ describe("SourceFile", () => {
         class Test {}
       `
 
-      const controllerFile = new SourceFile(project, "hello_controller.ts", code)
+      const controllerFile = createTestSourceFile(project, "hello_controller.ts", code)
       project.projectFiles.push(controllerFile)
 
       await project.analyze()

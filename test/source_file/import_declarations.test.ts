@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -16,7 +16,7 @@ describe("SourceFile", async () => {
         import "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -29,7 +29,7 @@ describe("SourceFile", async () => {
         import Something from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -49,7 +49,7 @@ describe("SourceFile", async () => {
         import { something } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -68,7 +68,7 @@ describe("SourceFile", async () => {
         import { something as somethingElse } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -87,7 +87,7 @@ describe("SourceFile", async () => {
         import * as something from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -107,7 +107,7 @@ describe("SourceFile", async () => {
         import onething, { anotherthing, thirdthing as something } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -145,7 +145,7 @@ describe("SourceFile", async () => {
         import { default as something } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -167,7 +167,7 @@ describe("SourceFile", async () => {
         import type { something } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -187,7 +187,7 @@ describe("SourceFile", async () => {
         import { Controller } from "@hotwired/stimulus"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -207,7 +207,7 @@ describe("SourceFile", async () => {
         import { Controller } from "stimulus"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -227,7 +227,7 @@ describe("SourceFile", async () => {
         import { Controller as StimulusController } from "@hotwired/stimulus"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -247,7 +247,7 @@ describe("SourceFile", async () => {
         import { Controller as StimulusController } from "stimulus"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -267,7 +267,7 @@ describe("SourceFile", async () => {
         import { BridgeComponent } from "@hotwired/strada"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -287,7 +287,7 @@ describe("SourceFile", async () => {
         import { BridgeComponent } from "@hotwired/hotwire-native-bridge"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()

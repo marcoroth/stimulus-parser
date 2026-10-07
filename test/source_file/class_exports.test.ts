@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -17,7 +17,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -43,7 +43,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -73,7 +73,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -103,7 +103,7 @@ describe("SourceFile", () => {
         export { Something as SomethingController }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -131,7 +131,7 @@ describe("SourceFile", () => {
         export class Something extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -161,7 +161,7 @@ describe("SourceFile", () => {
         export default Something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -189,7 +189,7 @@ describe("SourceFile", () => {
         export default class Something extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -217,7 +217,7 @@ describe("SourceFile", () => {
         export default class extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -247,7 +247,7 @@ describe("SourceFile", () => {
         export default Something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -277,7 +277,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -305,7 +305,7 @@ describe("SourceFile", () => {
         export const Something = class extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -336,7 +336,7 @@ describe("SourceFile", () => {
         export { AnotherThing }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()

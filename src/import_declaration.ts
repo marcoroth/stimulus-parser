@@ -15,7 +15,8 @@ type ImportDeclarationArgs = {
   localName: string
   source: string
   isStimulusImport: boolean // TODO: check if this really needs to be in the args on initialization
-  node: Acorn.ImportDeclaration
+  loc?: Acorn.SourceLocation | null
+  sourceLoc?: Acorn.SourceLocation | null
 }
 
 export class ImportDeclaration {
@@ -25,7 +26,8 @@ export class ImportDeclaration {
   public readonly source: string
   public readonly type: ImportDeclarationType
   public readonly isStimulusImport: boolean
-  public readonly node: Acorn.ImportDeclaration
+  public readonly loc?: Acorn.SourceLocation | null
+  public readonly sourceLoc?: Acorn.SourceLocation | null
 
   constructor(sourceFile: SourceFile, args: ImportDeclarationArgs) {
     this.sourceFile = sourceFile
@@ -33,8 +35,9 @@ export class ImportDeclaration {
     this.localName = args.localName
     this.source = args.source
     this.isStimulusImport = args.isStimulusImport
-    this.node = args.node
     this.type = args.type
+    this.loc = args.loc
+    this.sourceLoc = args.sourceLoc
   }
 
   get project() {

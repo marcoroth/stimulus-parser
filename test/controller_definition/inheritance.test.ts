@@ -1,10 +1,10 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
 
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
-let project = setupProject("app")
+let project = setupProject("app", { writable: true })
 
 const parentCode = dedent`
   import { Controller } from "@hotwired/stimulus"
@@ -46,12 +46,12 @@ const childCode = dedent`
 
 describe("inheritance", () => {
   beforeEach(() => {
-    project = setupProject("app")
+    project = setupProject("app", { writable: true })
   })
 
   test("inherits actions", async () => {
-    const parentFile = new SourceFile(project, "parent_controller.js", parentCode)
-    const childFile = new SourceFile(project, "child_controller.js", childCode)
+    const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+    const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
     project.projectFiles.push(parentFile)
     project.projectFiles.push(childFile)
@@ -72,8 +72,8 @@ describe("inheritance", () => {
   })
 
   test("inherits targets", async () => {
-    const parentFile = new SourceFile(project, "parent_controller.js", parentCode)
-    const childFile = new SourceFile(project, "child_controller.js", childCode)
+    const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+    const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
     project.projectFiles.push(parentFile)
     project.projectFiles.push(childFile)
@@ -94,8 +94,8 @@ describe("inheritance", () => {
   })
 
   test("inherits values", async () => {
-    const parentFile = new SourceFile(project, "parent_controller.js", parentCode)
-    const childFile = new SourceFile(project, "child_controller.js", childCode)
+    const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+    const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
     project.projectFiles.push(parentFile)
     project.projectFiles.push(childFile)
@@ -137,8 +137,8 @@ describe("inheritance", () => {
   })
 
   test("inherits classes", async () => {
-    const parentFile = new SourceFile(project, "parent_controller.js", parentCode)
-    const childFile = new SourceFile(project, "child_controller.js", childCode)
+    const parentFile = createTestSourceFile(project, "parent_controller.js", parentCode)
+    const childFile = createTestSourceFile(project, "child_controller.js", childCode)
 
     project.projectFiles.push(parentFile)
     project.projectFiles.push(childFile)

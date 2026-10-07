@@ -3,11 +3,11 @@ import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
 import { extractLoc } from "../helpers/matchers"
 
-import { Project } from "../../src/project"
-import { SourceFile } from "../../src/source_file"
+import { createTestSourceFile } from "../helpers/temp"
+import { setupProject } from "../helpers/setup"
 
 describe("with TS Syntax", () => {
-  test("parse typescript code", () => {
+  test("parse typescript code", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -19,12 +19,12 @@ describe("with TS Syntax", () => {
         }
       }`
 
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.targetNames).toEqual(["one", "two", "three"])
   })
 
-  test("parse targets", () => {
+  test("parse targets", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -36,12 +36,12 @@ describe("with TS Syntax", () => {
         declare readonly threeTarget: HTMLElement
       }
     `
-    const controller = parseController(code, "target_controller.ts")
+    const controller = await parseController(code, "target_controller.ts")
 
     expect(controller.targetNames).toEqual(["one", "two", "three"])
   })
 
-  test("parse classes", () => {
+  test("parse classes", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -49,12 +49,12 @@ describe("with TS Syntax", () => {
         static classes = ["one", "two", "three"]
       }
     `
-    const controller = parseController(code, "class_controller.ts")
+    const controller = await parseController(code, "class_controller.ts")
 
     expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
-  test("parse values", () => {
+  test("parse values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -74,7 +74,7 @@ describe("with TS Syntax", () => {
         declare numberValue: number
       }
     `
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 16])
@@ -132,7 +132,7 @@ describe("with TS Syntax", () => {
     })
   })
 
-  test("parse values with with default values", () => {
+  test("parse values with with default values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -152,7 +152,7 @@ describe("with TS Syntax", () => {
         declare numberValue: number
       }
     `
-    const controller = parseController(code, "value_controller.ts")
+    const controller = await parseController(code, "value_controller.ts")
 
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 46])
@@ -217,8 +217,8 @@ describe("with TS Syntax", () => {
       export default class extends Controller {
     `
 
-    const project = new Project(process.cwd())
-    const sourceFile = new SourceFile(project, "error_controller.js", code)
+    const project = setupProject()
+    const sourceFile = createTestSourceFile(project, "error_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.analyze()
@@ -232,7 +232,7 @@ describe("with TS Syntax", () => {
     // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
   })
 
-  test("parse arrow function", () => {
+  test("parse arrow function", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -245,14 +245,14 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.ts")
+    const controller = await parseController(code, "controller.ts")
 
     expect(controller.actionNames).toEqual(["connect", "load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse methods", () => {
+  test("parse methods", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -264,14 +264,14 @@ describe("with TS Syntax", () => {
         isSomething(): Boolean {}
       }
     `
-    const controller = parseController(code, "controller.ts")
+    const controller = await parseController(code, "controller.ts")
 
     expect(controller.actionNames).toEqual(["load", "unload", "isSomething"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse private methods", () => {
+  test("parse private methods", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -280,14 +280,14 @@ describe("with TS Syntax", () => {
         private unload() {}
       }
     `
-    const controller = parseController(code, "controller.ts")
+    const controller = await parseController(code, "controller.ts")
 
     expect(controller.actionNames).toEqual(["#load", "#unload"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse nested object/array default value types", () => {
+  test("parse nested object/array default value types", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -298,7 +298,7 @@ describe("with TS Syntax", () => {
         }
       }
     `
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([5, 12, 5, 85])
@@ -323,7 +323,7 @@ describe("with TS Syntax", () => {
     })
   })
 
-  test("parse controller with public class fields", () => {
+  test("parse controller with public class fields", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -335,13 +335,13 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.ts")
+    const controller = await parseController(code, "controller.ts")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse controller with private getter", () => {
+  test("parse controller with private getter", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -352,14 +352,14 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.ts")
+    const controller = await parseController(code, "controller.ts")
 
     expect(controller.actionNames).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse controller with private setter", () => {
+  test("parse controller with private setter", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -370,7 +370,7 @@ describe("with TS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.ts")
+    const controller = await parseController(code, "controller.ts")
 
     expect(controller.actionNames).toEqual([])
     expect(controller.hasErrors).toBeFalsy()

@@ -231,9 +231,9 @@ export class ControllerDefinition {
 
   addTargetDefinition(targetDefinition: TargetDefinition): void {
     if (this.localTargetNames.includes(targetDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Target "${targetDefinition.name}"`, targetDefinition.elementNode.loc))
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Target "${targetDefinition.name}"`, targetDefinition.loc))
     } else if (this.targetNames.includes(targetDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Target "${targetDefinition.name}". A parent controller already defines this Target.`, targetDefinition.elementNode.loc))
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Target "${targetDefinition.name}". A parent controller already defines this Target.`, targetDefinition.loc))
     }
 
     this.targetDefinitions.push(targetDefinition)
@@ -241,9 +241,9 @@ export class ControllerDefinition {
 
   addClassDefinition(classDefinition: ClassDefinition) {
     if (this.localClassNames.includes(classDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Class "${classDefinition.name}"`, classDefinition.elementNode.loc))
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Class "${classDefinition.name}"`, classDefinition.loc))
     } else if (this.classNames.includes(classDefinition.name)) {
-      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Class "${classDefinition.name}". A parent controller already defines this Class.`, classDefinition.elementNode.loc))
+      this.errors.push(new ParseError("LINT", `Duplicate definition of Stimulus Class "${classDefinition.name}". A parent controller already defines this Class.`, classDefinition.loc))
     }
 
     this.classDefinitions.push(classDefinition)

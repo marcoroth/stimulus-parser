@@ -12,10 +12,10 @@ import type { TSESTree } from "@typescript-eslint/typescript-estree"
 type Node = Acorn.MethodDefinition | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.ObjectExpression
 type ElementNode = Acorn.Property | Acorn.PropertyDefinition | Acorn.ArrayExpression | Acorn.Literal | Acorn.Identifier | Acorn.MethodDefinition
 
+export type { Node as ControllerPropertyNode, ElementNode as ControllerPropertyElementNode }
+
 export abstract class ControllerPropertyDefinition {
   public readonly name: string
-  public readonly node: Node
-  public readonly elementNode: ElementNode
   public readonly loc?: Acorn.SourceLocation | null
   public readonly definitionType: "decorator" | "static" = "static"
 
@@ -27,8 +27,6 @@ export abstract class ControllerPropertyDefinition {
     definitionType: "decorator" | "static" = "static",
   ) {
     this.name = name
-    this.node = node
-    this.elementNode = elementNode
     this.loc = loc
     this.definitionType = definitionType
   }
@@ -36,7 +34,11 @@ export abstract class ControllerPropertyDefinition {
 
 export class ValueDefinition extends ControllerPropertyDefinition {
   public readonly definition: ValueDefinitionType
-  private propertyNode: Acorn.Property
+
+  private readonly _keyLoc: Acorn.SourceLocation | null | undefined
+  private readonly _typeLoc: Acorn.SourceLocation | null | undefined
+  private readonly _defaultValueLoc: Acorn.SourceLocation | null | undefined
+  private readonly _valueLoc: Acorn.SourceLocation | null | undefined
 
   constructor(
     name: string,
@@ -48,72 +50,77 @@ export class ValueDefinition extends ControllerPropertyDefinition {
   ) {
     super(name, node, propertyNode, loc, definitionType)
     this.definition = definition
-    this.propertyNode = propertyNode
+
+    const elementNodePropertyValue = (propertyNode?.value?.type === "ObjectExpression") ? propertyNode.value : undefined
+
+    // keyLoc
+    if (definitionType === "decorator") {
+      this._keyLoc = (node as Acorn.PropertyDefinition).key?.loc || node.loc
+    } else {
+      this._keyLoc = propertyNode.key?.loc || node.loc
+    }
+
+    // typeLoc
+    switch (definition.kind) {
+      case "shorthand":
+        this._typeLoc = propertyNode.value?.loc || node.loc
+        break
+      case "expanded":
+        this._typeLoc = findPropertyInProperties(elementNodePropertyValue?.properties || [], "type")?.value?.loc || node.loc
+        break
+      case "decorator":
+        const decorators = (node as any as TSESTree.PropertyDefinition).decorators || []
+        this._typeLoc = decorators[0]?.loc || node.loc
+        break
+      default:
+        this._typeLoc = node.loc
+    }
+
+    // defaultValueLoc
+    switch (definition.kind) {
+      case "shorthand":
+        this._defaultValueLoc = undefined
+        break
+      case "expanded":
+        this._defaultValueLoc = findPropertyInProperties(elementNodePropertyValue?.properties || [], "default")?.value?.loc
+        break
+      case "decorator":
+        this._defaultValueLoc = (node as Acorn.PropertyDefinition).value?.loc
+        break
+      default:
+        this._defaultValueLoc = undefined
+    }
+
+    // valueLoc
+    if (definitionType === "decorator") {
+      this._valueLoc = (node as Acorn.PropertyDefinition).value?.loc || node.loc
+    } else {
+      this._valueLoc = propertyNode.value?.loc || node.loc
+    }
   }
 
   get type() {
     return this.definition.type
   }
 
-  get elementNodePropertyValue() {
-    const propertyValue = this.propertyNode?.value
-
-    if (!propertyValue) return
-    if (propertyValue.type !== "ObjectExpression") return
-
-    return propertyValue
-  }
-
   get keyLoc() {
-    if (this.definitionType === "decorator") {
-      return (this.node as Acorn.PropertyDefinition).key?.loc || this.node.loc
-    }
-
-    return this.propertyNode.key?.loc || this.node.loc
+    return this._keyLoc
   }
 
   get typeLoc() {
-    switch(this.definition.kind) {
-      case "shorthand":
-        return this.propertyNode.value?.loc || this.node.loc
-
-      case "expanded":
-        return findPropertyInProperties(this.elementNodePropertyValue?.properties || [], "type")?.value?.loc || this.node.loc
-
-      case "decorator":
-        const decorators = (this.node as any as TSESTree.PropertyDefinition).decorators || []
-        return decorators[0]?.loc || this.node.loc
-
-      default:
-        return this.node.loc
-    }
+    return this._typeLoc
   }
 
   get defaultValueLoc(): Acorn.SourceLocation | null | undefined {
-    switch(this.definition.kind) {
-      case "shorthand": return undefined
-
-      case "expanded":
-        return findPropertyInProperties(this.elementNodePropertyValue?.properties || [], "default")?.value?.loc
-
-      case "decorator":
-        return (this.node as Acorn.PropertyDefinition).value?.loc
-
-      default:
-        return undefined
-    }
+    return this._defaultValueLoc
   }
 
   get hasExplicitDefaultValue(): boolean {
-    return !!this.defaultValueLoc
+    return !!this._defaultValueLoc
   }
 
   get valueLoc() {
-    if (this.definitionType === "decorator") {
-      return (this.node as Acorn.PropertyDefinition).value?.loc || this.node.loc
-    }
-
-    return this.propertyNode.value?.loc || this.node.loc
+    return this._valueLoc
   }
 
   get default() {

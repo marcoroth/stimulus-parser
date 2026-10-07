@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -16,7 +16,7 @@ describe("ClassDeclaration", () => {
         class Child {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -34,7 +34,7 @@ describe("ClassDeclaration", () => {
         class Child extends Parent {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -54,7 +54,7 @@ describe("ClassDeclaration", () => {
         class Child extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -74,7 +74,7 @@ describe("ClassDeclaration", () => {
         class Child extends Parent {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -96,7 +96,7 @@ describe("ClassDeclaration", () => {
         class Child extends Parent {}
       `
 
-      const sourceFile = new SourceFile(project, "child.js", code)
+      const sourceFile = createTestSourceFile(project, "child.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()

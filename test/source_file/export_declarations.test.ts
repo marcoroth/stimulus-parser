@@ -1,7 +1,7 @@
 import dedent from "dedent"
 import { describe, beforeEach, test, expect } from "vitest"
-import { SourceFile } from "../../src"
 import { setupProject } from "../helpers/setup"
+import { createTestSourceFile } from "../helpers/temp"
 
 let project = setupProject()
 
@@ -16,7 +16,7 @@ describe("SourceFile", () => {
         export default Something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -33,7 +33,7 @@ describe("SourceFile", () => {
         export { something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -50,7 +50,7 @@ describe("SourceFile", () => {
         export { Something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -66,7 +66,7 @@ describe("SourceFile", () => {
         export {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -79,7 +79,7 @@ describe("SourceFile", () => {
         export function something() {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -97,7 +97,7 @@ describe("SourceFile", () => {
         export default something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -113,7 +113,7 @@ describe("SourceFile", () => {
         export const something = async () => {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -131,7 +131,7 @@ describe("SourceFile", () => {
         export default something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -147,7 +147,7 @@ describe("SourceFile", () => {
         export const something = 0
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -163,7 +163,7 @@ describe("SourceFile", () => {
         export let something = 0
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -179,7 +179,7 @@ describe("SourceFile", () => {
         export var something = 0
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -197,7 +197,7 @@ describe("SourceFile", () => {
         export default something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -213,7 +213,7 @@ describe("SourceFile", () => {
         export default 0
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -229,7 +229,7 @@ describe("SourceFile", () => {
         export default function() {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -245,7 +245,7 @@ describe("SourceFile", () => {
         export default async () => {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -261,7 +261,7 @@ describe("SourceFile", () => {
         export default []
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -277,7 +277,7 @@ describe("SourceFile", () => {
         export default {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -293,7 +293,7 @@ describe("SourceFile", () => {
         export { something as somethingElse }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -309,7 +309,7 @@ describe("SourceFile", () => {
         export { something, somethingElse }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -328,7 +328,7 @@ describe("SourceFile", () => {
         export * from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -345,7 +345,7 @@ describe("SourceFile", () => {
         export * as something from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -362,7 +362,7 @@ describe("SourceFile", () => {
         export { default } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -379,7 +379,7 @@ describe("SourceFile", () => {
         export { default as something } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -398,7 +398,7 @@ describe("SourceFile", () => {
         export { something as default }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -414,7 +414,7 @@ describe("SourceFile", () => {
         export { something as somethingElse } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -431,7 +431,7 @@ describe("SourceFile", () => {
         export class Something {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -449,7 +449,7 @@ describe("SourceFile", () => {
         export default Something
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -465,7 +465,7 @@ describe("SourceFile", () => {
         export default class Something {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -481,7 +481,7 @@ describe("SourceFile", () => {
         export default function something() {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -497,7 +497,7 @@ describe("SourceFile", () => {
         export default something = async () => {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -513,7 +513,7 @@ describe("SourceFile", () => {
         export default class {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -529,7 +529,7 @@ describe("SourceFile", () => {
         export default class extends Controller {}
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -545,7 +545,7 @@ describe("SourceFile", () => {
         export type { something }
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -560,7 +560,7 @@ describe("SourceFile", () => {
         export type { something } from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -577,7 +577,7 @@ describe("SourceFile", () => {
         export type * from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()
@@ -594,7 +594,7 @@ describe("SourceFile", () => {
         export type * as something from "something"
       `
 
-      const sourceFile = new SourceFile(project, "abc.js", code)
+      const sourceFile = createTestSourceFile(project, "abc.js", code)
       project.projectFiles.push(sourceFile)
 
       await project.analyze()

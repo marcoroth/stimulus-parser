@@ -3,22 +3,22 @@ import { describe, test, expect } from "vitest"
 import { parseController } from "../helpers/parse"
 import { extractLoc } from "../helpers/matchers"
 
-import { Project } from "../../src/project"
-import { SourceFile } from "../../src/source_file"
+import { createTestSourceFile } from "../helpers/temp"
+import { setupProject } from "../helpers/setup"
 
 describe("with JS Syntax", () => {
-  test("doesn't parse non Stimulus class", () => {
+  test("doesn't parse non Stimulus class", async () => {
     const code = dedent`
       export default class extends Controller {
         static targets = ["one", "two", "three"]
       }
     `
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller).toBeUndefined()
   })
 
-  test("parse targets", () => {
+  test("parse targets", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -26,12 +26,12 @@ describe("with JS Syntax", () => {
         static targets = ["one", "two", "three"]
       }
     `
-    const controller = parseController(code, "target_controller.js")
+    const controller = await parseController(code, "target_controller.js")
 
     expect(controller.targetNames).toEqual(["one", "two", "three"])
   })
 
-  test("parse classes", () => {
+  test("parse classes", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -39,14 +39,14 @@ describe("with JS Syntax", () => {
         static classes = ["one", "two", "three"]
       }
     `
-    const controller = parseController(code, "class_controller.js")
+    const controller = await parseController(code, "class_controller.js")
 
     expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
   // TODO: instead, we could also mark the SpreadElement node with
   // a warning that says that we couldn't parse it
-  test.todo("parse classes with spread", () => {
+  test.todo("parse classes with spread", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -55,13 +55,13 @@ describe("with JS Syntax", () => {
         static classes = [...this.spread, "three"]
       }
     `
-    const controller = parseController(code, "class_controller.js")
+    const controller = await parseController(code, "class_controller.js")
 
     expect(controller.classNames).toEqual(["three"])
     expect(controller.classNames).toEqual(["one", "two", "three"])
   })
 
-  test("parse values", () => {
+  test("parse values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -75,7 +75,7 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 16])
@@ -133,7 +133,7 @@ describe("with JS Syntax", () => {
     })
   })
 
-  test("parse values with with default values", () => {
+  test("parse values with with default values", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -147,7 +147,7 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(extractLoc(controller.valueDefinitionsMap.array.keyLoc)).toEqual([8, 4, 8, 9])
     expect(extractLoc(controller.valueDefinitionsMap.array.valueLoc)).toEqual([8, 11, 8, 46])
@@ -205,7 +205,7 @@ describe("with JS Syntax", () => {
     })
   })
 
-  test.todo("parse values with spread", () => {
+  test.todo("parse values with spread", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -223,7 +223,7 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(controller.valueDefinitionsMap).toEqual({
       string: { type: "String", default: "string" },
@@ -241,8 +241,8 @@ describe("with JS Syntax", () => {
       export default class extends Controller {
     `
 
-    const project = new Project(process.cwd())
-    const sourceFile = new SourceFile(project, "error_controller.js", code)
+    const project = setupProject()
+    const sourceFile = createTestSourceFile(project, "error_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.analyze()
@@ -255,7 +255,7 @@ describe("with JS Syntax", () => {
     // expect(sourceFile.errors[0].loc.end.line).toEqual(9)
   })
 
-  test("parse arrow function", () => {
+  test("parse arrow function", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -272,14 +272,14 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.actionNames).toEqual(["connect", "load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse methods", () => {
+  test("parse methods", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -288,14 +288,14 @@ describe("with JS Syntax", () => {
         unload() {}
       }
     `
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.actionNames).toEqual(["load", "unload"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse private methods", () => {
+  test("parse private methods", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -303,14 +303,14 @@ describe("with JS Syntax", () => {
         #load() {}
       }
     `
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.actionNames).toEqual(["#load"])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse nested object/array default value types", () => {
+  test("parse nested object/array default value types", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -321,7 +321,7 @@ describe("with JS Syntax", () => {
         }
       }
     `
-    const controller = parseController(code, "value_controller.js")
+    const controller = await parseController(code, "value_controller.js")
 
     expect(extractLoc(controller.valueDefinitionsMap.object.keyLoc)).toEqual([5, 4, 5, 10])
     expect(extractLoc(controller.valueDefinitionsMap.object.valueLoc)).toEqual([5, 12, 5, 85])
@@ -346,7 +346,7 @@ describe("with JS Syntax", () => {
     })
   })
 
-  test("parse controller with public class fields", () => {
+  test("parse controller with public class fields", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -358,14 +358,14 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.actionNames).toEqual([])
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
   })
 
-  test("parse controller with private getter", () => {
+  test("parse controller with private getter", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -376,14 +376,14 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
     expect(controller.actionNames).toEqual([])
   })
 
-  test("parse controller with private setter", () => {
+  test("parse controller with private setter", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -394,14 +394,14 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)
     expect(controller.actionNames).toEqual([])
   })
 
-  test("parse controller with variable declaration in method body", () => {
+  test("parse controller with variable declaration in method body", async () => {
     const code = dedent`
       import { Controller } from "@hotwired/stimulus"
 
@@ -412,7 +412,7 @@ describe("with JS Syntax", () => {
       }
     `
 
-    const controller = parseController(code, "controller.js")
+    const controller = await parseController(code, "controller.js")
 
     expect(controller.hasErrors).toBeFalsy()
     expect(controller.errors).toHaveLength(0)

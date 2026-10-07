@@ -1,7 +1,8 @@
 import { describe, test, expect } from "vitest"
-import { Project, StimulusControllerClassDeclaration } from "../../src"
+import { StimulusControllerClassDeclaration } from "../../src"
+import { setupProject } from "../helpers/setup"
 
-const project = new Project(`${process.cwd()}/test/fixtures/packages/tailwindcss-stimulus-components`)
+const project = setupProject("packages/tailwindcss-stimulus-components")
 
 describe("packages", () => {
   describe("tailwindcss-stimulus-components", () => {

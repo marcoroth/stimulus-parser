@@ -2,11 +2,11 @@ import { describe, beforeEach, test, expect } from "vitest"
 import { findNodeModulesPath } from "../../../src/util/npm"
 import { setupProject } from "../../helpers/setup"
 
-let project = setupProject()
+let project = setupProject("app")
 
 describe("util.npm", () => {
   beforeEach(() => {
-    project = setupProject()
+    project = setupProject("app")
   })
 
   describe("findNodeModulesPath", () => {
@@ -27,10 +27,7 @@ describe("util.npm", () => {
     })
 
     test("for directory outside project", async () => {
-      const splits = project.projectPath.split("/")
-      const path = splits.slice(0, splits.length - 2).join("/")
-
-      expect(await findNodeModulesPath(path)).toEqual(null)
+      expect(await findNodeModulesPath("/tmp/nonexistent-directory")).toEqual(null)
     })
   })
 })

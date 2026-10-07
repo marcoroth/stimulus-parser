@@ -1,12 +1,11 @@
-import path from "path"
 import dedent from "dedent"
 import { describe, test, expect } from "vitest"
 import { setupProject } from "../helpers/setup"
 
 import { ClassDeclaration, StimulusControllerClassDeclaration } from "../../src/class_declaration"
-import { SourceFile } from "../../src/source_file"
+import { createTestSourceFile } from "../helpers/temp"
 
-const project = setupProject("packages/stimulus-dropdown")
+const project = setupProject("packages/stimulus-dropdown", { writable: true })
 
 describe("@hotwired/stimulus Controller", () => {
   test("parse parent", async () => {
@@ -16,7 +15,7 @@ describe("@hotwired/stimulus Controller", () => {
       export default class extends Controller {}
     `
 
-    const sourceFile = new SourceFile(project, "parent_controller.js", code)
+    const sourceFile = createTestSourceFile(project, "parent_controller.js", code)
 
     project.projectFiles.push(sourceFile)
 
@@ -41,7 +40,7 @@ describe("@hotwired/stimulus Controller", () => {
       export default class extends StimulusController {}
     `
 
-    const sourceFile = new SourceFile(project, "parent_controller.js", code)
+    const sourceFile = createTestSourceFile(project, "parent_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.analyze()
@@ -70,7 +69,7 @@ describe("with controller in same file", () => {
       export default class extends AbstractController {}
     `
 
-    const sourceFile = new SourceFile(project, "parent_controller.js", code)
+    const sourceFile = createTestSourceFile(project, "parent_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.analyze()
@@ -111,8 +110,8 @@ describe("with controller from other file", () => {
       export default class extends ApplicationController {}
     `
 
-    const applicationFile = new SourceFile(project, path.join(project.projectPath, "application_controller.js"), applicationCode)
-    const helloFile = new SourceFile(project, path.join(project.projectPath, "parent_controller.js"), helloCode)
+    const applicationFile = createTestSourceFile(project, "application_controller.js", applicationCode)
+    const helloFile = createTestSourceFile(project, "parent_controller.js", helloCode)
 
     project.projectFiles.push(applicationFile)
     project.projectFiles.push(helloFile)
@@ -148,7 +147,7 @@ describe("with controller from stimulus package", () => {
       export default class extends SomeController {}
     `
 
-    const sourceFile = new SourceFile(project, "parent_controller.js", code)
+    const sourceFile = createTestSourceFile(project, "parent_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.analyze()
@@ -165,7 +164,7 @@ describe("with controller from stimulus package", () => {
   })
 
   test("parse parent with regular import", async () => {
-    const project = setupProject("packages/tailwindcss-stimulus-components")
+    const project = setupProject("packages/tailwindcss-stimulus-components", { writable: true })
 
     const code = dedent`
       import { Modal } from "tailwindcss-stimulus-components"
@@ -173,7 +172,7 @@ describe("with controller from stimulus package", () => {
       export default class extends Modal {}
     `
 
-    const sourceFile = new SourceFile(project, "parent_controller.js", code)
+    const sourceFile = createTestSourceFile(project, "parent_controller.js", code)
     project.projectFiles.push(sourceFile)
 
     await project.analyze()
