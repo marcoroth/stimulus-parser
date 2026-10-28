@@ -188,6 +188,7 @@ describe("ClassDeclaration", () => {
 
       expect(parentFile.classDeclarations.length).toEqual(1)
       expect(childFile.classDeclarations.length).toEqual(1)
+      expect(childFile.controllerDefinitions.length).toEqual(1)
 
       const child = childFile.findClass("ChildController")
       const parent = parentFile.findClass("ParentController")

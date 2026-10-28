@@ -1,4 +1,7 @@
+import path from "path"
 import { glob } from "glob"
+import { execFile } from "child_process"
+import { promisify } from "util"
 
 import { ApplicationFile } from "./application_file"
 import { ControllerDefinition } from "./controller_definition"
@@ -9,11 +12,13 @@ import { Parser } from "./parser"
 import { SourceFile } from "./source_file"
 
 import { analyzeAll, analyzePackage } from "./packages"
-import { resolvePathWhenFileExists, nestedFolderSort } from "./util/fs"
+import { resolvePathWhenFileExists, fileExists, nestedFolderSort } from "./util/fs"
 import { calculateControllerRoots } from "./util/project"
 
 import type { NodeModule } from "./node_module"
 import type { RegisteredController } from "./registered_controller"
+
+const execFileAsync = promisify(execFile)
 
 export class Project {
   readonly projectPath: string
@@ -189,6 +194,10 @@ export class Project {
 
   private async analyzeProjectFiles() {
     await Promise.allSettled(this.projectFiles.map(file => file.analyze()))
+
+    // A subclass is only recognized as a controller once the file declaring its parent class has been
+    // analyzed, so analyze controllers again to pick up subclasses whose file came before their parent's.
+    await Promise.allSettled(this.projectFiles.filter(file => file.isAnalyzed).map(async file => file.analyzeControllers()))
   }
 
   private async refreshProjectFiles() {
@@ -272,9 +281,37 @@ export class Project {
   }
 
   private async getProjectFilePaths(): Promise<string[]> {
+    const gitPaths = await this.getGitProjectFilePaths()
+
+    // nothing listed can also mean the project sits in an ignored folder of an enclosing repository
+    if (gitPaths?.length) return gitPaths
+
+    // a trailing /** makes glob skip node_modules entirely instead of walking every file in it
     return await glob(`${this.projectPath}/**/*.{${this.extensionsGlob}}`, {
-      ignore: `${this.projectPath}/**/node_modules/**/*`,
+      ignore: `${this.projectPath}/**/node_modules/**`,
     })
+  }
+
+  // Lists tracked and untracked files but leaves out gitignored ones, so build output
+  // (public/assets, public/vite, app/assets/builds, ...) doesn't get parsed.
+  // Returns undefined if git isn't installed or the project isn't in a git work tree.
+  private async getGitProjectFilePaths(): Promise<string[] | undefined> {
+    const extensions = Project.javascriptExtensions.concat(Project.typescriptExtensions)
+    const args = ["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", ...extensions.map(extension => `*.${extension}`)]
+
+    const result = await execFileAsync("git", args, { cwd: this.projectPath, maxBuffer: 64 * 1024 * 1024 }).catch(() => undefined)
+
+    if (!result) return undefined
+
+    const paths = result.stdout
+      .split("\0")
+      .filter(file => file && !file.split("/").includes("node_modules"))
+      .map(file => path.join(this.projectPath, file))
+
+    // --cached also lists tracked files that were deleted from the working tree
+    const exists = await Promise.all(paths.map(file => fileExists(file)))
+
+    return paths.filter((_file, index) => exists[index])
   }
 
   get extensionsGlob() {
