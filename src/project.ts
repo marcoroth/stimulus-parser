@@ -189,6 +189,10 @@ export class Project {
 
   private async analyzeProjectFiles() {
     await Promise.allSettled(this.projectFiles.map(file => file.analyze()))
+
+    // A subclass is only recognized as a controller once the file declaring its parent class has been
+    // analyzed, so analyze controllers again to pick up subclasses whose file came before their parent's.
+    await Promise.allSettled(this.projectFiles.filter(file => file.isAnalyzed).map(async file => file.analyzeControllers()))
   }
 
   private async refreshProjectFiles() {
